@@ -1,0 +1,286 @@
+//*****************************************************************
+// File:   adac.jj
+// Author: ...........
+// Date:   ...........
+// Coms:   Un tutorial sobre el análisis léxico con javacc
+//         https://javacc.github.io/javacc/tutorials/token-manager.html
+//*****************************************************************
+
+// options {
+//   IGNORE_CASE = false;
+//   COMMON_TOKEN_ACTION = false;
+//   ...
+// }
+
+PARSER_BEGIN(adac)
+package traductor;
+
+public class adac {
+    public static void main(String[] args) {
+    	adac parser;
+
+    	try {
+	    	if(args.length == 0) { //entrada desde stdin
+				parser = new adac(System.in);
+			}
+			else { //entrada desde fichero en args[0]
+	            parser = new adac(new java.io.FileInputStream(args[0])); 
+			}
+			parser.S(); //invoca símbolo inicial de la gramática
+		}
+		catch (java.io.FileNotFoundException e) {
+			System.err.println ("Fichero " + args[0] + " no encontrado.");
+		}
+		catch (TokenMgrError e) {
+        	System.err.println("LEX_ERROR: " + e.getMessage());
+        }
+        catch (ParseException e) {
+        	System.err.println("SINT_ERROR: " + e.getMessage());
+        } 
+    }
+}
+PARSER_END(adac)
+//------------ descripción del AL
+
+TOKEN_MGR_DECLS : 
+{
+	static void printToken (Token t, String s) {
+		System.out.printf("(%d, %d): \"%s\" %s\n", t.beginLine,
+		t.beginColumn, t.image, s );
+	}
+}
+
+TOKEN :
+{
+ 	< #LETTER: (["a"-"z","A"-"Z"]) >
+|	< #DIGIT: ["0"-"9"] >
+|	< #NUM : (<DIGIT>)+ >
+|	< #WORD: ["a"-"z","A"-"Z"](~[" ","\t","\n","\r","0"-"9"])*>
+}
+
+SKIP :
+{
+	
+	< " " | "\t" | "\r" | "\n" >	// Espacios en blanco
+|	< "--"(~["\n", "\r"])* >				// Comentarios
+}
+
+TOKEN :
+{
+	< tCHAR: "'" (~["\n","\r","'"]) "'" >
+		{
+			printToken(matchedToken, "character");
+		}
+|	< tSTRING: "\"" (~["\n","\r", "\""] | "\"\"")* "\"" >
+		{
+			printToken(matchedToken, "string");
+		}
+|	< tNUM: <NUM> >
+		{
+			printToken(matchedToken, "number");
+		}
+|	< tPROC: "procedure" >
+		{
+			printToken(matchedToken, "declarator");
+		}	
+|	< tIS: "is" >
+		{
+			printToken(matchedToken, "statement");
+		}	
+| 	< tBEGIN: "begin" >
+ 		{
+			printToken(matchedToken, "statement");
+		}
+|	< tEND: "end" >
+		{
+			printToken(matchedToken, "statement");
+		}
+|	< tRET: "return" >
+		{
+			printToken(matchedToken, "statement");
+		}
+|	< tBOOL: "boolean" >
+		{
+			printToken(matchedToken, "declarator");
+		}
+|	< tCHDECL: "character" >
+		{
+			printToken(matchedToken, "declarator");
+		}
+|   < tINT:  "integer" >
+		{
+			printToken(matchedToken, "declarator");
+		}
+|   < tNOT:  "not" >
+		{
+			printToken(matchedToken, "logical operator");
+		}
+|   < tIF:  "if" >
+		{
+			printToken(matchedToken, "statement");
+		}
+|   < tTHEN:  "then" >
+		{
+			printToken(matchedToken, "statement");
+		}
+|   < tELSE:  "else" >
+		{
+			printToken(matchedToken, "statement");
+		}
+		
+|   < tWHIL:  "while" >
+		{
+			printToken(matchedToken, "statement");
+		}
+|   < tDO:  "do" >
+		{
+			printToken(matchedToken, "statement");
+		}
+|	< tCOMMA:  "," >
+		{
+			printToken(matchedToken, "separator ");
+		}
+|	< tSCOL:  ";" >
+		{
+			printToken(matchedToken, "separator ");
+		}
+|	< tPTOP:  "(" >
+		{
+			printToken(matchedToken, "open bracket separator");
+		}
+|	< tPTCL:  ")" >
+		{
+			printToken(matchedToken, "closed bracket separator");
+		}
+|	< tSQOP:  "[" >
+		{
+			printToken(matchedToken, "open square bracket separator");
+		}
+|	< tSQCL:  "]" >
+		{
+			printToken(matchedToken, "closed square bracket separator");
+		}
+|	< tSQUOT:  "'" >
+		{
+			printToken(matchedToken, "separator");
+		}
+|	< tDQUOT:  "\"" >
+		{
+			printToken(matchedToken, "separator");
+		}
+|   < tASIG:  ":=" >
+		{
+			printToken(matchedToken, "assign operator");
+		}
+|	< tADD:  "+" >
+		{
+			printToken(matchedToken, "addition operator");
+		}
+|	< tSUB:  "-" >
+		{
+			printToken(matchedToken, "substraction operator");
+		}
+|	< tMUL:  "*" >
+		{
+			printToken(matchedToken, "multiplication operator");
+		}
+|	< tDIV:  "div" >
+		{
+			printToken(matchedToken, "division operator");
+		}
+|	< tMOD:  "mod" >
+		{
+			printToken(matchedToken, "modulus operator");
+		}
+|	< tGT:  ">" >
+		{
+			printToken(matchedToken, "greater than logical operator");
+		}
+|	< tLT:  "<" >
+		{
+			printToken(matchedToken, "lower than logical operator");
+		}
+|	< tEQ:  "=" >
+		{
+			printToken(matchedToken, "equality logical operator");
+		}
+|	< tDIFF:  "<>" >
+		{
+			printToken(matchedToken, "inequality logical operator");
+		}
+|	< tTRUE:  "true" >
+		{
+			printToken(matchedToken, "constant logical value");
+		}
+|	< tFALSE:  "false" >
+		{
+			printToken(matchedToken, "constant logical value");
+		}
+|	< tATOI:  "char2int" >
+		{
+			printToken(matchedToken, "internal function");
+		}
+|	< tITOA:  "int2char" >
+		{
+			printToken(matchedToken, "internal function");
+		}
+|	< tGET:  "get" >
+		{
+			printToken(matchedToken, "internal function");
+		}
+|	< tPUT:  "put" >
+		{
+			printToken(matchedToken, "internal function");
+		}
+|	< tPUTL:  "put_line" >
+		{
+			printToken(matchedToken, "internal function");
+		}
+|	< tFUNC: "function" >
+		{
+			printToken(matchedToken, "declarator");
+		}
+|	< tVAL: "val" >
+		{
+			printToken(matchedToken, "declarator");
+		}		
+|	< tREF: "ref" >
+		{
+			printToken(matchedToken, "declarator");
+		}		
+|	< tIDENTIFIER: <LETTER> ( ("_")? (<DIGIT> | <LETTER>) )* >
+		{
+			printToken(matchedToken, "identifier");
+		}
+}
+SPECIAL_TOKEN:
+{
+	< ~[] >
+		{
+			System.out.print("LEXICAL ERROR: ");
+			System.out.printf("(%d, %d): unrecognized symbol: %s", matchedToken.beginLine,
+			matchedToken.beginColumn, matchedToken.image );
+		}
+}
+
+
+//------------ Símbolo inicial de la gramática. Para análisis léxico no hace falta más
+void S () : 
+{
+
+}
+{
+	( 
+		<tCHAR> | <tSTRING> | <tNUM>
+		| <tPROC> | <tIS> | <tBEGIN> | <tEND> | <tRET>
+		| <tBOOL> | <tCHDECL> | <tINT>
+		| <tNOT> | <tIF> | <tTHEN> | <tELSE> |<tWHIL> | <tDO>
+		| <tCOMMA> | <tSCOL> | <tPTOP> | <tPTCL> | <tSQOP> | <tSQCL>
+		| <tSQUOT> | <tDQUOT> 
+		| <tASIG> | <tADD> | <tSUB> | <tMUL> | <tDIV> | <tMOD>
+		| <tGT> | <tLT> | <tEQ> | <tDIFF> | <tTRUE> | <tFALSE>
+		| <tATOI> | <tITOA> | <tGET> | <tPUT> | <tPUTL> | <tFUNC> |<tVAL> | <tREF>
+		| <tIDENTIFIER>
+	)+
+	< EOF >
+}
