@@ -554,6 +554,37 @@ factor() :
 |	<tFALSE>
 }
 
+JAVACODE //------------------------------------ 
+//Informa sobre la excepción, y calcula el conjunto de tokens esperados Set infoParseException(ParseException e) {
+Set<Integer> infoParseException(ParseException e) {
+	Set<Integer> esperados = new HashSet<Integer>(); 
+	System.err.println("ERROR_SINT: ('" + e.currentToken.next.image + ", " + e.currentToken.next.beginLine
+		+ "," + e.currentToken.next.beginColumn + ")");
+	System.err.println("Se esperaba uno de los siguientes tokens:")
+	for(int i = 0; i<e.expectedTokenSequences.length; i++) {
+		esperados.add(e.expectedTokenSequences[i][0]);
+		System.err.println("\t" + tradConstants.tokenImage[e.expectedTokenSequences[i][0]]);
+	}
+	return esperados;
+}
+
+JAVACODE //--------- 
+void recuperacionPanico(Token tInesperado, Set Integer> conjSinc) {
+	// System.err.println(sep); 
+	System.err.println("----> Recupero en modo pánico: "
+		+ "\n----> saltando todo hasta token de conjunto de sincronización"); 
+	System.err.println("Lexema inesperado: " + tInesperado.image);
+	Token t - getNextToken();
+	while (!conjSinc.contains(t. kind) && t.kind != EOF){ 
+		System.err.println("Descartando token ("
+		+ tradConstants.tokenImage[t.kind)
+		+ "," + t.image + ")"); t - getNextToken();
+	}
+}
+
+
+
+
 /* void S antiguo (previo a práctica 2)
 void S () : 
 {
