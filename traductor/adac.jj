@@ -115,6 +115,14 @@ TOKEN :
 		{
 			printToken(matchedToken, "logical operator");
 		}
+|   < tOR:  "or" >
+		{
+			printToken(matchedToken, "logical operator");
+		}
+|   < tAND:  "and" >
+		{
+			printToken(matchedToken, "logical operator");
+		}
 |   < tIF:  "if" >
 		{
 			printToken(matchedToken, "statement");
@@ -204,6 +212,14 @@ TOKEN :
 		{
 			printToken(matchedToken, "equality logical operator");
 		}
+|	< tGEQ:  ">=" >
+		{
+			printToken(matchedToken, "greater or equal to logical operator");
+		}
+|	< tLEQ:  "<=" >
+		{
+			printToken(matchedToken, "lower or equal to logical operator");
+		}
 |	< tDIFF:  "<>" >
 		{
 			printToken(matchedToken, "inequality logical operator");
@@ -248,7 +264,7 @@ TOKEN :
 		{
 			printToken(matchedToken, "declarator");
 		}		
-|	< tIDENTIFIER: <LETTER> ( ("_")? (<DIGIT> | <LETTER>) )* >
+|	< tID: <LETTER> ( ("_")? (<DIGIT> | <LETTER>) )* >
 		{
 			printToken(matchedToken, "identifier");
 		}
@@ -270,6 +286,280 @@ void S () :
 
 }
 {
+	<tPROC>
+	<tID>
+	<tIS>
+	declaracion_variables()
+	declaracion_procs_funcs()
+	bloque_sentencias()
+}
+
+//declaracion_variables : ( declaracion <tSCOL> )*
+void declaracion_variables() :
+{
+	
+}
+{
+	(declaracion() <tSCOL>)*
+}
+
+//declaracion : tipo_variable lista_vars
+void declaracion() :
+{
+	
+}
+{
+	tipo_variable() lista_vars()
+}
+
+// tipo_variable : <tINT> | <tCHDECL> | <tBOOL>
+void tipo_variable() :
+{
+	
+}
+{
+	<tINT> | <tCHDECL> | <tBOOL>
+}
+
+//lista_vars : variable ( <tCOMMA> variable )*
+void lista_vars() :
+{
+	
+}
+{
+	variable() ( <tCOMMA> variable() )*
+}
+
+//variable : LOOKAHEAD(2)
+//				<tID> <tACOR> <tCONST_INT> <tCCOR>
+//			|	<tID>
+variable() :
+{
+	
+}
+{
+	LOOKAHEAD(2)
+	<tID> <tSQOP> <tNUM> <tSQCL>
+|	<tID>
+}
+
+//declaracion_procs_funcs : ( declaracion_proc_func )*
+declaracion_procs_funcs() :
+{
+	
+}
+{
+	( declaracion_proc_func() )*
+}
+
+//...
+
+//declaracion_funcion : cabecera_funcion declaracion_variables bloque_sentencias
+declaracion_funcion() :
+{
+	
+}
+{
+	cabecera_funcion() declaracion_variables() bloque_sentencias()
+}
+
+//...
+
+//dec_parametros : clase_parametros tipo_variable id_or_array ( <tCOMMA> id_or_array )*
+dec_parametros() :
+{
+	
+}
+{
+	clase_parametros() tipo_variable() id_or_array() ( <tCOMMA> id_or_array() )*
+}
+
+//id_or_array : LOOKAHEAD(2)
+//					<tID> <tSQOP> <tNUM> <tSQCL>
+//				|	<tID>
+id_or_array() :
+{
+	
+}
+{
+	LOOKAHEAD(2)
+	<tID> <tSQOP> <tNUM> <tSQCL>
+|	<tID>
+}
+
+//...
+
+//instruccion : 	inst_leer <tSCOL>
+//				|	inst_saltar_linea <tSCOL> 
+//				|	inst_escribir <tSCOL> 
+//				|	inst_escribir_linea <tSCOL> 
+//				|LOOKAHEAD(2)
+//					inst_invoc_proc <tSCOL> 
+//				|	inst_asignacion <tSCOL> 
+//				|	inst_seleccion
+//				|	inst_iteracion
+//				|	inst_return <tSCOL>
+instruccion() :
+{
+	inst_leer() <tSCOL>
+|	inst_saltar_linea() <tSCOL> 
+|	inst_escribir() <tSCOL> 
+|	inst_escribir_linea() <tSCOL> 
+|LOOKAHEAD(2)
+	inst_invoc_proc() <tSCOL> 
+|	inst_asignacion() <tSCOL> 
+|	inst_seleccion()
+|	inst_iteracion()
+|	inst_return() <tSCOL>
+}
+{
+	
+}
+
+//inst_asignacion : asignable <tASIG> expresion
+inst_asignacion() :
+{
+	
+}
+{
+	asignable() <tASIG> expresion()
+}
+
+//...
+
+//inst_iteracion : <tWHIL> expresion <tDO> lista_cero_o_mas_exps <tEND>
+inst_iteracion() :
+{
+	
+}
+{
+	<tWHIL> expresion <tDO> lista_cero_o_mas_exps() <tEND>
+}
+
+//...
+
+//lista_cero_o_mas_exps: ( lista_una_o_mas_exps )?
+lista_cero_o_mas_exps() :
+{
+	
+}
+{
+	( lista_una_o_mas_exps() )?
+}
+
+//... 
+
+//expresion : expresion_simple ( operador_relacional expresion_simple )?
+expresion() :
+{
+	
+}
+{
+	expresion_simple() ( operador_relacional() expresion_simple() )?
+}
+
+//operador_relacional :	<tEQ>
+//					|	<tLT>
+//					|	<tGT>
+//					|	<tLEQ>
+//					|	<tGEQ>
+//					|	<tDIFF>
+operador_relacional() :
+{
+	<tEQ>
+|	<tLT>
+|	<tGT>
+|	<tLEQ>
+|	<tGEQ>
+|	<tDIFF>
+}
+{
+	
+}
+
+//expresion_simple : ( <tADD> | <tSUB> )? termino ( operador_aditivo termino )*
+expresion_simple() :
+{
+	
+}
+{
+	( <tADD> | <tSUB> )? termino() ( operador_aditivo() termino() )*
+}
+
+//operador_aditivo :	<tADD>
+//					|	<tSUB>
+//					|	<tOR>
+operador_aditivo() :
+{
+	
+}
+{
+	<tADD>
+|	<tSUB>
+|	<tOR>
+}
+
+//termino : factor ( operador_multiplicativo factor )*
+termino() :
+{
+	
+}
+{
+	factor() ( operador_multiplicativo() factor() )*
+}
+
+//operador_multiplicativo :	<tMUL>
+//						|	<tMOD>
+//						|	<tDIV>
+//						|	<tAND>
+operador_multiplicativo() :
+{
+	
+}
+{
+	<tMUL>
+|	<tMOD>
+|	<tDIV>
+|	<tAND>
+}
+
+//factor :	<tNOT> factor
+//		|	<tPTOP> expresion <tPTCL>
+//		|	<tINT2CHAR> <tPTOP> expresion <tPTCL>
+//		|	<tCHAR2INT> <tPTOP> expresion <tPTCL>
+//		|	LOOKAHEAD(2)  <tID> <tPTOP> lista_cero_o_mas_exps <tPTCL>
+//		|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>
+//		|	<tID>
+//		|	<tNUM>
+//		|	<tCHAR>
+//		|	<tSTRING>
+//		|	<tTRUE>
+//		|	<tFALSE>
+factor() :
+{
+	
+}
+{
+	<tNOT> factor()
+|	<tPTOP> expresion <tPTCL>
+|	<tITOA> <tPTOP> expresion <tPTCL>
+|	<tATOI> <tPTOP> expresion <tPTCL>
+|	LOOKAHEAD(2)  <tID> <tPTOP> lista_cero_o_mas_exps <tPTCL>
+|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>
+|	<tID>
+|	<tNUM>
+|	<tCHAR>
+|	<tSTRING>
+|	<tTRUE>
+|	<tFALSE>
+}
+
+/* void S antiguo (previo a práctica 2)
+void S () : 
+{
+
+}
+{
 	( 
 		<tCHAR> | <tSTRING> | <tNUM>
 		| <tPROC> | <tIS> | <tBEGIN> | <tEND> | <tRET>
@@ -280,7 +570,8 @@ void S () :
 		| <tASIG> | <tADD> | <tSUB> | <tMUL> | <tDIV> | <tMOD>
 		| <tGT> | <tLT> | <tEQ> | <tDIFF> | <tTRUE> | <tFALSE>
 		| <tATOI> | <tITOA> | <tGET> | <tPUT> | <tPUTL> | <tFUNC> |<tVAL> | <tREF>
-		| <tIDENTIFIER>
+		| <tID>
 	)+
 	< EOF >
 }
+*/
