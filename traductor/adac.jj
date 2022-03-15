@@ -286,12 +286,15 @@ void S () :
 
 }
 {
-	<tPROC>
-	<tID>
-	<tIS>
-	declaracion_variables()
-	declaracion_procs_funcs()
-	bloque_sentencias()
+	try {
+		<tPROC> <tID> <tIS>
+		declaracion_variables() declaracion_procs_funcs() bloque_sentencias()
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //declaracion_variables : ( declaracion <tSCOL> )*
@@ -300,7 +303,14 @@ void declaracion_variables() :
 	
 }
 {
-	(declaracion() <tSCOL>)*
+	try {
+		(declaracion() <tSCOL>)*
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //declaracion : tipo_variable lista_vars
@@ -309,7 +319,14 @@ void declaracion() :
 	
 }
 {
-	tipo_variable() lista_vars()
+	try {
+		tipo_variable() lista_vars()
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 // tipo_variable : <tINT> | <tCHDECL> | <tBOOL>
@@ -318,7 +335,14 @@ void tipo_variable() :
 	
 }
 {
-	<tINT> | <tCHDECL> | <tBOOL>
+	try {
+		<tINT> | <tCHDECL> | <tBOOL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //lista_vars : variable ( <tCOMMA> variable )*
@@ -327,7 +351,14 @@ void lista_vars() :
 	
 }
 {
-	variable() ( <tCOMMA> variable() )*
+	try {
+		variable() ( <tCOMMA> variable() )*
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //variable : LOOKAHEAD(2)
@@ -338,9 +369,16 @@ variable() :
 	
 }
 {
-	LOOKAHEAD(2)
-	<tID> <tSQOP> <tNUM> <tSQCL>
-|	<tID>
+	try {
+		LOOKAHEAD(2)
+		<tID> <tSQOP> <tNUM> <tSQCL>
+	|	<tID>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //declaracion_procs_funcs : ( declaracion_proc_func )*
@@ -349,7 +387,14 @@ declaracion_procs_funcs() :
 	
 }
 {
-	( declaracion_proc_func() )*
+	try {
+		( declaracion_proc_func() )*
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //...
@@ -360,7 +405,14 @@ declaracion_funcion() :
 	
 }
 {
-	cabecera_funcion() declaracion_variables() bloque_sentencias()
+	try {
+		cabecera_funcion() declaracion_variables() bloque_sentencias()
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //...
@@ -371,7 +423,14 @@ dec_parametros() :
 	
 }
 {
-	clase_parametros() tipo_variable() id_or_array() ( <tCOMMA> id_or_array() )*
+	try {
+		clase_parametros() tipo_variable() id_or_array() ( <tCOMMA> id_or_array() )*
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //id_or_array : LOOKAHEAD(2)
@@ -382,9 +441,16 @@ id_or_array() :
 	
 }
 {
-	LOOKAHEAD(2)
-	<tID> <tSQOP> <tNUM> <tSQCL>
-|	<tID>
+	try {
+		LOOKAHEAD(2)
+		<tID> <tSQOP> <tNUM> <tSQCL>
+	|	<tID>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //...
@@ -401,16 +467,23 @@ id_or_array() :
 //				|	inst_return <tSCOL>
 instruccion() :
 {
-	inst_leer() <tSCOL>
-|	inst_saltar_linea() <tSCOL> 
-|	inst_escribir() <tSCOL> 
-|	inst_escribir_linea() <tSCOL> 
-|LOOKAHEAD(2)
-	inst_invoc_proc() <tSCOL> 
-|	inst_asignacion() <tSCOL> 
-|	inst_seleccion()
-|	inst_iteracion()
-|	inst_return() <tSCOL>
+	try {
+		inst_leer() <tSCOL>
+	|	inst_saltar_linea() <tSCOL> 
+	|	inst_escribir() <tSCOL> 
+	|	inst_escribir_linea() <tSCOL> 
+	|LOOKAHEAD(2)
+		inst_invoc_proc() <tSCOL> 
+	|	inst_asignacion() <tSCOL> 
+	|	inst_seleccion()
+	|	inst_iteracion()
+	|	inst_return() <tSCOL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 {
 	
@@ -422,7 +495,14 @@ inst_asignacion() :
 	
 }
 {
-	asignable() <tASIG> expresion()
+	try {
+		asignable() <tASIG> expresion()
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //...
@@ -433,7 +513,14 @@ inst_iteracion() :
 	
 }
 {
-	<tWHIL> expresion <tDO> lista_cero_o_mas_exps() <tEND>
+	try {
+		<tWHIL> expresion <tDO> lista_cero_o_mas_exps() <tEND>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //...
@@ -444,7 +531,14 @@ lista_cero_o_mas_exps() :
 	
 }
 {
-	( lista_una_o_mas_exps() )?
+	try {
+		( lista_una_o_mas_exps() )?
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //... 
@@ -455,7 +549,14 @@ expresion() :
 	
 }
 {
-	expresion_simple() ( operador_relacional() expresion_simple() )?
+	try {
+		expresion_simple() ( operador_relacional() expresion_simple() )?
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //operador_relacional :	<tEQ>
@@ -466,15 +567,22 @@ expresion() :
 //					|	<tDIFF>
 operador_relacional() :
 {
-	<tEQ>
-|	<tLT>
-|	<tGT>
-|	<tLEQ>
-|	<tGEQ>
-|	<tDIFF>
+	
 }
 {
-	
+	try {
+		<tEQ>
+	|	<tLT>
+	|	<tGT>
+	|	<tLEQ>
+	|	<tGEQ>
+	|	<tDIFF>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //expresion_simple : ( <tADD> | <tSUB> )? termino ( operador_aditivo termino )*
@@ -483,7 +591,14 @@ expresion_simple() :
 	
 }
 {
-	( <tADD> | <tSUB> )? termino() ( operador_aditivo() termino() )*
+	try {
+		( <tADD> | <tSUB> )? termino() ( operador_aditivo() termino() )*
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //operador_aditivo :	<tADD>
@@ -494,9 +609,16 @@ operador_aditivo() :
 	
 }
 {
-	<tADD>
-|	<tSUB>
-|	<tOR>
+	try {
+		<tADD>
+	|	<tSUB>
+	|	<tOR>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //termino : factor ( operador_multiplicativo factor )*
@@ -505,7 +627,14 @@ termino() :
 	
 }
 {
-	factor() ( operador_multiplicativo() factor() )*
+	try {
+		factor() ( operador_multiplicativo() factor() )*
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //operador_multiplicativo :	<tMUL>
@@ -517,10 +646,17 @@ operador_multiplicativo() :
 	
 }
 {
-	<tMUL>
-|	<tMOD>
-|	<tDIV>
-|	<tAND>
+	try {
+		<tMUL>
+	|	<tMOD>
+	|	<tDIV>
+	|	<tAND>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
 
 //factor :	<tNOT> factor
@@ -540,19 +676,27 @@ factor() :
 	
 }
 {
-	<tNOT> factor()
-|	<tPTOP> expresion <tPTCL>
-|	<tITOA> <tPTOP> expresion <tPTCL>
-|	<tATOI> <tPTOP> expresion <tPTCL>
-|	LOOKAHEAD(2)  <tID> <tPTOP> lista_cero_o_mas_exps <tPTCL>
-|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>
-|	<tID>
-|	<tNUM>
-|	<tCHAR>
-|	<tSTRING>
-|	<tTRUE>
-|	<tFALSE>
+	try {
+		<tNOT> factor()
+	|	<tPTOP> expresion <tPTCL>
+	|	<tITOA> <tPTOP> expresion <tPTCL>
+	|	<tATOI> <tPTOP> expresion <tPTCL>
+	|	LOOKAHEAD(2)  <tID> <tPTOP> lista_cero_o_mas_exps <tPTCL>
+	|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>
+	|	<tID>
+	|	<tNUM>
+	|	<tCHAR>
+	|	<tSTRING>
+	|	<tTRUE>
+	|	<tFALSE>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
 }
+
 
 /* void S antiguo (previo a práctica 2)
 void S () : 
