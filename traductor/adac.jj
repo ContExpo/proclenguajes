@@ -4,16 +4,19 @@
 // Date:   ...........
 // Coms:   Un tutorial sobre el análisis léxico con javacc
 //         https://javacc.github.io/javacc/tutorials/token-manager.html
+//		   Para ejecutar el jar: java -jar ruta_jar < ruta_prog_prueba
 //*****************************************************************
 
-// options {
-//   IGNORE_CASE = false;
-//   COMMON_TOKEN_ACTION = false;
-//   ...
-// }
+options {
+  // IGNORE_CASE = false;
+  // COMMON_TOKEN_ACTION = false;
+  DEBUG_PARSER = true;
+}
 
 PARSER_BEGIN(adac)
 package traductor;
+import java.util.Set;
+import java.util.HashSet;
 
 public class adac {
     public static void main(String[] args) {
@@ -45,8 +48,8 @@ PARSER_END(adac)
 TOKEN_MGR_DECLS : 
 {
 	static void printToken (Token t, String s) {
-		/*System.out.printf("(%d, %d): \"%s\" %s\n", t.beginLine,
-		t.beginColumn, t.image, s );*/
+		System.out.printf("(%d, %d): \"%s\" %s\n", t.beginLine,
+		t.beginColumn, t.image, s );
 	}
 }
 
@@ -68,206 +71,56 @@ SKIP :
 TOKEN :
 {
 	< tCHAR: "'" (~["\n","\r","'"]) "'" >
-		{
-			printToken(matchedToken, "character");
-		}
 |	< tSTRING: "\"" (~["\n","\r", "\""] | "\"\"")* "\"" >
-		{
-			printToken(matchedToken, "string");
-		}
 |	< tNUM: <NUM> >
-		{
-			printToken(matchedToken, "number");
-		}
 |	< tPROC: "procedure" >
-		{
-			printToken(matchedToken, "declarator");
-		}	
 |	< tIS: "is" >
-		{
-			printToken(matchedToken, "statement");
-		}	
 | 	< tBEGIN: "begin" >
- 		{
-			printToken(matchedToken, "statement");
-		}
 |	< tEND: "end" >
-		{
-			printToken(matchedToken, "statement");
-		}
 |	< tRET: "return" >
-		{
-			printToken(matchedToken, "statement");
-		}
 |	< tBOOL: "boolean" >
-		{
-			printToken(matchedToken, "declarator");
-		}
 |	< tCHDECL: "character" >
-		{
-			printToken(matchedToken, "declarator");
-		}
 |   < tINT:  "integer" >
-		{
-			printToken(matchedToken, "declarator");
-		}
 |   < tNOT:  "not" >
-		{
-			printToken(matchedToken, "logical operator");
-		}
 |   < tOR:  "or" >
-		{
-			printToken(matchedToken, "logical operator");
-		}
 |   < tAND:  "and" >
-		{
-			printToken(matchedToken, "logical operator");
-		}
 |   < tIF:  "if" >
-		{
-			printToken(matchedToken, "statement");
-		}
 |   < tTHEN:  "then" >
-		{
-			printToken(matchedToken, "statement");
-		}
 |   < tELSE:  "else" >
-		{
-			printToken(matchedToken, "statement");
-		}
-		
 |   < tWHIL:  "while" >
-		{
-			printToken(matchedToken, "statement");
-		}
 |   < tDO:  "do" >
-		{
-			printToken(matchedToken, "statement");
-		}
 |	< tCOMMA:  "," >
-		{
-			printToken(matchedToken, "separator ");
-		}
 |	< tSCOL:  ";" >
-		{
-			printToken(matchedToken, "separator ");
-		}
 |	< tPTOP:  "(" >
-		{
-			printToken(matchedToken, "open bracket separator");
-		}
 |	< tPTCL:  ")" >
-		{
-			printToken(matchedToken, "closed bracket separator");
-		}
 |	< tSQOP:  "[" >
-		{
-			printToken(matchedToken, "open square bracket separator");
-		}
 |	< tSQCL:  "]" >
-		{
-			printToken(matchedToken, "closed square bracket separator");
-		}
 |	< tSQUOT:  "'" >
-		{
-			printToken(matchedToken, "separator");
-		}
 |	< tDQUOT:  "\"" >
-		{
-			printToken(matchedToken, "separator");
-		}
 |   < tASIG:  ":=" >
-		{
-			printToken(matchedToken, "assign operator");
-		}
 |	< tADD:  "+" >
-		{
-			printToken(matchedToken, "addition operator");
-		}
 |	< tSUB:  "-" >
-		{
-			printToken(matchedToken, "substraction operator");
-		}
 |	< tMUL:  "*" >
-		{
-			printToken(matchedToken, "multiplication operator");
-		}
 |	< tDIV:  "div" >
-		{
-			printToken(matchedToken, "division operator");
-		}
 |	< tMOD:  "mod" >
-		{
-			printToken(matchedToken, "modulus operator");
-		}
 |	< tGT:  ">" >
-		{
-			printToken(matchedToken, "greater than logical operator");
-		}
 |	< tLT:  "<" >
-		{
-			printToken(matchedToken, "lower than logical operator");
-		}
 |	< tEQ:  "=" >
-		{
-			printToken(matchedToken, "equality logical operator");
-		}
 |	< tGEQ:  ">=" >
-		{
-			printToken(matchedToken, "greater or equal to logical operator");
-		}
 |	< tLEQ:  "<=" >
-		{
-			printToken(matchedToken, "lower or equal to logical operator");
-		}
 |	< tDIFF:  "<>" >
-		{
-			printToken(matchedToken, "inequality logical operator");
-		}
 |	< tTRUE:  "true" >
-		{
-			printToken(matchedToken, "constant logical value");
-		}
 |	< tFALSE:  "false" >
-		{
-			printToken(matchedToken, "constant logical value");
-		}
 |	< tATOI:  "char2int" >
-		{
-			printToken(matchedToken, "internal function");
-		}
 |	< tITOA:  "int2char" >
-		{
-			printToken(matchedToken, "internal function");
-		}
 |	< tGET:  "get" >
-		{
-			printToken(matchedToken, "internal function");
-		}
+|	< tSKIPL:  "skip_line" >
 |	< tPUT:  "put" >
-		{
-			printToken(matchedToken, "internal function");
-		}
 |	< tPUTL:  "put_line" >
-		{
-			printToken(matchedToken, "internal function");
-		}
 |	< tFUNC: "function" >
-		{
-			printToken(matchedToken, "declarator");
-		}
 |	< tVAL: "val" >
-		{
-			printToken(matchedToken, "declarator");
-		}		
 |	< tREF: "ref" >
-		{
-			printToken(matchedToken, "declarator");
-		}		
 |	< tID: <LETTER> ( ("_")? (<DIGIT> | <LETTER>) )* >
-		{
-			printToken(matchedToken, "identifier");
-		}
 }
 SPECIAL_TOKEN:
 {
@@ -288,11 +141,11 @@ void S () :
 {
 	try {
 		<tPROC> <tID> <tIS>
-		declaracion_variables() declaracion_procs_funcs() bloque_sentencias()
+		declaracion_variables() declaracion_procs_funcs() bloque_sentencias() <EOF>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
-		//Si la declaraciòn del programa no està bien, es mejor saltar directamente hasta el final
-		conjSinc.add(EOF);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -307,9 +160,12 @@ void declaracion_variables() :
 		(declaracion() <tSCOL>)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
-		//Esperamos un ;, el acabar de una funciòn
+		//añadir tokens al conj de sincronización
 		conjSinc.add(tSCOL);
+		conjSinc.add(tBEGIN);
 		conjSinc.add(tEND);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -325,7 +181,11 @@ void declaracion() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tSCOL);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -341,7 +201,12 @@ void tipo_variable() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
+		conjSinc.add(tID);
 		conjSinc.add(tSCOL);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -357,7 +222,12 @@ void lista_vars() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tSCOL);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -365,7 +235,7 @@ void lista_vars() :
 //variable : LOOKAHEAD(2)
 //				<tID> <tACOR> <tCONST_INT> <tCCOR>
 //			|	<tID>
-variable() :
+void variable() :
 {
 	
 }
@@ -377,13 +247,18 @@ variable() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tSCOL);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
 
 //declaracion_procs_funcs : ( declaracion_proc_func )*
-declaracion_procs_funcs() :
+void declaracion_procs_funcs() :
 {
 	
 }
@@ -393,14 +268,15 @@ declaracion_procs_funcs() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
 
 //declaracion_proc_func :	declaracion_proceso
 //						|	declaracion_funcion
-declaracion_proc_func() :
+void declaracion_proc_func() :
 {
 	
 }
@@ -411,13 +287,14 @@ declaracion_proc_func() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
 
 //declaracion_proceso : cabecera_proceso declaracion_variables bloque_sentencias
-declaracion_proceso() :
+void declaracion_proceso() :
 {
 	
 }
@@ -427,13 +304,14 @@ declaracion_proceso() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
 
 //cabecera_proceso : <tPROC> <tID> ( decs_parametros )? <tIS>
-cabecera_proceso() :
+void cabecera_proceso() :
 {
 	
 }
@@ -443,45 +321,17 @@ cabecera_proceso() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
-		recuperacionPanico(e.currentToken.next, conjSinc);
-	}
-}
-
-//decs_parametros : <tPTOP> ( dec_parametros ( <tSCOL> dec_parametros )* )? <tPTCL>
-decs_parametros() :
-{
-	
-}
-{
-	try {
-		<tPTOP> ( dec_parametros() ( <tSCOL> dec_parametros() )* )? <tPTCL>
-	} catch (ParseException e) {
-		Set<Integer> conjSinc = infoParseException(e);
-		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
-		recuperacionPanico(e.currentToken.next, conjSinc);
-	}
-}
-
-//bloque_sentencias : <tBEGIN> ( instruccion )* <tEND>
-bloque_sentencias() :
-{
-	
-}
-{
-	try {
-		<tBEGIN> ( instruccion() )* <tEND>
-	} catch (ParseException e) {
-		Set<Integer> conjSinc = infoParseException(e);
-		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tIS);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
 
 //declaracion_funcion : cabecera_funcion declaracion_variables bloque_sentencias
-declaracion_funcion() :
+void declaracion_funcion() :
 {
 	
 }
@@ -491,29 +341,73 @@ declaracion_funcion() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
 
-//cabecera_funcion : <tFUNC> <tID> ( decs_parametros )? <tIS>
-cabecera_proceso() :
+//cabecera_funcion : <tFUNC> tipo_variable <tID> ( decs_parametros )? <tIS>
+void cabecera_funcion() :
 {
 	
 }
 {
 	try {
-		<tFUNC> <tID> ( decs_parametros() )? <tIS>
+		<tFUNC> tipo_variable() <tID> ( decs_parametros() )? <tIS>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tIS);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//bloque_sentencias : <tBEGIN> ( instruccion )* <tEND>
+void bloque_sentencias() :
+{
+	
+}
+{
+	try {
+		<tBEGIN> ( instruccion() )* <tEND>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//decs_parametros : <tPTOP> ( dec_parametros ( <tSCOL> dec_parametros )* )? <tPTCL>
+void decs_parametros() :
+{
+	
+}
+{
+	try {
+		<tPTOP> ( dec_parametros() ( <tSCOL> dec_parametros() )* )? <tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tIS);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
 
 //dec_parametros : clase_parametros tipo_variable id_or_array ( <tCOMMA> id_or_array )*
-dec_parametros() :
+void dec_parametros() :
 {
 	
 }
@@ -523,7 +417,11 @@ dec_parametros() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
-		//conjSinc.add(token);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tIS);
+		conjSinc.add(tBEGIN);
+		conjSinc.add(tEND);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -531,7 +429,7 @@ dec_parametros() :
 //id_or_array : LOOKAHEAD(2)
 //					<tID> <tSQOP> <tNUM> <tSQCL>
 //				|	<tID>
-id_or_array() :
+void id_or_array() :
 {
 	
 }
@@ -550,7 +448,7 @@ id_or_array() :
 
 //clase_parametros:	<tREF>
 //				|	<tVAL>
-clase_parametros() :
+void clase_parametros() :
 {
 	
 }
@@ -576,7 +474,10 @@ clase_parametros() :
 //				|	inst_seleccion
 //				|	inst_iteracion
 //				|	inst_return <tSCOL>
-instruccion() :
+void instruccion() :
+{
+	
+}
 {
 	try {
 		inst_leer() <tSCOL>
@@ -596,12 +497,89 @@ instruccion() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
+
+//inst_leer : <tGET> <tPTOP> asignable ( <tCOMMA> asignable )* <tPTCL>
+void inst_leer() :
 {
 	
 }
+{
+	try {
+		<tGET> <tPTOP> asignable() ( <tCOMMA> asignable() )* <tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//inst_saltar_linea : <tSKIPL> <tPTOP> <tPTCL>
+void inst_saltar_linea() :
+{
+	
+}
+{
+	try {
+		<tSKIPL> <tPTOP> <tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//inst_escribir : <tPUT> <tPTOP> lista_exps <tPTCL>
+void inst_escribir() :
+{
+	
+}
+{
+	try {
+		<tPUT> <tPTOP> lista_exps() <tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//inst_escribir_linea : <tPUTL> <tPTOP> lista_exps <tPTCL>
+void inst_escribir_linea() :
+{
+	
+}
+{
+	try {
+		<tPUTL> <tPTOP> lista_exps() <tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//inst_invoc_proc : <tID> <tPTOP> lista_exps <tPTCL>
+void inst_invoc_proc() :
+{
+	
+}
+{
+	try {
+		<tID> <tPTOP> lista_exps() <tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		// añadir tokens al conj de sincronización
+		// conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
 
 //inst_asignacion : asignable <tASIG> expresion
-inst_asignacion() :
+void inst_asignacion() :
 {
 	
 }
@@ -616,17 +594,49 @@ inst_asignacion() :
 	}
 }
 
+//inst_seleccion :	<tIF> expresion <tTHEN> ( instruccion )* resto_if <tEND>
+void inst_seleccion() :
+{
+	
+}
+{
+	try {
+		<tIF> expresion() <tTHEN> ( instruccion() )* ( resto_if() )? <tEND>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//resto_if : <tELSE> ( instruccion )*
+void resto_if() :
+{
+	
+}
+{
+	try {
+		<tELSE> ( instruccion() )*
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
 //asignable : LOOKAHEAD(2)
-//			|	<tID> <tSQOP> expresion <tSQCL>
+//				<tID> <tSQOP> expresion <tSQCL>
 //			|	<tID>
-asignable() :
+void asignable() :
 {
 	
 }
 {
 	try {
 	LOOKAHEAD(3)
-	|	<tID> <tSQOP> expresion() <tSQCL>
+		<tID> <tSQOP> expresion() <tSQCL>
 	|	<tID>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -637,13 +647,13 @@ asignable() :
 }
 
 //inst_iteracion : <tWHIL> expresion <tDO> ( instruccion )* <tEND>
-inst_iteracion() :
+void inst_iteracion() :
 {
 	
 }
 {
 	try {
-		<tWHIL> expresion <tDO> ( instruccion() )* <tEND>
+		<tWHIL> expresion() <tDO> ( instruccion() )* <tEND>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -652,14 +662,30 @@ inst_iteracion() :
 	}
 }
 
-//lista_exps: ( expresion ( <tCOMMA> expresion )* )?
-lista_exps() :
+//inst_return : <tRET> expresion
+void inst_return() :
 {
 	
 }
 {
 	try {
-		( expresion ( <tCOMMA> expresion )* )?
+		<tRET> expresion()
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		//conjSinc.add(token);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+}
+
+//lista_exps : ( expresion ( <tCOMMA> expresion )* )?
+void lista_exps() :
+{
+	
+}
+{
+	try {
+		( expresion() ( <tCOMMA> expresion() )* )?
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -669,7 +695,7 @@ lista_exps() :
 }
 
 //expresion : expresion_simple ( operador_relacional expresion_simple )?
-expresion() :
+void expresion() :
 {
 	
 }
@@ -690,7 +716,7 @@ expresion() :
 //					|	<tLEQ>
 //					|	<tGEQ>
 //					|	<tDIFF>
-operador_relacional() :
+void operador_relacional() :
 {
 	
 }
@@ -711,7 +737,7 @@ operador_relacional() :
 }
 
 //expresion_simple : ( <tADD> | <tSUB> )? termino ( operador_aditivo termino )*
-expresion_simple() :
+void expresion_simple() :
 {
 	
 }
@@ -729,7 +755,7 @@ expresion_simple() :
 //operador_aditivo :	<tADD>
 //					|	<tSUB>
 //					|	<tOR>
-operador_aditivo() :
+void operador_aditivo() :
 {
 	
 }
@@ -747,7 +773,7 @@ operador_aditivo() :
 }
 
 //termino : factor ( operador_multiplicativo factor )*
-termino() :
+void termino() :
 {
 	
 }
@@ -766,7 +792,7 @@ termino() :
 //						|	<tMOD>
 //						|	<tDIV>
 //						|	<tAND>
-operador_multiplicativo() :
+void operador_multiplicativo() :
 {
 	
 }
@@ -796,18 +822,18 @@ operador_multiplicativo() :
 //		|	<tSTRING>
 //		|	<tTRUE>
 //		|	<tFALSE>
-factor() :
+void factor() :
 {
 	
 }
 {
 	try {
 		<tNOT> factor()
-	|	<tPTOP> expresion <tPTCL>
-	|	<tITOA> <tPTOP> expresion <tPTCL>
-	|	<tATOI> <tPTOP> expresion <tPTCL>
-	|	LOOKAHEAD(2)  <tID> <tPTOP> lista_exps <tPTCL>
-	|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>
+	|	<tPTOP> expresion() <tPTCL>
+	|	<tITOA> <tPTOP> expresion() <tPTCL>
+	|	<tATOI> <tPTOP> expresion() <tPTCL>
+	|	LOOKAHEAD(2)  <tID> <tPTOP> lista_exps() <tPTCL>
+	|	LOOKAHEAD(2)  <tID> <tSQOP> expresion() <tSQCL>
 	|	<tID>
 	|	<tNUM>
 	|	<tCHAR>
@@ -825,52 +851,27 @@ factor() :
 JAVACODE //------------------------------------ 
 //Informa sobre la excepción, y calcula el conjunto de tokens esperados Set infoParseException(ParseException e) {
 Set<Integer> infoParseException(ParseException e) {
-	Set<Integer> esperados = new HashSet<Integer>(); 
-	System.err.println("ERROR_SINT: ('" + e.currentToken.next.image + ", " + e.currentToken.next.beginLine
-		+ "," + e.currentToken.next.beginColumn + ")");
-	System.err.println("Se esperaba uno de los siguientes tokens:")
-	for(int i = 0; i<e.expectedTokenSequences.length; i++) {
-		esperados.add(e.expectedTokenSequences[i][0]);
-		System.err.println("\t" + tradConstants.tokenImage[e.expectedTokenSequences[i][0]]);
-	}
-	return esperados;
+    Set<Integer> esperados = new HashSet<Integer>(); 
+    System.err.println("ERROR_SINT: ('" + e.currentToken.next.image + ", " + e.currentToken.next.beginLine
+        + "," + e.currentToken.next.beginColumn + ")");
+    System.err.println("Se esperaba uno de los siguientes tokens:");
+    for(int i = 0; i<e.expectedTokenSequences.length; i++) {
+        esperados.add(e.expectedTokenSequences[i][0]);
+        System.err.println("\t" + adacConstants.tokenImage[e.expectedTokenSequences[i][0]]);
+    }
+    return esperados;
 }
 
 JAVACODE //--------- 
-void recuperacionPanico(Token tInesperado, Set Integer> conjSinc) {
-	// System.err.println(sep); 
-	System.err.println("----> Recupero en modo pánico: "
-		+ "\n----> saltando todo hasta token de conjunto de sincronización"); 
-	System.err.println("Lexema inesperado: " + tInesperado.image);
-	Token t - getNextToken();
-	while (!conjSinc.contains(t. kind) && t.kind != EOF){ 
-		System.err.println("Descartando token ("
-		+ tradConstants.tokenImage[t.kind)
-		+ "," + t.image + ")"); t - getNextToken();
-	}
+void recuperacionPanico(Token tInesperado, Set <Integer> conjSinc) {
+    // System.err.println(sep); 
+    System.err.println("----> Recupero en modo pánico: "
+        + "\n----> saltando todo hasta token de conjunto de sincronización"); 
+    System.err.println("Lexema inesperado: " + tInesperado.image);
+    Token t = getNextToken();
+    while (!conjSinc.contains(t. kind) && t.kind != EOF){ 
+        System.err.println("Descartando token ("
+        + adacConstants.tokenImage[t.kind]
+        + "," + t.image + ")"); t = getNextToken();
+    }
 }
-
-
-
-
-/* void S antiguo (previo a práctica 2)
-void S () : 
-{
-
-}
-{
-	( 
-		<tCHAR> | <tSTRING> | <tNUM>
-		| <tPROC> | <tIS> | <tBEGIN> | <tEND> | <tRET>
-		| <tBOOL> | <tCHDECL> | <tINT>
-		| <tNOT> | <tIF> | <tTHEN> | <tELSE> |<tWHIL> | <tDO>
-		| <tCOMMA> | <tSCOL> | <tPTOP> | <tPTCL> | <tSQOP> | <tSQCL>
-		| <tSQUOT> | <tDQUOT> 
-		| <tASIG> | <tADD> | <tSUB> | <tMUL> | <tDIV> | <tMOD>
-		| <tGT> | <tLT> | <tEQ> | <tDIFF> | <tTRUE> | <tFALSE>
-		| <tATOI> | <tITOA> | <tGET> | <tPUT> | <tPUTL> | <tFUNC> |<tVAL> | <tREF>
-		| <tID>
-	)+
-	< EOF >
-}
-*/
