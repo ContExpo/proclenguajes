@@ -581,6 +581,7 @@ void inst_seleccion() :
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
+		conjSinc.add(tDO);
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
@@ -703,6 +704,8 @@ void expresion() :
 //					|	<tLEQ>
 //					|	<tGEQ>
 //					|	<tDIFF>
+//					|	<tOR>
+//					|	<tAND>
 void operador_relacional() :
 {
 	
@@ -715,6 +718,8 @@ void operador_relacional() :
 	|	<tLEQ>
 	|	<tGEQ>
 	|	<tDIFF>
+	|	<tOR>
+	|	<tAND>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización

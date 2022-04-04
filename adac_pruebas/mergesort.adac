@@ -1,6 +1,9 @@
 procedure mergesort is
 
-	procedure merging(integer low, integer mid, integer high) is
+	integer i;
+	integer a[11];
+
+	procedure merging(val integer low, mid, high) is
 		
 		integer l1, l2, i;
 
@@ -8,19 +11,19 @@ procedure mergesort is
 		l1 := low;
 		l2 := mid + 1;
 		i := low;
-		while l1 <= mid && l2 <= high do
+		while l1 <= mid and l2 <= high do
 			if a[l1] <= a[l2] then
 				b[i] := a[l1];
-				l1 := l1+1
+				l1 := l1+1;
 			else
 				b[i] := a[l2];
-				l2 := l2+1
+				l2 := l2+1;
 			end
-			i := i+1
+			i := i+1;
 		end
 		
 		while l1 <= mid do
-			b[i++] := a[l1++];
+			b[i] := a[l1];
 			i := i+1;
 			l1 := l1+1;
 		end
@@ -38,7 +41,7 @@ procedure mergesort is
 		end
 	end
 -----------------------------------------------
-	procedure sort(integer low, integer high) is
+	procedure sort(val integer low, high) is
 
 		integer mid;
 
@@ -53,9 +56,6 @@ procedure mergesort is
 		end  
 	end
 -----------------------------------------------
-
-		integer i;
-		integer a[11];
 
 	begin
 		a[0] := 23;
