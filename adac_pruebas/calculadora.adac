@@ -1,0 +1,41 @@
+procedure calculadora is
+
+--Utilizamo este programa para comprobar los varios tipos de pasos de parametros y las llamadas recursivas 
+    procedure sum(val integer x, val integer y, ref integer result ) is 
+        integer z;
+    begin 
+        z :=x+y;
+        put_line("El valor ", result, " se ha puesto en Z");
+    end
+
+    function integer diff(ref integer x, ref integer y) is 
+        integer z;
+    begin 
+        z :=x+y;
+        put_line("El resultado es ", z);
+        return z; 
+    end
+
+    procedure swap(ref integer x, ref integer y) is
+        
+        integer z;
+
+    begin
+        z :=x;
+        x :=y;
+        y :=z;
+    end
+
+--------------------------------------------------
+        integer a, b, z;
+    begin
+        a  := 10;
+        b  := 5;
+        sum(a,b, z);
+        put_line("Main-sum: El resultado es ", z);
+        diff(a,b);
+        put_line("Main-sub: El resultado es ", z);
+        put_line("A y B antes del swap", a, "  " ,b);
+        swap(a,b);
+        put_line("A y B despues del swap", a, "  " ,b);
+    end
