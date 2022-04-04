@@ -1,0 +1,88 @@
+procedure mergesort is
+
+	procedure merging(integer low, integer mid, integer high) is
+		
+		integer l1, l2, i;
+
+	begin
+		l1 := low;
+		l2 := mid + 1;
+		i := low;
+		while l1 <= mid && l2 <= high do
+			if a[l1] <= a[l2] then
+				b[i] := a[l1];
+				l1 := l1+1
+			else
+				b[i] := a[l2];
+				l2 := l2+1
+			end
+			i := i+1
+		end
+		
+		while l1 <= mid do
+			b[i++] := a[l1++];
+			i := i+1;
+			l1 := l1+1;
+		end
+
+		while l2 <= high do
+			i := i+1;
+			l2 := l2+1;
+			b[i] := a[l2];
+		end
+
+		i := low;
+		while i <= high do
+			a[i] := b[i];
+			i := i+1;
+		end
+	end
+-----------------------------------------------
+	procedure sort(integer low, integer high) is
+
+		integer mid;
+
+	begin
+		if low < high then
+			mid := (low + high) / 2;
+			sort(low, mid);
+			sort(mid+1, high);
+			merging(low, mid, high);
+		else
+			return;
+		end  
+	end
+-----------------------------------------------
+
+		integer i;
+		integer a[11];
+
+	begin
+		a[0] := 23;
+		a[1] := 11;
+		a[2] := 14;
+		a[3] := 0;
+		a[4] := 22;
+		a[5] := 8;
+		a[6] := 100;
+		a[7] := 60;
+		a[8] := 80;
+		a[9] := 44;
+		a[10] := 66;
+		printf("List before sorting\n");
+		
+		while i<10 do
+			put(a[i], '\t');
+			i := i+1;
+		end
+		put_line();
+		put_line();
+		sort(0, 10);
+
+		put_line("List after sorting");
+		while i<10 do
+			put(a[i], '\t');
+			i := i+1;
+		end
+end
+-----------------------------------------------
