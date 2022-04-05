@@ -162,6 +162,7 @@ void declaracion_variables() :
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tSCOL);
+		conjSinc.add(tBEGIN);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -178,6 +179,9 @@ void declaracion() :
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tSCOL);
+		conjSinc.add(tPROC);
+		conjSinc.add(tFUNC);
+		conjSinc.add(tBEGIN)
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -210,7 +214,7 @@ void lista_vars() :
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tSCOL);
-		conjSinc.add(tCOMMA);
+		conjSinc.add(tBEGIN);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -494,7 +498,6 @@ void inst_saltar_linea() :
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
-		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -512,7 +515,6 @@ void inst_escribir() :
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
-		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -530,7 +532,6 @@ void inst_escribir_linea() :
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
-		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }
@@ -622,8 +623,6 @@ void asignable() :
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
-		conjSinc.add(tPTCL);
-		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 }

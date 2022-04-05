@@ -11,7 +11,7 @@ procedure mergesort is
 		l1 := low;
 		l2 := mid + 1;
 		i := low;
-		while (l1 <= mid) and (l2 <= high) do
+		while l1 <= mid and l2 <= high do
 			if a[l1] <= a[l2] then
 				b[i] := a[l1];
 				l1 := l1+1;
@@ -47,10 +47,12 @@ procedure mergesort is
 
 	begin
 		if low < high then
-			mid := (low + high) div 2;
+			mid := (low + high) / 2;
 			sort(low, mid);
 			sort(mid+1, high);
 			merging(low, mid, high);
+		else
+			return;
 		end  
 	end
 -----------------------------------------------
@@ -70,7 +72,7 @@ procedure mergesort is
 		printf("List before sorting\n");
 		
 		while i<10 do
-			put(a[i], "    ");
+			put(a[i], '\t');
 			i := i+1;
 		end
 		put_line();
@@ -79,7 +81,7 @@ procedure mergesort is
 
 		put_line("List after sorting");
 		while i<10 do
-			put(a[i], "    ");
+			put(a[i], '\t');
 			i := i+1;
 		end
 end
