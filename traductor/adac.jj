@@ -17,8 +17,22 @@ PARSER_BEGIN(adac)
 package traductor;
 import java.util.Set;
 import java.util.HashSet;
+import lib.symbolTable.*;
+import lib.symbolTable.exceptions.*;
 
 public class adac {
+
+	static SymbolTable st;
+
+	private static void initSymbolTable() {
+		boolean b;
+		String[] palsRes = {
+	    	"var","const","escribir"
+		};
+
+		st.insertReservedWords(palsRes);
+	}
+
     public static void main(String[] args) {
     	adac parser;
 
@@ -272,14 +286,14 @@ void declaracion_proc_func() :
 	}
 }
 
-//declaracion_proceso : cabecera_proceso declaracion_variables bloque_sentencias
+//declaracion_proceso : cabecera_proceso declaracion_variables declaracion_procs_funcs bloque_sentencias
 void declaracion_proceso() :
 {
 	
 }
 {
 	try {
-		cabecera_proceso() declaracion_variables() bloque_sentencias()
+		cabecera_proceso() declaracion_variables() declaracion_procs_funcs() bloque_sentencias()
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -303,14 +317,16 @@ void cabecera_proceso() :
 	}
 }
 
-//declaracion_funcion : cabecera_funcion declaracion_variables bloque_sentencias
+
+
+//declaracion_funcion : cabecera_funcion declaracion_variables declaracion_procs_funcs bloque_sentencias
 void declaracion_funcion() :
 {
 	
 }
 {
 	try {
-		cabecera_funcion() declaracion_variables() bloque_sentencias()
+		cabecera_funcion() declaracion_variables() declaracion_procs_funcs() bloque_sentencias()
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
