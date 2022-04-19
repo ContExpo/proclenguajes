@@ -10,7 +10,7 @@
 options {
   // IGNORE_CASE = false;
   // COMMON_TOKEN_ACTION = false;
-  DEBUG_PARSER = true;
+  DEBUG_PARSER = false;
 }
 
 PARSER_BEGIN(adac)
@@ -19,10 +19,11 @@ import java.util.Set;
 import java.util.HashSet;
 import lib.symbolTable.*;
 import lib.symbolTable.exceptions.*;
+import java.util.ArrayList;
 
 public class adac {
 
-	static SymbolTable st;
+	static SymbolTable st = new SymbolTable();
 
 	private static void initSymbolTable() {
 		boolean b;
@@ -35,15 +36,15 @@ public class adac {
 		st.insertReservedWords(palsRes);
 	}
 
-	public static void main(String[] args) {
-		adac parser;
+    public static void main(String[] args) {
+    	adac parser;
 
-		try {
-			if(args.length == 0) { //entrada desde stdin
+    	try {
+	    	if(args.length == 0) { //entrada desde stdin
 				parser = new adac(System.in);
 			}
 			else { //entrada desde fichero en args[0]
-				parser = new adac(new java.io.FileInputStream(args[0])); 
+	            parser = new adac(new java.io.FileInputStream(args[0])); 
 			}
 			parser.S(); //invoca símbolo inicial de la gramática
 		}
@@ -51,12 +52,12 @@ public class adac {
 			System.err.println ("Fichero " + args[0] + " no encontrado.");
 		}
 		catch (TokenMgrError e) {
-			System.err.println("LEX_ERROR: " + e.getMessage());
-		}
-		catch (ParseException e) {
-			System.err.println("SINT_ERROR: " + e.getMessage());
-		} 
-	}
+        	System.err.println("LEX_ERROR: " + e.getMessage());
+        }
+        catch (ParseException e) {
+        	System.err.println("SINT_ERROR: " + e.getMessage());
+        } 
+    }
 }
 PARSER_END(adac)
 //------------ descripción del AL
@@ -71,7 +72,7 @@ TOKEN_MGR_DECLS :
 
 TOKEN :
 {
-	< #LETTER: (["a"-"z","A"-"Z"]) >
+ 	< #LETTER: (["a"-"z","A"-"Z"]) >
 |	< #DIGIT: ["0"-"9"] >
 |	< #NUM : (<DIGIT>)+ >
 |	< #WORD: ["a"-"z","A"-"Z"](~[" ","\t","\n","\r","0"-"9"])*>
@@ -152,17 +153,28 @@ SPECIAL_TOKEN:
 //------------ Símbolo inicial de la gramática. Para análisis léxico no hace falta más
 void S () : 
 {
-
+	Token t1 = new Token();
 }
 {
 	try {
-		<tPROC> <tID> <tIS>
-		declaracion_variables() declaracion_procs_funcs() bloque_sentencias() <EOF>
+		<tPROC>
+		t1 = <tID>
+		<tIS>
+		{
+			SymbolProcedure s = new SymbolProcedure(t1.image, new ArrayList<Symbol>());
+			st.insertSymbol(s);
+		}
+		declaracion_variables()
+		declaracion_procs_funcs()
+		bloque_sentencias(t1.image, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED)
+		<EOF>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		//conjSinc.add(token);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	} catch(AlreadyDefinedSymbolException e) {
+		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
 }
 
@@ -173,7 +185,10 @@ void declaracion_variables() :
 }
 {
 	try {
-		(declaracion() <tSCOL>)*
+		(
+			declaracion()
+			<tSCOL>
+		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -185,11 +200,12 @@ void declaracion_variables() :
 //declaracion : tipo_variable lista_vars
 void declaracion() :
 {
-	
+	Symbol.Types type;
 }
 {
 	try {
-		tipo_variable() lista_vars()
+		type = tipo_variable()
+		lista_vars(type)
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -205,7 +221,18 @@ Symbol.Types tipo_variable() :
 }
 {
 	try {
-		<tINT> | <tCHDECL> | <tBOOL>
+		<tINT>
+		{
+			return Symbol.Types.INT;
+		}
+	|	<tCHDECL>
+		{
+			return Symbol.Types.CHAR;
+		}
+	|	<tBOOL>
+		{
+			return Symbol.Types.BOOL;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -215,13 +242,17 @@ Symbol.Types tipo_variable() :
 }
 
 //lista_vars : variable ( <tCOMMA> variable )*
-void lista_vars() :
+void lista_vars(Symbol.Types type) :
 {
 	
 }
 {
 	try {
-		variable() ( <tCOMMA> variable() )*
+		variable(type)
+		(
+			<tCOMMA>
+			variable(type)
+		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -234,15 +265,50 @@ void lista_vars() :
 //variable : LOOKAHEAD(2)
 //				<tID> <tACOR> <tCONST_INT> <tCCOR>
 //			|	<tID>
-void variable() :
+void variable(Symbol.Types type) :
 {
-	
+	Token t1;
+	Token t2;
 }
 {
 	try {
 		LOOKAHEAD(2)
-		<tID> <tSQOP> <tNUM> <tSQCL>
-	|	<tID>
+		t1 = <tID>
+		<tSQOP>
+		t2 = <tNUM>
+		<tSQCL>
+		{
+			try {
+				SymbolArray sArr = new SymbolArray(t1.image, Integer.parseInt(t2.image), type);
+				st.insertSymbol(sArr);
+			} catch(AlreadyDefinedSymbolException e) {
+				System.err.println("Error: " + t1.image + " ya está declarado");
+			}
+		}
+	|	t1 = <tID>
+		{
+			try {
+				switch (type) {
+					case INT : 
+						SymbolInt sInt = new SymbolInt(t1.image);
+						st.insertSymbol(sInt);
+						break;
+						
+					case CHAR : 
+						SymbolChar sChar = new SymbolChar(t1.image);
+						st.insertSymbol(sChar);
+						break;
+						
+					case BOOL :
+						SymbolBool sBool = new SymbolBool(t1.image);
+						st.insertSymbol(sBool);
+						break;
+					default: System.err.println("Error: " + type + " no es un tipo válido");
+				}
+			} catch(AlreadyDefinedSymbolException e) {
+				System.err.println("Error: " + t1.image + " ya está declarado");
+			}
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -259,7 +325,9 @@ void declaracion_procs_funcs() :
 }
 {
 	try {
-		( declaracion_proc_func() )*
+		(
+			declaracion_proc_func()
+		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -287,11 +355,14 @@ void declaracion_proc_func() :
 //declaracion_proceso : cabecera_proceso declaracion_variables declaracion_procs_funcs bloque_sentencias
 void declaracion_proceso() :
 {
-	
+	String nom;
 }
 {
 	try {
-		cabecera_proceso() declaracion_variables() declaracion_procs_funcs() bloque_sentencias()
+		nom = cabecera_proceso()
+		declaracion_variables()
+		declaracion_procs_funcs()
+		bloque_sentencias(nom, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED)
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -300,18 +371,35 @@ void declaracion_proceso() :
 }
 
 //cabecera_proceso : <tPROC> <tID> ( decs_parametros )? <tIS>
-void cabecera_proceso() :
+String cabecera_proceso() :
 {
-	
+	Token t1 = new Token();
+	ArrayList<Symbol> parList = new ArrayList<Symbol>();
 }
 {
 	try {
-		<tPROC> <tID> ( decs_parametros() )? <tIS>
+		<tPROC>
+		t1 = <tID>
+		(
+			parList = decs_parametros()
+		)?
+		<tIS>
+		{
+			SymbolProcedure s = new SymbolProcedure(t1.image, parList);
+			st.insertSymbol(s);
+			st.insertBlock();
+			for (Symbol par : parList) {
+				st.insertSymbol(par);
+			}
+			return t1.image;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tIS);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	} catch(AlreadyDefinedSymbolException e) {
+		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
 }
 
@@ -320,11 +408,14 @@ void cabecera_proceso() :
 //declaracion_funcion : cabecera_funcion declaracion_variables declaracion_procs_funcs bloque_sentencias
 void declaracion_funcion() :
 {
-	
+	Symbol.Types retType;
 }
 {
 	try {
-		cabecera_funcion() declaracion_variables() declaracion_procs_funcs() bloque_sentencias()
+		retType = cabecera_funcion()
+		declaracion_variables()
+		declaracion_procs_funcs()
+		bloque_sentencias("WIP", Symbol.Types.FUNCTION, retType)
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -333,29 +424,68 @@ void declaracion_funcion() :
 }
 
 //cabecera_funcion : <tFUNC> tipo_variable <tID> ( decs_parametros )? <tIS>
-void cabecera_funcion() :
+Symbol.Types cabecera_funcion() :
 {
-	
+	Token t1 = new Token();
+	Symbol.Types retType;
+	ArrayList<Symbol> parList = new ArrayList<Symbol>();
 }
 {
 	try {
-		<tFUNC> tipo_variable() <tID> ( decs_parametros() )? <tIS>
+		<tFUNC>
+		retType = tipo_variable()
+		t1 = <tID>
+		(
+			parList = decs_parametros()
+		)?
+		<tIS>
+		{
+			SymbolFunction s = new SymbolFunction(t1.image, parList, retType);
+			st.insertSymbol(s);
+			st.insertBlock();
+			for (Symbol par : parList) {
+				st.insertSymbol(par);
+			}
+			return retType;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tIS);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	} catch(AlreadyDefinedSymbolException e) {
+		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
 }
 
 //bloque_sentencias : <tBEGIN> ( instruccion )* <tEND>
-void bloque_sentencias() :
+void bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types retType) :
 {
-	
+	boolean hayReturn = false;
+	boolean aux = false;
 }
 {
 	try {
-		<tBEGIN> ( instruccion() )* <tEND>
+		<tBEGIN>
+		{
+			System.err.println("***********************");
+			System.err.println("Procesando " + nom);
+			System.err.println("***********************");
+		}
+		(
+			aux = instruccion()
+			{
+				hayReturn |= aux;
+			}
+		)*
+		<tEND>
+		{
+			if (proc_or_func == Symbol.Types.FUNCTION && !hayReturn) {
+				System.err.println("Error: No hay return en la función");
+			}
+			System.err.println(st.toString());
+			st.removeBlock();
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -365,13 +495,29 @@ void bloque_sentencias() :
 }
 
 //decs_parametros : <tPTOP> ( dec_parametros ( <tSCOL> dec_parametros )* )? <tPTCL>
-void decs_parametros() :
+ArrayList<Symbol> decs_parametros() :
 {
-	
+	ArrayList<Symbol> partialList = new ArrayList<Symbol>();
+	ArrayList<Symbol> parList = new ArrayList<Symbol>();
 }
 {
 	try {
-		<tPTOP> ( dec_parametros() ( <tSCOL> dec_parametros() )* )? <tPTCL>
+		<tPTOP>
+		(
+			partialList = dec_parametros()
+			(
+				<tSCOL>
+				{
+					parList.addAll(partialList);
+				}
+				partialList = dec_parametros()
+			)*
+		)?
+		<tPTCL>
+		{
+			parList.addAll(partialList);
+			return parList;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -383,13 +529,33 @@ void decs_parametros() :
 }
 
 //dec_parametros : clase_parametros tipo_variable id_or_array ( <tCOMMA> id_or_array )*
-void dec_parametros() :
+ArrayList<Symbol> dec_parametros() :
 {
-	
+	Symbol.ParameterClass parClass = Symbol.ParameterClass.NONE;
+	Symbol.Types type;
+	Symbol par;
+	ArrayList<Symbol> parList = new ArrayList<Symbol>();
 }
 {
 	try {
-		clase_parametros() tipo_variable() id_or_array() ( <tCOMMA> id_or_array() )*
+		parClass = clase_parametros()
+		type = tipo_variable()
+		par = id_or_array(type)
+		{
+			par.parClass = parClass;
+			parList.add(par);
+		}
+		(
+			<tCOMMA>
+			par = id_or_array(type)
+			{
+				par.parClass = parClass;
+				parList.add(par);
+			}
+		)*
+		{
+			return parList;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -404,15 +570,38 @@ void dec_parametros() :
 //id_or_array : LOOKAHEAD(2)
 //					<tID> <tSQOP> <tNUM> <tSQCL>
 //				|	<tID>
-void id_or_array() :
+Symbol id_or_array(Symbol.Types type) :
 {
-	
+	Token t1;
+	Token t2;
 }
 {
 	try {
 		LOOKAHEAD(2)
-		<tID> <tSQOP> <tNUM> <tSQCL>
-	|	<tID>
+		t1 = <tID>
+		<tSQOP>
+		t2 = <tNUM>
+		<tSQCL>
+		{
+			return new SymbolArray(t1.image, Integer.parseInt(t2.image), type);
+		}
+	|	t1 = <tID>
+		{
+			switch (type) {
+				case INT : 
+					return new SymbolInt(t1.image);
+					break;
+					
+				case CHAR : 
+					return new SymbolChar(t1.image);
+					break;
+					
+				case BOOL :
+					return new SymbolBool(t1.image);
+					break;
+				default: System.err.println("Error: " + type + " no es un tipo válido");
+			}
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -426,14 +615,20 @@ void id_or_array() :
 
 //clase_parametros:	<tREF>
 //				|	<tVAL>
-void clase_parametros() :
+Symbol.ParameterClass clase_parametros() :
 {
 	
 }
 {
 	try {
 		<tREF>
+		{
+			return Symbol.ParameterClass.REF;
+		}
 	|	<tVAL>
+		{
+			return Symbol.ParameterClass.VAL;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -455,22 +650,29 @@ void clase_parametros() :
 //				|	inst_seleccion
 //				|	inst_iteracion
 //				|	inst_return <tSCOL>
-void instruccion() :
+boolean instruccion() :
 {
-	
+	boolean hayReturn = false;
 }
 {
 	try {
-		inst_leer() <tSCOL>
-	|	inst_saltar_linea() <tSCOL> 
-	|	inst_escribir() <tSCOL> 
-	|	inst_escribir_linea() <tSCOL> 
+		inst_leer()
+		<tSCOL> { return false; }
+	|	inst_saltar_linea()
+		<tSCOL> { return false; }
+	|	inst_escribir()
+		<tSCOL> { return false; }
+	|	inst_escribir_linea() 
+		<tSCOL> { return false; }
 	|LOOKAHEAD(2)
-		inst_invoc_proc() <tSCOL> 
-	|	inst_asignacion() <tSCOL> 
-	|	inst_seleccion()
-	|	inst_iteracion()
-	|	inst_return() <tSCOL>
+		inst_invoc_proc()
+		<tSCOL> { return false; }
+	|	inst_asignacion()
+		<tSCOL> { return false; }
+	|	hayReturn = inst_seleccion() { return hayReturn; }
+	|	hayReturn = inst_iteracion() { return hayReturn; }
+	|	inst_return()
+		<tSCOL> { return true; }
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -487,7 +689,14 @@ void inst_leer() :
 }
 {
 	try {
-		<tGET> <tPTOP> asignable() ( <tCOMMA> asignable() )* <tPTCL>
+		<tGET>
+		<tPTOP>
+		asignable()
+		(
+			<tCOMMA>
+			asignable()
+		)*
+		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -506,7 +715,9 @@ void inst_saltar_linea() :
 }
 {
 	try {
-		<tSKIPL> <tPTOP> <tPTCL>
+		<tSKIPL>
+		<tPTOP>
+		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -524,7 +735,10 @@ void inst_escribir() :
 }
 {
 	try {
-		<tPUT> <tPTOP> lista_exps() <tPTCL>
+		<tPUT>
+		<tPTOP>
+		lista_exps()
+		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -542,7 +756,10 @@ void inst_escribir_linea() :
 }
 {
 	try {
-		<tPUTL> <tPTOP> lista_exps() <tPTCL>
+		<tPUTL>
+		<tPTOP>
+		lista_exps()
+		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -560,7 +777,10 @@ void inst_invoc_proc() :
 }
 {
 	try {
-		<tID> <tPTOP> lista_exps() <tPTCL>
+		<tID>
+		<tPTOP>
+		lista_exps()
+		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		// añadir tokens al conj de sincronización
@@ -578,7 +798,9 @@ void inst_asignacion() :
 }
 {
 	try {
-		asignable() <tASIG> expresion()
+		asignable()
+		<tASIG>
+		expresion()
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -589,13 +811,33 @@ void inst_asignacion() :
 }
 
 //inst_seleccion :	<tIF> expresion <tTHEN> ( instruccion )* resto_if <tEND>
-void inst_seleccion() :
+boolean inst_seleccion() :
 {
-	
+	boolean hayReturn1 = false;
+	boolean hayReturn2 = false;
+	boolean aux = false;
 }
 {
 	try {
-		<tIF> expresion() <tTHEN> ( instruccion() )* ( resto_if() )? <tEND>
+		<tIF>
+		expresion()
+		<tTHEN>
+		(
+			aux = instruccion()
+			{
+				hayReturn1 |= aux;
+			}
+		)*
+		(
+			aux = resto_if()
+			{
+				hayReturn2 |= aux;
+			}
+		)?
+		<tEND>
+		{
+			return hayReturn1 && hayReturn2;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -606,13 +848,23 @@ void inst_seleccion() :
 }
 
 //resto_if : <tELSE> ( instruccion )*
-void resto_if() :
+boolean resto_if() :
 {
-	
+	boolean hayReturn = false;
+	boolean aux = false;
 }
 {
 	try {
-		<tELSE> ( instruccion() )*
+		<tELSE>
+		(
+			aux = instruccion()
+			{
+				hayReturn |= aux;
+			}
+		)*
+		{
+			return hayReturn;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -632,7 +884,10 @@ void asignable() :
 {
 	try {
 	LOOKAHEAD(3)
-		<tID> <tSQOP> expresion() <tSQCL>
+		<tID>
+		<tSQOP>
+		expresion()
+		<tSQCL>
 	|	<tID>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -646,13 +901,26 @@ void asignable() :
 }
 
 //inst_iteracion : <tWHIL> expresion <tDO> ( instruccion )* <tEND>
-void inst_iteracion() :
+boolean inst_iteracion() :
 {
-	
+	boolean hayReturn = false;
+	boolean aux = false;
 }
 {
 	try {
-		<tWHIL> expresion() <tDO> ( instruccion() )* <tEND>
+		<tWHIL>
+		expresion()
+		<tDO>
+		(
+			aux = instruccion()
+			{
+				hayReturn |= aux;
+			}
+		)*
+		<tEND>
+		{
+			return hayReturn;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -669,7 +937,8 @@ void inst_return() :
 }
 {
 	try {
-		<tRET> expresion()
+		<tRET>
+		expresion()
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -686,7 +955,13 @@ void lista_exps() :
 }
 {
 	try {
-		( expresion() ( <tCOMMA> expresion() )* )?
+		(
+			expresion()
+			(
+				<tCOMMA>
+				expresion()
+			)*
+		)?
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -704,7 +979,11 @@ void expresion() :
 }
 {
 	try {
-		expresion_simple() ( operador_relacional() expresion_simple() )?
+		expresion_simple()
+		(
+			operador_relacional()
+			expresion_simple()
+		)?
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		conjSinc.add(tEND);
@@ -751,7 +1030,15 @@ void expresion_simple() :
 }
 {
 	try {
-		( <tADD> | <tSUB> )? termino() ( operador_aditivo() termino() )*
+		(
+			<tADD>
+		|	<tSUB>
+		)?
+		termino()
+		(
+			operador_aditivo()
+			termino()
+		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -793,7 +1080,11 @@ void termino() :
 }
 {
 	try {
-		factor() ( operador_multiplicativo() factor() )*
+		factor()
+		(
+			operador_multiplicativo()
+			factor()
+		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -848,12 +1139,29 @@ void factor() :
 }
 {
 	try {
-		<tNOT> factor()
-	|	<tPTOP> expresion() <tPTCL>
-	|	<tITOA> <tPTOP> expresion() <tPTCL>
-	|	<tATOI> <tPTOP> expresion() <tPTCL>
-	|	LOOKAHEAD(2)  <tID> <tPTOP> lista_exps() <tPTCL>
-	|	LOOKAHEAD(2)  <tID> <tSQOP> expresion() <tSQCL>
+		<tNOT>
+		factor()
+	|	<tPTOP>
+		expresion()
+		<tPTCL>
+	|	<tITOA>
+		<tPTOP>
+		expresion()
+		<tPTCL>
+	|	<tATOI>
+		<tPTOP>
+		expresion()
+		<tPTCL>
+	|	LOOKAHEAD(2) 
+		<tID>
+		<tPTOP>
+		lista_exps()
+		<tPTCL>
+	|	LOOKAHEAD(2) 
+		<tID>
+		<tSQOP>
+		expresion()
+		<tSQCL>
 	|	<tID>
 	|	<tNUM>
 	|	<tCHAR>
@@ -875,27 +1183,27 @@ void factor() :
 JAVACODE //------------------------------------ 
 //Informa sobre la excepción, y calcula el conjunto de tokens esperados Set infoParseException(ParseException e) {
 Set<Integer> infoParseException(ParseException e) {
-	Set<Integer> esperados = new HashSet<Integer>(); 
-	System.err.println("ERROR_SINT: ('" + e.currentToken.next.image + ", " + e.currentToken.next.beginLine
-		+ "," + e.currentToken.next.beginColumn + ")");
-	System.err.println("Se esperaba uno de los siguientes tokens:");
-	for(int i = 0; i<e.expectedTokenSequences.length; i++) {
-		esperados.add(e.expectedTokenSequences[i][0]);
-		System.err.println("\t" + adacConstants.tokenImage[e.expectedTokenSequences[i][0]]);
-	}
-	return esperados;
+    Set<Integer> esperados = new HashSet<Integer>(); 
+    System.err.println("ERROR_SINT: ('" + e.currentToken.next.image + ", " + e.currentToken.next.beginLine
+        + "," + e.currentToken.next.beginColumn + ")");
+    System.err.println("Se esperaba uno de los siguientes tokens:");
+    for(int i = 0; i<e.expectedTokenSequences.length; i++) {
+        esperados.add(e.expectedTokenSequences[i][0]);
+        System.err.println("\t" + adacConstants.tokenImage[e.expectedTokenSequences[i][0]]);
+    }
+    return esperados;
 }
 
 JAVACODE //--------- 
 void recuperacionPanico(Token tInesperado, Set <Integer> conjSinc) {
-	// System.err.println(sep); 
-	System.err.println("----> Recupero en modo pánico: "
-		+ "\n----> saltando todo hasta token de conjunto de sincronización"); 
-	System.err.println("Lexema inesperado: " + tInesperado.image);
-	Token t = getNextToken();
-	while (!conjSinc.contains(t. kind) && t.kind != EOF){ 
-		System.err.println("Descartando token ("
-		+ adacConstants.tokenImage[t.kind]
-		+ "," + t.image + ")"); t = getNextToken();
-	}
+    // System.err.println(sep); 
+    System.err.println("----> Recupero en modo pánico: "
+        + "\n----> saltando todo hasta token de conjunto de sincronización"); 
+    System.err.println("Lexema inesperado: " + tInesperado.image);
+    Token t = getNextToken();
+    while (!conjSinc.contains(t. kind) && t.kind != EOF){ 
+        System.err.println("Descartando token ("
+        + adacConstants.tokenImage[t.kind]
+        + "," + t.image + ")"); t = getNextToken();
+    }
 }
