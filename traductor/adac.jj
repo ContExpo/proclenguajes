@@ -18,6 +18,7 @@ package traductor;
 import java.util.Set;
 import java.util.HashSet;
 import lib.symbolTable.*;
+import lib.attributes.Attributes;
 import lib.symbolTable.exceptions.*;
 import java.util.ArrayList;
 
@@ -408,14 +409,14 @@ String cabecera_proceso() :
 //declaracion_funcion : cabecera_funcion declaracion_variables declaracion_procs_funcs bloque_sentencias
 void declaracion_funcion() :
 {
-	Symbol.Types retType;
+	Attributes nomYTipo;
 }
 {
 	try {
-		retType = cabecera_funcion()
+		nomYTipo = cabecera_funcion()
 		declaracion_variables()
 		declaracion_procs_funcs()
-		bloque_sentencias("WIP", Symbol.Types.FUNCTION, retType)
+		bloque_sentencias(nomYTipo.valString, Symbol.Types.FUNCTION, nomYTipo.type)
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -424,29 +425,32 @@ void declaracion_funcion() :
 }
 
 //cabecera_funcion : <tFUNC> tipo_variable <tID> ( decs_parametros )? <tIS>
-Symbol.Types cabecera_funcion() :
+Attributes cabecera_funcion() :
 {
+	Attributes nomYTipo = new Attributes();
 	Token t1 = new Token();
-	Symbol.Types retType;
+	Symbol.Types type;
 	ArrayList<Symbol> parList = new ArrayList<Symbol>();
 }
 {
 	try {
 		<tFUNC>
-		retType = tipo_variable()
+		type = tipo_variable()
 		t1 = <tID>
 		(
 			parList = decs_parametros()
 		)?
 		<tIS>
 		{
-			SymbolFunction s = new SymbolFunction(t1.image, parList, retType);
+			SymbolFunction s = new SymbolFunction(t1.image, parList, type);
 			st.insertSymbol(s);
 			st.insertBlock();
 			for (Symbol par : parList) {
 				st.insertSymbol(par);
 			}
-			return retType;
+			nomYTipo.type = type;
+			nomYTipo.valString = t1.image;
+			return nomYTipo;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
