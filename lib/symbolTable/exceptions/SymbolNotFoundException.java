@@ -12,8 +12,12 @@ package lib.symbolTable.exceptions;
 
 public class SymbolNotFoundException extends Error {
 
-	public SymbolNotFoundException() {
+	int line;
+	int column;
 
+	public SymbolNotFoundException(int line, int column) {
+		this.line = line;
+		this.column = column;
 	}
 
 }

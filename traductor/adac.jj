@@ -375,6 +375,8 @@ void declaracion_proceso() :
 String cabecera_proceso() :
 {
 	Token t1 = new Token();
+	//TODO Aqui nos cogemos un ArrayList<Symbol>, pero creo sería mejor cojer un ArrayList<Symbol.Type>, así que
+	//cuando en la invocacion funcion cogemos las expresiones parametros podremos hacer una comparación más sencilla
 	ArrayList<Symbol> parList = new ArrayList<Symbol>();
 }
 {
@@ -382,6 +384,8 @@ String cabecera_proceso() :
 		<tPROC>
 		t1 = <tID>
 		(
+			//Todo
+			//Aquí tenemos 
 			parList = decs_parametros()
 		)?
 		<tIS>
@@ -584,7 +588,7 @@ Symbol id_or_array(Symbol.Types type) :
 		LOOKAHEAD(2)
 		t1 = <tID>
 		<tSQOP>
-		t2 = <tNUM>
+		t2 = <tNUM> //TODO aquí prodría ser expresion?
 		<tSQCL>
 		{
 			return new SymbolArray(t1.image, Integer.parseInt(t2.image), type);
@@ -689,7 +693,7 @@ boolean instruccion() :
 //inst_leer : <tGET> <tPTOP> asignable ( <tCOMMA> asignable )* <tPTCL>
 void inst_leer() :
 {
-	
+	Token var;
 }
 {
 	try {
@@ -712,6 +716,7 @@ void inst_leer() :
 	}
 }
 
+//Aqui no hay nada que comprobar
 //inst_saltar_linea : <tSKIPL> <tPTOP> <tPTCL>
 void inst_saltar_linea() :
 {
@@ -820,11 +825,15 @@ boolean inst_seleccion() :
 	boolean hayReturn1 = false;
 	boolean hayReturn2 = false;
 	boolean aux = false;
+	Symbol.Types tipo;
 }
 {
 	try {
 		<tIF>
-		expresion()
+		tipo = expresion() {
+			if (tipo != Types.BOOL)
+				//TODO: tipo incorrecto
+		}
 		<tTHEN>
 		(
 			aux = instruccion()
@@ -881,18 +890,30 @@ boolean resto_if() :
 //asignable : LOOKAHEAD(2)
 //				<tID> <tSQOP> expresion <tSQCL>
 //			|	<tID>
+//Un asignable es el nombre de una variable escalar o de un array con un indice (que puede ser una expresion)
+//
+//Desde asignable tenemos que comprobar que el nombre existe, así que no haga falta mirarlo en los varios lugares donde llamamos esta funcion
+
 void asignable() :
 {
-	
+	Token var
 }
 {
 	try {
 	LOOKAHEAD(3)
-		<tID>
+		var = <tID> {
+			if (!st.isReservedWord(var.image)) {
+				throw new SymbolNotFoundException();
+			}
+		}
 		<tSQOP>
-		expresion()
+		expresion() //esta tiene que ser de tipo intero
 		<tSQCL>
-	|	<tID>
+	|	var = <tID> {
+			if (!st.isReservedWord(var.image)) {
+				throw new SymbolNotFoundException();
+			}
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -901,6 +922,9 @@ void asignable() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	} catch (SymbolNotFoundException e) {
+		System.Out.Println("Simbolo no encontrado en " + e.line + e.column)
+		//
 	}
 }
 
@@ -953,9 +977,9 @@ void inst_return() :
 }
 
 //lista_exps : ( expresion ( <tCOMMA> expresion )* )?
-void lista_exps() :
+ArrayList<Symbol> lista_exps() :
 {
-	
+	ArrayList<Symbol.Types> parList
 }
 {
 	try {
@@ -977,16 +1001,18 @@ void lista_exps() :
 }
 
 //expresion : expresion_simple ( operador_relacional expresion_simple )?
-void expresion() :
+Symbol.Types expresion() :
 {
-	
+	Symbol.Types tipoExpresion;
 }
 {
 	try {
-		expresion_simple()
+		tipoExpresion = expresion_simple()
 		(
-			operador_relacional()
-			expresion_simple()
+			if (operador_relacional() != tipoExpresion)
+				//throw exc
+			if (expresion_simple() != tipoExpresion)
+				//throw exc
 		)?
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1009,6 +1035,7 @@ void operador_relacional() :
 	
 }
 {
+	//Todo esto seguro es bool, no creo que haga falta añadirlo
 	try {
 		<tEQ>
 	|	<tLT>
@@ -1028,20 +1055,25 @@ void operador_relacional() :
 }
 
 //expresion_simple : ( <tADD> | <tSUB> )? termino ( operador_aditivo termino )*
-void expresion_simple() :
+Symbol.Types expresion_simple() :
 {
-	
+	Symbol.Types toRet = Symbol.Types.UNDEFINED;
+	Symbol.Types temp;
 }
 {
 	try {
 		(
-			<tADD>
-		|	<tSUB>
+			<tADD> 	temp = Symbol.Types.INT
+		|	<tSUB>	temp = Symbol.Types.INT
 		)?
-		termino()
+		toRet = termino()
+		if (temp!= Symbol.Types.UNDEFINED && temp!=toRet)
+			//throw exc 
 		(
-			operador_aditivo()
-			termino()
+			if (operador_aditivo() != toRet)
+				throw exc
+			if (termino() != toRet)
+				throw exc
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1057,7 +1089,7 @@ void expresion_simple() :
 //operador_aditivo :	<tADD>
 //					|	<tSUB>
 //					|	<tOR>
-void operador_aditivo() :
+Symbol.Types operador_aditivo() :
 {
 	
 }
@@ -1065,7 +1097,7 @@ void operador_aditivo() :
 	try {
 		<tADD>
 	|	<tSUB>
-	|	<tOR>
+	|	<tOR>	return Symbol.Types.BOOL
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1075,19 +1107,22 @@ void operador_aditivo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	return Symbol.Types.INT
 }
 
 //termino : factor ( operador_multiplicativo factor )*
-void termino() :
+Symbol.Types termino() :
 {
-	
+	Symbol.Types toRet
 }
 {
 	try {
-		factor()
+		toRet = factor()
 		(
-			operador_multiplicativo()
-			factor()
+			if (operador_multiplicativo()!=toRet)
+				//throw exc
+			if (factor()!=toRet)
+				//throw exc
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1104,7 +1139,7 @@ void termino() :
 //						|	<tMOD>
 //						|	<tDIV>
 //						|	<tAND>
-void operador_multiplicativo() :
+Symbol.Types operador_multiplicativo() :
 {
 	
 }
@@ -1113,7 +1148,7 @@ void operador_multiplicativo() :
 		<tMUL>
 	|	<tMOD>
 	|	<tDIV>
-	|	<tAND>
+	|	<tAND>  return Symbol.Types.BOOL
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1123,55 +1158,66 @@ void operador_multiplicativo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	return Symbol.Types.INT
 }
 
 //factor :	<tNOT> factor
 //		|	<tPTOP> expresion <tPTCL>
 //		|	<tINT2CHAR> <tPTOP> expresion <tPTCL>
 //		|	<tCHAR2INT> <tPTOP> expresion <tPTCL>
-//		|	LOOKAHEAD(2)  <tID> <tPTOP> lista_exps <tPTCL>
-//		|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>
+//		|	LOOKAHEAD(2)  <tID> <tPTOP> lista_exps <tPTCL> Esta es una llamada a funcion
+//		|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>  Igualmente
 //		|	<tID>
 //		|	<tNUM>
 //		|	<tCHAR>
 //		|	<tSTRING>
 //		|	<tTRUE>
 //		|	<tFALSE>
-void factor() :
+Symbol.Types factor() :
 {
-	
+	Token t;
+	Symbol.Types toRet = null;
 }
 {
 	try {
 		<tNOT>
-		factor()
+			if (factor() == Symbol.Types.INT)
+				//Throw exc...
+			toRet = Symbol.Types.BOOL
 	|	<tPTOP>
-		expresion()
+		toRet = expresion()
 		<tPTCL>
-	|	<tITOA>
+	|	<tITOA>//Aqui es int2Char...el tipo es char entonces? Y porque un char es un factor?
 		<tPTOP>
-		expresion()
+		if (expresion()!= Symbol.Types.INT)
+				//Throw exc...
+				toRet= Symbol.Types.CHAR
 		<tPTCL>
 	|	<tATOI>
 		<tPTOP>
-		expresion()
+		if (expresion()!= Symbol.Types.CHAR)
+				//Throw exc...
+				toRet= Symbol.Types.INT
 		<tPTCL>
 	|	LOOKAHEAD(2) 
 		<tID>
 		<tPTOP>
+		//TODO no entiendo que es esto
 		lista_exps()
 		<tPTCL>
 	|	LOOKAHEAD(2) 
-		<tID>
+		t = <tID>
 		<tSQOP>
-		expresion()
+		if (expresion()!= Symbol.Types.INT)
+				//Throw exc...
 		<tSQCL>
-	|	<tID>
-	|	<tNUM>
-	|	<tCHAR>
-	|	<tSTRING>
-	|	<tTRUE>
-	|	<tFALSE>
+	|	t = <tID>
+	|	<tNUM> toRet = Symbol.Types.INT
+	|	<tCHAR> toRet = Symbol.Types.CHAR
+	|	<tSTRING> toRet = Symbol.Types.STRING
+	|	<tTRUE> toRet = Symbol.Types.BOOL
+	|	<tFALSE> toRet = Symbol.Types.BOOL
+
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1182,6 +1228,7 @@ void factor() :
 		conjSinc.add(tSQCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	return toRet
 }
 
 JAVACODE //------------------------------------ 
