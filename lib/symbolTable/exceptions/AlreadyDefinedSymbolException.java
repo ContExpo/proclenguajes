@@ -12,12 +12,7 @@ package lib.symbolTable.exceptions;
 
 public class AlreadyDefinedSymbolException extends Exception {
 
-	int line;
-	int column;
-
-	public AlreadyDefinedSymbolException(int line, int column) {
-		this.line = line;
-		this.column = column;
+	public AlreadyDefinedSymbolException() {
 	}
 
 }

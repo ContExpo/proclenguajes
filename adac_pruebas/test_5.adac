@@ -1,0 +1,75 @@
+--Encontrar las dos raíces enteras de una ecuación cuadrática
+
+--------------------------------------------------------------------
+procedure quadratic_roots is
+
+integer a, b, c, determinante, r1, r2, real, imag;
+--------------------------------------------------------------------
+function integer sqrt(val integer n) is
+integer inicio, final, mitad, sol;
+boolean encontrado;
+begin
+	inicio := 0;
+	final := n;
+	
+	while inicio <= final and not foundRoot do
+	
+		--Encontrar la mitad
+		mitad := (inicio + final) div 2;
+		
+		--Si n tiene raíz entera, parar de buscar
+		if mitad*mitad = n then
+			sol := mitad;
+			foundRoot := true;
+		else
+			--Incrementar el inicio si la parte entera se encuentra
+			--a la derecha de la mitad.
+			if mitad*mitad < n then
+				
+				--Guardamos el valor como respuesta por si nos pasamos
+				sol := inicio;
+				
+				--Y empezamos a buscar una posible mejor respuesta
+				--a partir de la mitad + 1
+				inicio := mitad+1;
+			
+			--Decrementar el final si la parte entera se encuentra
+			--a la izquierda de la mitad.
+			else
+				final := mitad-1;
+			end
+		end
+		
+		return sol;
+		
+	end
+end
+--------------------------------------------------------------------
+begin
+	get (a);
+	get (b);
+	get (c);
+	
+	--Fórmula matemática para conocer la naturaleza de las raíces
+	determinante := b*b - 4*a*c;
+	
+	if determinante > 0 then --ambas raíces son reales
+		r1 := (-b + sqrt(determinante)) div (2*a);
+		r2 := (-b - sqrt(determinante)) div (2*a);
+		
+		put_line ("Las raíces son: ", r1, " y ", r2);
+	else
+		if determinante = 0 then --ambas raíces son reales e iguales
+			r1 := -b div (2*a);
+			r2 := r1;
+			
+			put_line ("Las raíces son: ", r1, " y ", r2);
+		else --ambas raíces son imaginarias
+			real := -b div (2*a);
+			imag := sqrt (-determinante) div (2*a);
+		
+			put_line ("Las raíces son: ", real, " + ", imag, " y ", real, " - ", imag);
+		end
+	end
+	
+end

@@ -1,0 +1,47 @@
+procedure stack is
+	integer stack[100], n, top;
+-------------------------------------------------------------
+	procedure push(val integer value) is
+	begin
+		if(top >= n-1) then
+			put_line("El stack esta' lleno");
+			put_line();
+		else
+			top := top + 1;
+			stack[top] := value;
+		end
+	end
+-------------------------------------------------------------
+	function integer pop() is
+	begin
+		if top <= -1 then
+			put_line("No hay nada en el stack");
+			put_line();
+		else 
+			put_line("The popped element is ",  stack[top]);
+			top := top-1;
+		end
+		return stack[top];
+	end
+-------------------------------------------------------------
+	procedure display() is 
+	
+	integer i;
+
+	begin
+		if top >= 0 then
+			put_line("Printing stack :");
+			i := top; 
+			while i >= 0 do
+				put(stack[i], "  ");
+			end
+		else
+			put_line("Stack is empty");
+		end
+	end
+-------------------------------------------------------------
+
+begin
+		n := 100;
+		top := -1;	
+end

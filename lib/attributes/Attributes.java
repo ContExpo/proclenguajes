@@ -20,10 +20,13 @@ public class Attributes implements Cloneable {
     public boolean valBool;
     public char valChar;
     public String valString;
-    //COMPLETAR
+    
+    public String name;
+    public boolean referenciable;
+    public Symbol simbolo;
 
     public Attributes() {
-        //COMPLETAR
+        name = null;
     }
 
     public Attributes clone() {
