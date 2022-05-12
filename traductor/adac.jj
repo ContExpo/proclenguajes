@@ -1090,15 +1090,16 @@ Attributes expresion() :
 			tipo_operador = operador_relacional()
 			{
 				if (tipo_operador != attrExpresion1.type)
-					throw new InvalidTypeExpressionException(token);
+					ErrorSemantico.deteccion("Tipos incoerentes entre variable y operador", token);
 			}
 			attrExpresion2 = expresion_simple()
 			{
 				if (attrExpresion2.type != attrExpresion1.type)
-					throw new InvalidTypeExpressionException(token);
+					ErrorSemantico.deteccion("Tipos incoerentes entre variables", token);
+				attrExpresion1.referenciable = false;
 			}
 			{
-				retAttribute.
+				return attrExpresion1;
 			}
 		)?
 	} catch (ParseException e) {
@@ -1108,7 +1109,7 @@ Attributes expresion() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
-	} catch ()
+	}
 }
 
 //operador_relacional :	<tEQ>
@@ -1143,16 +1144,26 @@ void operador_relacional() :
 //expresion_simple : ( <tADD> | <tSUB> )? termino ( operador_aditivo termino )*
 Symbol.Types expresion_simple() :
 {
-	Symbol.Types toRet = Symbol.Types.UNDEFINED;
-	Symbol.Types temp;
+	Attributes a = new Attributes();
+	Attributes a2 = null;
 }
 {
 	try {
 		(
-			<tADD> 	temp = Symbol.Types.INT
-		|	<tSUB>	temp = Symbol.Types.INT
+			<tADD> 	{
+				a2 = new Attributes();
+			}
+		|	<tSUB>	temp {
+				a2 = new Attributes();
+			}
 		)?
-		toRet = termino()
+		a = termino();
+		{
+			if (a2!=null){
+				if (a.type != Symbol.Types.INT)
+					ErrorSemantico.deteccion("La variable despues de +/- tiene que ser intera", token);
+			}
+		}
 		if (temp!= Symbol.Types.UNDEFINED && temp!=toRet)
 			throw new InvalidTypeExpressionException(token);
 		(
@@ -1177,13 +1188,19 @@ Symbol.Types expresion_simple() :
 //					|	<tOR>
 Symbol.Types operador_aditivo() :
 {
-	
+	Attributes a = new Attributes()
 }
 {
 	try {
-		<tADD>
-	|	<tSUB>
-	|	<tOR>	return Symbol.Types.BOOL
+		<tADD> {
+			a.type = Symbol.Types.INT
+		}
+	|	<tSUB> {
+			a.type = Symbol.Types.INT
+		}
+	|	<tOR> {
+			a.type = Symbol.Types.BOOL
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1193,22 +1210,27 @@ Symbol.Types operador_aditivo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	return Symbol.Types.INT
 }
 
 //termino : factor ( operador_multiplicativo factor )*
-Symbol.Types termino() :
+Attributes termino() :
 {
-	Symbol.Types toRet
+	Attributes a;
+	Attributes a2;
 }
 {
 	try {
-		toRet = factor()
+		a = factor()
 		(
-			if (operador_multiplicativo()!=toRet)
-				//throw exc
-			if (factor()!=toRet)
-				//throw exc
+			a2 = operador_multiplicativo() {
+				if (a2.type != a.type)
+					ErrorSemantico.deteccion("Los tipos del operando y el operator no coinciden", token)
+			}
+			a2 = factor() {
+				if (a2.type != a.type)
+					ErrorSemantico.deteccion("Los tipos de los operandos no coinciden", token)
+				a.asignable = false;
+			}
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1219,6 +1241,7 @@ Symbol.Types termino() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	return a;
 }
 
 //operador_multiplicativo :	<tMUL>
@@ -1227,14 +1250,22 @@ Symbol.Types termino() :
 //						|	<tAND>
 Symbol.Types operador_multiplicativo() :
 {
-	
+	Attributes a = new Attributes();
 }
 {
 	try {
-		<tMUL>
-	|	<tMOD>
-	|	<tDIV>
-	|	<tAND>  return Symbol.Types.BOOL
+		<tMUL> {
+			a.type = Symbol.Types.INT
+		}
+	|	<tMOD> {
+			a.type = Symbol.Types.INT
+		}
+	|	<tDIV> {
+			a.type = Symbol.Types.INT
+		}
+	|	<tAND> {
+			a.type = Symbol.Types.BOOL
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1244,7 +1275,7 @@ Symbol.Types operador_multiplicativo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	return Symbol.Types.INT
+	return a;
 }
 
 //factor :	<tNOT> factor
@@ -1265,6 +1296,7 @@ Attributes factor() :
 	Attributes temp;
 	Token t;
 	Symbol.Types toRet = null;
+	Symbol s;
 }
 {
 	try {
@@ -1312,28 +1344,55 @@ Attributes factor() :
 		<tPTCL>
 	|	LOOKAHEAD(2) 
 		t = <tID>	//Esto es id de array
+		{
+			Symbol s = st.getSymbol(s.image);
+			if (!st.containsSymbol(s.image))
+				ErrorSemantico.deteccion(new SymbolNotFoundException(), t);
+			if (s.type != Symbol.Types.ARRAY)
+				ErrorSemantico.deteccion(t.image + "no es identificador de array", t);
+			a.type = (SymbolArray) s.baseType;
+			a.asignable = true;
+		}
 		<tSQOP>
-		a = expresion() { 
+		temp = expresion() { 
 			if (a.type != Symbol.Types.INT)
-				throw new SemanticException("");
-				//TODO poner string
+				ErrorSemantico.deteccion("El indice de elemento de array tiene que ser intero", t);
 		}
 		<tSQCL>
 	|	t = <tID>
+		{
+			Symbol s = st.getSymbol(s.image);
+			if (!st.containsSymbol(s.image))
+				ErrorSemantico.deteccion(new SymbolNotFoundException(), t);
+			if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE)
+				ErrorSemantico.deteccion(t.image + "no puede ser utilizado como variable simple", t);
+			a.type = s.type;
+			a.asignable = true;
+		}
 	|	t2 = <tNUM> {
 		a = new Attributes()
+		a.type = Symbol.Types.INT;
+		a.asignable = false;
 	}
 	|	t2 = <tCHAR> {
 		a = new Attributes()
+		a.type = Symbol.Types.CHAR;
+		a.asignable = false;
 	}
 	|	t2 = <tSTRING> {
 		a = new Attributes()
+		a.type = Symbol.Types.STRING;
+		a.asignable = false;
 	}
 	|	t2 = <tTRUE> {
 		a = new Attributes()
+		a.type = Symbol.Types.BOOL;
+		a.asignable = false;
 	}
 	|	t2 = <tFALSE> {
 		a = new Attributes()
+		a.type = Symbol.Types.BOOL;
+		a.asignable = false;
 	}
 
 	} catch (ParseException e) {
