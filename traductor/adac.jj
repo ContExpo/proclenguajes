@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class adac {
 
 	static SymbolTable st = new SymbolTable();
-
+	static ErrorSemantico es;
 	private static void initSymbolTable() {
 		boolean b;
 		String[] palsRes = {
@@ -795,9 +795,7 @@ void inst_invoc_proc() :
 		{
 			func = st.getSymbol(procName.image);
 			if (func.type != Symbol.Types.PROCEDURE) {
-				throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-				+"Invocación incorrecta a " + procName.image
-				+": No es un procedimiento");
+				es.deteccion(new SymbolNotFoundException(), procName);
 			}
 		}
 		<tPTOP>
@@ -806,24 +804,18 @@ void inst_invoc_proc() :
 			expectedPars = (SymbolProcedure) func.parList;
 			if (expectedPars.length != parList.length)
 			{
-				throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-				+"Invocación incorrecta a " + procName.image
-				+": El número de parámetros no coincide con el esperado");
+				es.deteccion("El número de parámetros no coincide con el esperado", procName);
 			}
 			for (int i = 0; i< parList.length; i++)
 			{
 				Symbol expPar = expectedPars.get(i);
 				Attributes givenPar = parList.get(i);
 				if (givenPar.type != expPar.type) {
-					throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-					+"Invocación incorrecta a " + procName.image
-					+": El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type);
+					es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.typ, procName);
 				}
 				//Si paso por referencia, tiene que ser asignable
 				if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
-					throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-					+"Invocación incorrecta a " + procName.image + ", "
-					+": El parámetro " + i + " no es asignable.");
+					es.deteccion("El parámetro " + i + " no es referenciable", procName);
 				}
 				//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
 				SymbolArray expParArray = (SymbolArray) expPar;
@@ -832,10 +824,8 @@ void inst_invoc_proc() :
 				boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
 											expParArray.maxInd == givenParArray.maxInd;
 				if (givenPar.type == Type.ARRAY && !sameDimensions) {
-					throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-					+"Invocación incorrecta a " + procName.image
-					+": El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
-					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ").");
+					es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
+					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", procName);
 				}
 			}
 		}
@@ -848,13 +838,8 @@ void inst_invoc_proc() :
 		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	} catch (SymbolNotFoundException e) {
-		ErrorSemantico.deteccion(e, token);
-	} catch (InvalidIdentifierException e) {
-		ErrorSemantico.deteccion(e, token);
-	} 
-	catch (SemanticException e) {
-		ErrorSemantico.deteccion(e.error, token);
-	} 
+		es.deteccion(e, token);
+	}
 }
 
 //inst_asignacion : asignable <tASIG> expresion
@@ -889,7 +874,7 @@ boolean inst_seleccion() :
 		<tIF>
 		tipo = expresion() {
 			if (tipo != Types.BOOL)
-				throw new InvalidTypeExpressionException(token);
+				es.deteccion("El tipo de la expresion tiene que ser booleano", token);
 		}
 		<tTHEN>
 		(
@@ -968,8 +953,7 @@ void asignable() :
 		<tSQOP>
 		type = expresion() {
 			if (type != Symbol.Types.INT) {
-				throw new SemanticException("("+var.beginLine+","+var.beginColumn+") : "
-				+ "Tipo de indice incorrecto, esperaba un entero");
+				es.deteccion("Tipo de indice incorrecto, esperaba un entero", procName);
 			}
 		}
 		<tSQCL>
@@ -1086,12 +1070,12 @@ Attributes expresion() :
 			tipo_operador = operador_relacional()
 			{
 				if (tipo_operador != attrExpresion1.type)
-					ErrorSemantico.deteccion("Tipos incoerentes entre variable y operador", token);
+					es.deteccion("Tipos incoerentes entre variable y operador", token);
 			}
 			attrExpresion2 = expresion_simple()
 			{
 				if (attrExpresion2.type != attrExpresion1.type)
-					ErrorSemantico.deteccion("Tipos incoerentes entre variables", token);
+					es.deteccion("Tipos incoerentes entre variables", token);
 				attrExpresion1.referenciable = false;
 			}
 			{
@@ -1160,19 +1144,19 @@ Attributes expresion_simple() :
 		{
 			if (a2!=null){
 				if (a.type != Symbol.Types.INT)
-					ErrorSemantico.deteccion("La variable despues de +/- tiene que ser intera", token);
+					es.deteccion("La variable despues de +/- tiene que ser intera", token);
 			}
 			a.referenciable = false;
 		}
 		(
 			a2 = operador_aditivo() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos del operando y el termino no coinciden", token);
+					es.deteccion("Los tipos del operando y el termino no coinciden", token);
 				a.asignable = false;
 			}
 			a2 = termino() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos de los terminos de la suma no coinciden", token);
+					es.deteccion("Los tipos de los terminos de la suma no coinciden", token);
 				a.asignable = false;
 			}
 		)*
@@ -1231,11 +1215,11 @@ Attributes termino() :
 		(
 			a2 = operador_multiplicativo() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos del operando y el operator no coinciden", token);
+					es.deteccion("Los tipos del operando y el operator no coinciden", token);
 			}
 			a2 = factor() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos de los operandos no coinciden", token);
+					es.deteccion("Los tipos de los operandos no coinciden", token);
 				a.asignable = false;
 			}
 		)*
@@ -1314,7 +1298,7 @@ Attributes factor() :
 		<tNOT>
 		a = factor(){ 
 			if (a.type != Symbol.Types.BOOL) {
-				throw new InvalidTypeExpressionException(token);
+				es.deteccion("El tipo de la expresion tiene que ser booleano", token);
 			}
 			a.referenciable = false;
 		}
@@ -1327,7 +1311,7 @@ Attributes factor() :
 		temp = expresion()
 		{
 			if (temp.type != Symbol.Types.INT) {
-				throw new InvalidTypeExpressionException(token);
+				es.deteccion("El tipo de la expresion tiene que ser intero", token);
 			}
 			a = new Attributes();
 			a.type = Symbol.Types.CHAR;
@@ -1340,7 +1324,7 @@ Attributes factor() :
 		temp = expresion()
 		{
 			if (temp.type != Symbol.Types.CHAR) {
-				throw new InvalidTypeExpressionException(token);
+				throw new es.deteccion("El tipo de la expresion tiene que ser character", token);
 			}
 			a = new Attributes();
 			a.type = Symbol.Types.INT;
@@ -1358,9 +1342,9 @@ Attributes factor() :
 		{
 			Symbol s = st.getSymbol(s.image);
 			if (!st.containsSymbol(s.image))
-				ErrorSemantico.deteccion(new SymbolNotFoundException(), t);
+				es.deteccion(new SymbolNotFoundException(), t);
 			if (s.type != Symbol.Types.ARRAY)
-				ErrorSemantico.deteccion(t.image + "no es identificador de array", t);
+				es.deteccion(t.image + "no es identificador de array", t);
 			a.type = (SymbolArray) s.baseType;
 			a.asignable = true;
 			a.name = t.image;
@@ -1369,16 +1353,16 @@ Attributes factor() :
 		<tSQOP>
 		temp = expresion() { 
 			if (a.type != Symbol.Types.INT)
-				ErrorSemantico.deteccion("El indice de elemento de array tiene que ser intero", t);
+				es.deteccion("El indice de elemento de array tiene que ser intero", t);
 		}
 		<tSQCL>
 	|	t = <tID>
 		{
 			Symbol s = st.getSymbol(s.image);
 			if (!st.containsSymbol(s.image))
-				ErrorSemantico.deteccion(new SymbolNotFoundException(), t);
+				es.deteccion(new SymbolNotFoundException(), t);
 			if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE)
-				ErrorSemantico.deteccion(t.image + "no puede ser utilizado como variable simple", t);
+				es.deteccion(t.image + "no puede ser utilizado como variable simple", t);
 			a.type = s.type;
 			a.asignable = true;
 			a.name = t.image;
