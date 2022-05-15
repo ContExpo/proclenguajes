@@ -18,6 +18,7 @@ package traductor;
 import java.util.Set;
 import java.util.HashSet;
 import lib.symbolTable.*;
+import lib.errores.*;
 import lib.attributes.Attributes;
 import lib.symbolTable.exceptions.*;
 import java.util.ArrayList;
@@ -695,7 +696,7 @@ boolean instruccion() :
 //inst_leer : <tGET> <tPTOP> asignable ( <tCOMMA> asignable )* <tPTCL>
 void inst_leer() :
 {
-	Token var;
+	Token token;
 }
 {
 	try {
@@ -812,7 +813,7 @@ void inst_invoc_proc() :
 				Symbol expPar = expectedPars.get(i);
 				Attributes givenPar = parList.get(i);
 				if (givenPar.type != expPar.type) {
-					es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.typ, procName);
+					es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type, procName);
 				}
 				//Si paso por referencia, tiene que ser asignable
 				if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
@@ -939,14 +940,14 @@ boolean resto_if() :
 
 void asignable() :
 {
-	Token var;
+	Token token;
 	Attributes attr;
 }
 {
 	try {
 	LOOKAHEAD(3)
-		var = <tID> {
-			if (!st.isReservedWord(var.image)) {
+		token = <tID> {
+			if (!st.isReservedWord(token.image)) {
 				throw new SymbolNotFoundException();
 			}
 		}
@@ -954,13 +955,13 @@ void asignable() :
 		<tSQOP>
 		attr = expresion() {
 			if (attr.type != Symbol.Types.INT) {
-				es.deteccion("Tipo de indice incorrecto, esperaba un entero", procName);
+				es.deteccion("Tipo de indice incorrecto, esperaba un entero", token);
 			}
 		}
 		<tSQCL>
-	|	var = <tID> {
-			if (!st.isReservedWord(var.image)) {
-				throw new SymbolNotFoundException();
+	|	token = <tID> {
+			if (!st.isReservedWord(token.image)) {
+				es.deteccion(new SymbolNotFoundException(), token);
 			}
 		}
 	} catch (ParseException e) {
@@ -971,9 +972,6 @@ void asignable() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
-	} catch (SymbolNotFoundException e) {
-		System.err.Println("Simbolo no encontrado en " + e.line + e.column);
-		//
 	}
 }
 
@@ -1028,7 +1026,7 @@ void inst_return() :
 //lista_exps : ( expresion ( <tCOMMA> expresion )* )?
 ArrayList<Attributes> lista_exps() :
 {
-	ArrayList<Attributes> parList;
+	ArrayList<Attributes> parList = new ArrayList<Attributes>();
 	Attributes attr;
 }
 {
@@ -1044,6 +1042,9 @@ ArrayList<Attributes> lista_exps() :
 				}
 			)*
 		)?
+		{
+			return parList;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1157,6 +1158,9 @@ Attributes expresion_simple() :
 				a.referenciable = false;
 			}
 		)*
+		{
+			return a;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1284,10 +1288,9 @@ Attributes operador_multiplicativo() :
 //		|	<tFALSE>
 Attributes factor() :
 {
-	Attributes a;
+	Attributes a = new Attributes();
 	Attributes temp;
 	Token t;
-	Symbol.Types toRet = null;
 	Symbol s;
 }
 {
@@ -1321,7 +1324,7 @@ Attributes factor() :
 		temp = expresion()
 		{
 			if (temp.type != Symbol.Types.CHAR) {
-				throw new es.deteccion("El tipo de la expresion tiene que ser character", token);
+				es.deteccion("El tipo de la expresion tiene que ser character", token);
 			}
 			a = new Attributes();
 			a.type = Symbol.Types.INT;
@@ -1342,8 +1345,8 @@ Attributes factor() :
 				es.deteccion(new SymbolNotFoundException(), t);
 			if (s.type != Symbol.Types.ARRAY)
 				es.deteccion(t.image + "no es identificador de array", t);
-			a.type = (SymbolArray) s.baseType;
-			a.asignable = true;
+			a.type = s.type;
+			a.referenciable = true;
 			a.name = t.image;
 			a.simbolo = st.getSymbol(t.image);
 		}
@@ -1361,42 +1364,42 @@ Attributes factor() :
 			if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE)
 				es.deteccion(t.image + "no puede ser utilizado como variable simple", t);
 			a.type = s.type;
-			a.asignable = true;
+			a.referenciable = true;
 			a.name = t.image;
 			a.simbolo = st.getSymbol(t.image);
 		}
-	|	t2 = <tNUM>
+	|	<tNUM>
 		{
 			a = new Attributes();
 			a.type = Symbol.Types.INT;
-			a.asignable = false;
+			a.referenciable = false;
 		}
-	|	t2 = <tCHAR>
+	|	<tCHAR>
 		{
 			a = new Attributes();
 			a.type = Symbol.Types.CHAR;
-			a.asignable = false;
+			a.referenciable = false;
 		}
-	|	t2 = <tSTRING>
+	|	<tSTRING>
 		{
 			a = new Attributes();
 			a.type = Symbol.Types.STRING;
-			a.asignable = false;
+			a.referenciable = false;
 		}
-	|	t2 = <tTRUE>
+	|	<tTRUE>
 		{
 			a = new Attributes();
 			a.type = Symbol.Types.BOOL;
-			a.asignable = false;
+			a.referenciable = false;
 		}
-	|	t2 = <tFALSE>
+	|	<tFALSE>
 		{
 			a = new Attributes();
 			a.type = Symbol.Types.BOOL;
-			a.asignable = false;
+			a.referenciable = false;
 		}
 		{
-			return toRet;
+			return a;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
