@@ -1319,7 +1319,6 @@ Attributes factor() :
 			if (temp.type != Symbol.Types.INT) {
 				es.deteccion("El tipo de la expresion tiene que ser intero", token);
 			}
-			a = new Attributes();
 			a.type = Symbol.Types.CHAR;
 			a.referenciable = false;
 		}
@@ -1332,7 +1331,6 @@ Attributes factor() :
 			if (temp.type != Symbol.Types.CHAR) {
 				es.deteccion("El tipo de la expresion tiene que ser character", token);
 			}
-			a = new Attributes();
 			a.type = Symbol.Types.INT;
 			a.referenciable = false;
 		}
@@ -1382,31 +1380,26 @@ Attributes factor() :
 		}
 	|	<tNUM>
 		{
-			a = new Attributes();
 			a.type = Symbol.Types.INT;
 			a.referenciable = false;
 		}
 	|	<tCHAR>
 		{
-			a = new Attributes();
 			a.type = Symbol.Types.CHAR;
 			a.referenciable = false;
 		}
 	|	<tSTRING>
 		{
-			a = new Attributes();
 			a.type = Symbol.Types.STRING;
 			a.referenciable = false;
 		}
 	|	<tTRUE>
 		{
-			a = new Attributes();
 			a.type = Symbol.Types.BOOL;
 			a.referenciable = false;
 		}
 	|	<tFALSE>
 		{
-			a = new Attributes();
 			a.type = Symbol.Types.BOOL;
 			a.referenciable = false;
 		}
