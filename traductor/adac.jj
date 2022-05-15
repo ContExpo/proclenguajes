@@ -793,8 +793,8 @@ void inst_invoc_proc() :
 	try {
 		procName = <tID>
 		{
-			func = st.getSymbol(procName.image)
-			if (func.type != Type.PROCEDURE) {
+			func = st.getSymbol(procName.image);
+			if (func.type != Symbol.Types.PROCEDURE) {
 				throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
 				+"Invocación incorrecta a " + procName.image
 				+": No es un procedimiento");
@@ -969,7 +969,7 @@ void asignable() :
 		type = expresion() {
 			if (type != Symbol.Types.INT) {
 				throw new SemanticException("("+var.beginLine+","+var.beginColumn+") : "
-				+ "Tipo de indice incorrecto, esperaba un entero")
+				+ "Tipo de indice incorrecto, esperaba un entero");
 			}
 		}
 		<tSQCL>
@@ -987,7 +987,7 @@ void asignable() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	} catch (SymbolNotFoundException e) {
-		System.err.Println("Simbolo no encontrado en " + e.line + e.column)
+		System.err.Println("Simbolo no encontrado en " + e.line + e.column);
 		//
 	}
 }
@@ -1152,11 +1152,11 @@ Attributes expresion_simple() :
 			<tADD> 	{
 				a2 = new Attributes();
 			}
-		|	<tSUB>	temp {
+		|	<tSUB> {
 				a2 = new Attributes();
 			}
 		)?
-		a = termino();
+		a = termino()
 		{
 			if (a2!=null){
 				if (a.type != Symbol.Types.INT)
@@ -1165,7 +1165,6 @@ Attributes expresion_simple() :
 			a.referenciable = false;
 		}
 		(
-			(
 			a2 = operador_aditivo() {
 				if (a2.type != a.type)
 					ErrorSemantico.deteccion("Los tipos del operando y el termino no coinciden", token);
@@ -1176,7 +1175,6 @@ Attributes expresion_simple() :
 					ErrorSemantico.deteccion("Los tipos de los terminos de la suma no coinciden", token);
 				a.asignable = false;
 			}
-		)*
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1194,18 +1192,21 @@ Attributes expresion_simple() :
 //					|	<tOR>
 Attributes operador_aditivo() :
 {
-	Attributes a = new Attributes()
+	Attributes a = new Attributes();
 }
 {
 	try {
 		<tADD> {
-			a.type = Symbol.Types.INT
+			a.type = Symbol.Types.INT;
 		}
 	|	<tSUB> {
-			a.type = Symbol.Types.INT
+			a.type = Symbol.Types.INT;
 		}
 	|	<tOR> {
-			a.type = Symbol.Types.BOOL
+			a.type = Symbol.Types.BOOL;
+		}
+		{
+			return a;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1216,7 +1217,6 @@ Attributes operador_aditivo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	return a;
 }
 
 //termino : factor ( operador_multiplicativo factor )*
@@ -1231,14 +1231,17 @@ Attributes termino() :
 		(
 			a2 = operador_multiplicativo() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos del operando y el operator no coinciden", token)
+					ErrorSemantico.deteccion("Los tipos del operando y el operator no coinciden", token);
 			}
 			a2 = factor() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos de los operandos no coinciden", token)
+					ErrorSemantico.deteccion("Los tipos de los operandos no coinciden", token);
 				a.asignable = false;
 			}
 		)*
+		{
+			return a;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1248,7 +1251,6 @@ Attributes termino() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	return a;
 }
 
 //operador_multiplicativo :	<tMUL>
@@ -1262,16 +1264,19 @@ Attributes operador_multiplicativo() :
 {
 	try {
 		<tMUL> {
-			a.type = Symbol.Types.INT
+			a.type = Symbol.Types.INT;
 		}
 	|	<tMOD> {
-			a.type = Symbol.Types.INT
+			a.type = Symbol.Types.INT;
 		}
 	|	<tDIV> {
-			a.type = Symbol.Types.INT
+			a.type = Symbol.Types.INT;
 		}
 	|	<tAND> {
-			a.type = Symbol.Types.BOOL
+			a.type = Symbol.Types.BOOL;
+		}
+		{
+			return a;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1282,7 +1287,6 @@ Attributes operador_multiplicativo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	return a;
 }
 
 //factor :	<tNOT> factor
@@ -1380,32 +1384,39 @@ Attributes factor() :
 			a.name = t.image;
 			a.simbolo = st.getSymbol(t.image);
 		}
-	|	t2 = <tNUM> {
-		a = new Attributes()
-		a.type = Symbol.Types.INT;
-		a.asignable = false;
-	}
-	|	t2 = <tCHAR> {
-		a = new Attributes()
-		a.type = Symbol.Types.CHAR;
-		a.asignable = false;
-	}
-	|	t2 = <tSTRING> {
-		a = new Attributes()
-		a.type = Symbol.Types.STRING;
-		a.asignable = false;
-	}
-	|	t2 = <tTRUE> {
-		a = new Attributes()
-		a.type = Symbol.Types.BOOL;
-		a.asignable = false;
-	}
-	|	t2 = <tFALSE> {
-		a = new Attributes()
-		a.type = Symbol.Types.BOOL;
-		a.asignable = false;
-	}
-
+	|	t2 = <tNUM>
+		{
+			a = new Attributes();
+			a.type = Symbol.Types.INT;
+			a.asignable = false;
+		}
+	|	t2 = <tCHAR>
+		{
+			a = new Attributes();
+			a.type = Symbol.Types.CHAR;
+			a.asignable = false;
+		}
+	|	t2 = <tSTRING>
+		{
+			a = new Attributes();
+			a.type = Symbol.Types.STRING;
+			a.asignable = false;
+		}
+	|	t2 = <tTRUE>
+		{
+			a = new Attributes();
+			a.type = Symbol.Types.BOOL;
+			a.asignable = false;
+		}
+	|	t2 = <tFALSE>
+		{
+			a = new Attributes();
+			a.type = Symbol.Types.BOOL;
+			a.asignable = false;
+		}
+		{
+			return toRet;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1416,7 +1427,6 @@ Attributes factor() :
 		conjSinc.add(tSQCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	return toRet
 }
 
 JAVACODE //------------------------------------ 
