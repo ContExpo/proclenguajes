@@ -397,7 +397,6 @@ String cabecera_proceso() :
 			for (Symbol par : parList) {
 				st.insertSymbol(par);
 			}
-			return t1.image;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -406,6 +405,9 @@ String cabecera_proceso() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	} catch(AlreadyDefinedSymbolException e) {
 		System.err.println("Error: " + t1.image + " ya está declarado");
+	}
+	{
+		return t1.image;
 	}
 }
 
@@ -455,7 +457,6 @@ Attributes cabecera_funcion() :
 			}
 			nomYTipo.type = type;
 			nomYTipo.valString = t1.image;
-			return nomYTipo;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -464,6 +465,9 @@ Attributes cabecera_funcion() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	} catch(AlreadyDefinedSymbolException e) {
 		System.err.println("Error: " + t1.image + " ya está declarado");
+	}
+	{
+		return nomYTipo;
 	}
 }
 
@@ -525,7 +529,6 @@ ArrayList<Symbol> decs_parametros() :
 		<tPTCL>
 		{
 			parList.addAll(partialList);
-			return parList;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -534,6 +537,9 @@ ArrayList<Symbol> decs_parametros() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return parList;
 	}
 }
 
@@ -564,9 +570,6 @@ ArrayList<Symbol> dec_parametros() :
 				parList.add(par);
 			}
 		)*
-		{
-			return parList;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -575,6 +578,9 @@ ArrayList<Symbol> dec_parametros() :
 		conjSinc.add(tSCOL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return parList;
 	}
 }
 
@@ -892,15 +898,15 @@ boolean inst_seleccion() :
 			}
 		)?
 		<tEND>
-		{
-			return hayReturn1 && hayReturn2;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return hayReturn1 && hayReturn2;
 	}
 }
 
@@ -919,15 +925,15 @@ boolean resto_if() :
 				hayReturn |= aux;
 			}
 		)*
-		{
-			return hayReturn;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return hayReturn;
 	}
 }
 
@@ -993,15 +999,15 @@ boolean inst_iteracion() :
 			}
 		)*
 		<tEND>
-		{
-			return hayReturn;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return hayReturn;
 	}
 }
 
@@ -1042,9 +1048,6 @@ ArrayList<Attributes> lista_exps() :
 				}
 			)*
 		)?
-		{
-			return parList;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1052,6 +1055,9 @@ ArrayList<Attributes> lista_exps() :
 		conjSinc.add(tSCOL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return parList;
 	}
 }
 
@@ -1158,9 +1164,6 @@ Attributes expresion_simple() :
 				a.referenciable = false;
 			}
 		)*
-		{
-			return a;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1169,6 +1172,9 @@ Attributes expresion_simple() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return a;
 	}
 }
 
@@ -1190,9 +1196,6 @@ Attributes operador_aditivo() :
 	|	<tOR> {
 			a.type = Symbol.Types.BOOL;
 		}
-		{
-			return a;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1201,6 +1204,9 @@ Attributes operador_aditivo() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return a;
 	}
 }
 
@@ -1260,9 +1266,6 @@ Attributes operador_multiplicativo() :
 	|	<tAND> {
 			a.type = Symbol.Types.BOOL;
 		}
-		{
-			return a;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1271,6 +1274,9 @@ Attributes operador_multiplicativo() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return a;
 	}
 }
 
@@ -1398,9 +1404,6 @@ Attributes factor() :
 			a.type = Symbol.Types.BOOL;
 			a.referenciable = false;
 		}
-		{
-			return a;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1410,6 +1413,9 @@ Attributes factor() :
 		conjSinc.add(tCOMMA);
 		conjSinc.add(tSQCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return a;
 	}
 }
 
