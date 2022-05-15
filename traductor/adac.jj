@@ -826,14 +826,16 @@ void inst_invoc_proc() :
 					es.deteccion("El parámetro " + i + " no es referenciable", funcName);
 				}
 				//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
-				SymbolArray expParArray = (SymbolArray) expPar;
-				SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
+				if (givenPar.type == Symbol.Types.ARRAY){
+					SymbolArray expParArray = (SymbolArray) expPar;
+					SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
 				
-				boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
+					boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
 											expParArray.maxInd == givenParArray.maxInd;
-				if (givenPar.type == Symbol.Types.ARRAY && !sameDimensions) {
-					es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
-					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+					if (!sameDimensions) {
+						es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
+						+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+					}
 				}
 			}
 		}
@@ -890,14 +892,16 @@ Attributes inst_invoc_func() :
 					es.deteccion("El parámetro " + i + " no es referenciable", funcName);
 				}
 				//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
-				SymbolArray expParArray = (SymbolArray) expPar;
-				SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
+				if (givenPar.type == Symbol.Types.ARRAY){
+					SymbolArray expParArray = (SymbolArray) expPar;
+					SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
 				
-				boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
+					boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
 											expParArray.maxInd == givenParArray.maxInd;
-				if (givenPar.type == Symbol.Types.ARRAY && !sameDimensions) {
-					es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
-					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+					if (!sameDimensions) {
+						es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
+						+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+					}
 				}
 			}
 		}
