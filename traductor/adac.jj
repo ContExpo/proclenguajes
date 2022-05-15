@@ -848,12 +848,12 @@ void inst_invoc_proc() :
 		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	} catch (SymbolNotFoundException e) {
-		System.err.printf("Simbolo no encontrado en (%d, %d): %s", token.beginLine, toker.beginColumn, token.image)
+		ErrorSemantico.deteccion(e, token);
 	} catch (InvalidIdentifierException e) {
-		System.err.printf("(%d, %d): %s no es un proceso o funcion", e.line, e.column, e.image)
+		ErrorSemantico.deteccion(e, token);
 	} 
 	catch (SemanticException e) {
-		System.err.printf(e.error);
+		ErrorSemantico.deteccion(e.error, token);
 	} 
 }
 
@@ -1156,7 +1156,7 @@ void operador_relacional() :
 }
 
 //expresion_simple : ( <tADD> | <tSUB> )? termino ( operador_aditivo termino )*
-Symbol.Types expresion_simple() :
+Attributes expresion_simple() :
 {
 	Attributes a = new Attributes();
 	Attributes a2 = null;
@@ -1177,14 +1177,21 @@ Symbol.Types expresion_simple() :
 				if (a.type != Symbol.Types.INT)
 					ErrorSemantico.deteccion("La variable despues de +/- tiene que ser intera", token);
 			}
+			a.referenciable = false;
 		}
-		if (temp!= Symbol.Types.UNDEFINED && temp!=toRet)
-			throw new InvalidTypeExpressionException(token);
 		(
-			if (operador_aditivo() != toRet)
-				throw new InvalidTypeExpressionException(token);
-			if (termino() != toRet)
-				throw new InvalidTypeExpressionException(token);
+			(
+			a2 = operador_aditivo() {
+				if (a2.type != a.type)
+					ErrorSemantico.deteccion("Los tipos del operando y el termino no coinciden", token)
+				a.asignable = false;
+			}
+			a2 = termino() {
+				if (a2.type != a.type)
+					ErrorSemantico.deteccion("Los tipos de los terminos de la suma no coinciden", token)
+				a.asignable = false;
+			}
+		)*
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1200,7 +1207,7 @@ Symbol.Types expresion_simple() :
 //operador_aditivo :	<tADD>
 //					|	<tSUB>
 //					|	<tOR>
-Symbol.Types operador_aditivo() :
+Attributes operador_aditivo() :
 {
 	Attributes a = new Attributes()
 }
@@ -1224,6 +1231,7 @@ Symbol.Types operador_aditivo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	return a;
 }
 
 //termino : factor ( operador_multiplicativo factor )*
@@ -1262,7 +1270,7 @@ Attributes termino() :
 //						|	<tMOD>
 //						|	<tDIV>
 //						|	<tAND>
-Symbol.Types operador_multiplicativo() :
+Attributes operador_multiplicativo() :
 {
 	Attributes a = new Attributes();
 }
