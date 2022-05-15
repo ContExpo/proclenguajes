@@ -796,8 +796,8 @@ void inst_invoc_proc() :
 			func = st.getSymbol(procName.image)
 			if (func.type != Type.PROCEDURE) {
 				throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-				+"Invocaciòn incorrecta:" + procName.image
-				+ " no es un procedimiento");
+				+"Invocación incorrecta a " + procName.image
+				+": No es un procedimiento");
 			}
 		}
 		<tPTOP>
@@ -807,8 +807,8 @@ void inst_invoc_proc() :
 			if (expectedPars.length != parList.length)
 			{
 				throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-				+"Invocaciòn incorrecta a " + procName.image
-				+ ": el numero de parametros no coincide con el esperado");
+				+"Invocación incorrecta a " + procName.image
+				+": El número de parámetros no coincide con el esperado");
 			}
 			for (int i = 0; i< parList.length; i++)
 			{
@@ -816,13 +816,27 @@ void inst_invoc_proc() :
 				Attributes givenPar = parList.get(i);
 				if (givenPar.type != expPar.type) {
 					throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
-					+"Invocaciòn incorrecta a " + procName.image + ", "
-					+ "El parametro " + i + "es " + givenPar.type + ", esperado" + expPar.type);
+					+"Invocación incorrecta a " + procName.image
+					+": El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type);
 				}
 				//Si paso por referencia, tiene que ser asignable
-				if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable)
-					throw new SemanticException("El parametro pasado no es referenciable");
-					//todo arreglar la string de exception
+				if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
+					throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
+					+"Invocación incorrecta a " + procName.image + ", "
+					+": El parámetro " + i + " no es asignable.");
+				}
+				//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
+				SymbolArray expParArray = (SymbolArray) expPar;
+				SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
+				
+				boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
+											expParArray.maxInd == givenParArray.maxInd;
+				if (givenPar.type == Type.ARRAY && !sameDimensions) {
+					throw new SemanticException("("+procName.beginLine+","+procName.beginColumn+") : "
+					+"Invocación incorrecta a " + procName.image
+					+": El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
+					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ").");
+				}
 			}
 		}
 		<tPTCL>
