@@ -1095,7 +1095,9 @@ Attributes expresion() :
 	Attributes attrExpresion1;
 	Symbol.Types tipo_operador = null;
 	Attributes attrExpresion2 = null;
-	Attributes retAttribute;
+	Attributes retAttribute = new Attributes();
+	retAttribute.type = Symbol.Types.BOOL;
+	retAttribute.referenciable = false;
 }
 {
 	try {
@@ -1113,9 +1115,12 @@ Attributes expresion() :
 				attrExpresion1.referenciable = false;
 			}
 			{
-				return attrExpresion1;
+				return retAttribute; //Si hay operador relacional
 			}
 		)?
+		{
+			return attrExpresion1; //Si no hay operador relacional
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		conjSinc.add(tEND);
@@ -1126,12 +1131,12 @@ Attributes expresion() :
 	}
 }
 
-//operador_relacional :	<tEQ>
-//					|	<tLT>
-//					|	<tGT>
-//					|	<tLEQ>
-//					|	<tGEQ>
-//					|	<tDIFF>
+//operador_relacional :	<tEQ> =
+//					|	<tLT> <
+//					|	<tGT> >
+//					|	<tLEQ> <=
+//					|	<tGEQ> >=
+//					|	<tDIFF> <>
 void operador_relacional() :
 {
 	
@@ -1183,12 +1188,12 @@ Attributes expresion_simple() :
 			(
 			a2 = operador_aditivo() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos del operando y el termino no coinciden", token)
+					ErrorSemantico.deteccion("Los tipos del operando y el termino no coinciden", token);
 				a.asignable = false;
 			}
 			a2 = termino() {
 				if (a2.type != a.type)
-					ErrorSemantico.deteccion("Los tipos de los terminos de la suma no coinciden", token)
+					ErrorSemantico.deteccion("Los tipos de los terminos de la suma no coinciden", token);
 				a.asignable = false;
 			}
 		)*
@@ -1374,6 +1379,8 @@ Attributes factor() :
 				ErrorSemantico.deteccion(t.image + "no es identificador de array", t);
 			a.type = (SymbolArray) s.baseType;
 			a.asignable = true;
+			a.name = t.image;
+			a.simbolo = st.getSymbol(t.image);
 		}
 		<tSQOP>
 		temp = expresion() { 
@@ -1390,6 +1397,8 @@ Attributes factor() :
 				ErrorSemantico.deteccion(t.image + "no puede ser utilizado como variable simple", t);
 			a.type = s.type;
 			a.asignable = true;
+			a.name = t.image;
+			a.simbolo = st.getSymbol(t.image);
 		}
 	|	t2 = <tNUM> {
 		a = new Attributes()

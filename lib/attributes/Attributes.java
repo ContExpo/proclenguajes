@@ -23,7 +23,7 @@ public class Attributes implements Cloneable {
     
     public String name;
     public boolean referenciable;
-    public Symbol simbolo;
+    public Symbol symbol;
 
     public Attributes() {
         name = null;
