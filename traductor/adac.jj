@@ -1067,11 +1067,7 @@ Attributes expresion() :
 	try {
 		attrExpresion1 = expresion_simple()
 		(
-			tipo_operador = operador_relacional()
-			{
-				if (tipo_operador != attrExpresion1.type)
-					es.deteccion("Tipos incoerentes entre variable y operador", token);
-			}
+			operador_relacional()
 			attrExpresion2 = expresion_simple()
 			{
 				if (attrExpresion2.type != attrExpresion1.type)
@@ -1079,7 +1075,7 @@ Attributes expresion() :
 				attrExpresion1.referenciable = false;
 			}
 			{
-				return retAttribute; //Si hay operador relacional
+				return retAttribute; //Si hay operador relacional devuelve un Attributes booleano
 			}
 		)?
 		{
