@@ -10,7 +10,7 @@
 options {
   // IGNORE_CASE = false;
   // COMMON_TOKEN_ACTION = false;
-  DEBUG_PARSER = false;
+  DEBUG_PARSER = true;
 }
 
 PARSER_BEGIN(adac)
@@ -1226,7 +1226,7 @@ Attributes termino() :
 			}
 			a2 = factor() {
 				if (a2.type != a.type)
-					es.deteccion("Los tipos de los operandos no coinciden", token);
+					es.deteccion("Los tipos de los operandos no coinciden: " + a.type + " vs " + a2.type, token);
 				a.referenciable = false;
 			}
 		)*
@@ -1364,15 +1364,18 @@ Attributes factor() :
 		<tSQCL>
 	|	t = <tID>
 		{
-			s = st.getSymbol(t.image);
-			if (!st.containsSymbol(t.image))
+			if (!st.containsSymbol(t.image)) {
 				es.deteccion(new SymbolNotFoundException(), t);
-			if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE)
-				es.deteccion(t.image + "no puede ser utilizado como variable simple", t);
-			a.type = s.type;
-			a.referenciable = true;
-			a.name = t.image;
-			a.simbolo = st.getSymbol(t.image);
+			} else {
+				s = st.getSymbol(t.image);
+				if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE) {
+					es.deteccion(t.image + "no puede ser utilizado como variable simple", t);
+				}
+				a.type = s.type;
+				a.referenciable = true;
+				a.name = t.image;
+				a.simbolo = s;
+			}
 		}
 	|	<tNUM>
 		{
