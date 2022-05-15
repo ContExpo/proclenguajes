@@ -1224,8 +1224,8 @@ Attributes expresion_simple() :
 			if (a2!=null){
 				if (a.type != Symbol.Types.INT)
 					es.deteccion("La variable despues de +/- tiene que ser intera", token);
+				a.referenciable = false;
 			}
-			a.referenciable = false;
 		}
 		(
 			a2 = operador_aditivo() {
@@ -1288,8 +1288,8 @@ Attributes operador_aditivo() :
 //termino : factor ( operador_multiplicativo factor )*
 Attributes termino() :
 {
-	Attributes a;
-	Attributes a2;
+	Attributes a = null;
+	Attributes a2 = null;
 }
 {
 	try {
@@ -1305,9 +1305,6 @@ Attributes termino() :
 				a.referenciable = false;
 			}
 		)*
-		{
-			return a;
-		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1316,6 +1313,9 @@ Attributes termino() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return a;
 	}
 }
 
