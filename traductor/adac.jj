@@ -1347,14 +1347,17 @@ Attributes factor() :
 		t = <tID>	//Esto es id de array
 		{
 			s = st.getSymbol(t.image);
-			if (!st.containsSymbol(t.image))
+			if (!st.containsSymbol(t.image)) {
 				es.deteccion(new SymbolNotFoundException(), t);
-			if (s.type != Symbol.Types.ARRAY)
-				es.deteccion(t.image + "no es identificador de array", t);
-			a.type = s.type;
-			a.referenciable = true;
-			a.name = t.image;
-			a.simbolo = st.getSymbol(t.image);
+			} else {
+				if (s.type != Symbol.Types.ARRAY) {
+					es.deteccion(t.image + "no es identificador de array", t);
+				}
+				a.type = s.type;
+				a.referenciable = true;
+				a.name = t.image;
+				a.simbolo = st.getSymbol(t.image);
+			}
 		}
 		<tSQOP>
 		temp = expresion() { 
