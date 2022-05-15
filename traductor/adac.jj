@@ -953,7 +953,7 @@ void asignable() :
 	try {
 	LOOKAHEAD(3)
 		token = <tID> {
-			if (!st.isReservedWord(token.image)) {
+			if (!st.containsSymbol(token.image)) {
 				throw new SymbolNotFoundException();
 			}
 		}
@@ -966,7 +966,7 @@ void asignable() :
 		}
 		<tSQCL>
 	|	token = <tID> {
-			if (!st.isReservedWord(token.image)) {
+			if (!st.containsSymbol(token.image)) {
 				es.deteccion(new SymbolNotFoundException(), token);
 			}
 		}
