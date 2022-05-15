@@ -791,39 +791,39 @@ void inst_escribir_linea() :
 //inst_invoc_proc : <tID> <tPTOP> lista_exps <tPTCL>
 void inst_invoc_proc() :
 {
-	Token procName;
+	Token funcName;
 	Symbol func;
 	ArrayList<Attributes> parList = new ArrayList<Attributes>();
 	ArrayList<Symbol> expectedPars;
 }
 {
 	try {
-		procName = <tID>
+		funcName = <tID>
 		{
-			func = st.getSymbol(procName.image);
+			func = st.getSymbol(funcName.image);
 			if (func.type != Symbol.Types.PROCEDURE) {
-				es.deteccion(new SymbolNotFoundException(), procName);
+				es.deteccion(new SymbolNotFoundException(), funcName);
 			}
 		}
 		<tPTOP>
 		parList = lista_exps()
 		{
-			SymbolProcedure expProc = (SymbolProcedure) func;
-			expectedPars = expProc.parList;
+			SymbolProcedure expFunc = (SymbolProcedure) func;
+			expectedPars = expFunc.parList;
 			if (expectedPars.size() != parList.size())
 			{
-				es.deteccion("El número de parámetros no coincide con el esperado", procName);
+				es.deteccion("El número de parámetros no coincide con el esperado", funcName);
 			}
 			for (int i = 0; i< parList.size(); i++)
 			{
 				Symbol expPar = expectedPars.get(i);
 				Attributes givenPar = parList.get(i);
 				if (givenPar.type != expPar.type) {
-					es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type, procName);
+					es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type, funcName);
 				}
 				//Si paso por referencia, tiene que ser asignable
 				if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
-					es.deteccion("El parámetro " + i + " no es referenciable", procName);
+					es.deteccion("El parámetro " + i + " no es referenciable", funcName);
 				}
 				//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
 				SymbolArray expParArray = (SymbolArray) expPar;
@@ -833,7 +833,7 @@ void inst_invoc_proc() :
 											expParArray.maxInd == givenParArray.maxInd;
 				if (givenPar.type == Symbol.Types.ARRAY && !sameDimensions) {
 					es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
-					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", procName);
+					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
 				}
 			}
 		}
@@ -849,6 +849,73 @@ void inst_invoc_proc() :
 		es.deteccion(e, token);
 	}
 }
+
+//inst_invoc_func : <tID> <tPTOP> lista_exps <tPTCL>
+Symbol.Types inst_invoc_func() :
+{
+	Token funcName;
+	Symbol func;
+	ArrayList<Attributes> parList = new ArrayList<Attributes>();
+	ArrayList<Symbol> expectedPars;
+}
+{
+	try {
+		funcName = <tID>
+		{
+			func = st.getSymbol(funcName.image);
+			if (func.type != Symbol.Types.FUNCTION) {
+				es.deteccion(new SymbolNotFoundException(), funcName);
+			}
+		}
+		<tPTOP>
+		parList = lista_exps()
+		{
+			SymbolFunction expFunc = (SymbolFunction) func;
+			expectedPars = expFunc.parList;
+			if (expectedPars.size() != parList.size())
+			{
+				es.deteccion("El número de parámetros no coincide con el esperado", funcName);
+			}
+			for (int i = 0; i< parList.size(); i++)
+			{
+				Symbol expPar = expectedPars.get(i);
+				Attributes givenPar = parList.get(i);
+				if (givenPar.type != expPar.type) {
+					es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type, funcName);
+				}
+				//Si paso por referencia, tiene que ser asignable
+				if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
+					es.deteccion("El parámetro " + i + " no es referenciable", funcName);
+				}
+				//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
+				SymbolArray expParArray = (SymbolArray) expPar;
+				SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
+				
+				boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
+											expParArray.maxInd == givenParArray.maxInd;
+				if (givenPar.type == Symbol.Types.ARRAY && !sameDimensions) {
+					es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
+					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+				}
+			}
+		}
+		<tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		// añadir tokens al conj de sincronización
+		conjSinc.add(tEND);
+		conjSinc.add(tSCOL);
+		conjSinc.add(tPTCL);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	} catch (SymbolNotFoundException e) {
+		es.deteccion(e, token);
+	}
+	{
+
+		return expFunc.returnType;
+	}
+}
+
 
 //inst_asignacion : asignable <tASIG> expresion
 void inst_asignacion() :
@@ -1336,11 +1403,7 @@ Attributes factor() :
 		}
 		<tPTCL>
 	|	LOOKAHEAD(2) 
-	//TODO: trasformar esto en invoc_func
-		<tID>
-		<tPTOP>
-		lista_exps()
-		<tPTCL>
+		a = inst_invoc_func()
 	|	LOOKAHEAD(2) 
 		t = <tID>	//Esto es id de array
 		{
