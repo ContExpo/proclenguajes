@@ -851,12 +851,14 @@ void inst_invoc_proc() :
 }
 
 //inst_invoc_func : <tID> <tPTOP> lista_exps <tPTCL>
-Symbol.Types inst_invoc_func() :
+Attributes inst_invoc_func() :
 {
+	Attributes toRet = new Attributes();
 	Token funcName;
 	Symbol func;
 	ArrayList<Attributes> parList = new ArrayList<Attributes>();
 	ArrayList<Symbol> expectedPars;
+	SymbolFunction expFunc;
 }
 {
 	try {
@@ -870,7 +872,7 @@ Symbol.Types inst_invoc_func() :
 		<tPTOP>
 		parList = lista_exps()
 		{
-			SymbolFunction expFunc = (SymbolFunction) func;
+			expFunc = (SymbolFunction) func;
 			expectedPars = expFunc.parList;
 			if (expectedPars.size() != parList.size())
 			{
@@ -911,8 +913,10 @@ Symbol.Types inst_invoc_func() :
 		es.deteccion(e, token);
 	}
 	{
-
-		return expFunc.returnType;
+		toRet.type = expFunc.returnType;
+		toRet.referenciable = false;
+		toRet.simbolo = func;
+		return toRet;
 	}
 }
 
