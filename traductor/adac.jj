@@ -855,10 +855,10 @@ Attributes inst_invoc_func() :
 {
 	Attributes toRet = new Attributes();
 	Token funcName;
-	Symbol func;
+	Symbol func = null;
 	ArrayList<Attributes> parList = new ArrayList<Attributes>();
 	ArrayList<Symbol> expectedPars;
-	SymbolFunction expFunc;
+	SymbolFunction expFunc = null;
 }
 {
 	try {
