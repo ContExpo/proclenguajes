@@ -1041,41 +1041,21 @@ void inst_return() :
 }
 
 //lista_exps : ( expresion ( <tCOMMA> expresion )* )?
-ArrayList<Symbol> lista_exps() :
+ArrayList<Attributes> lista_exps() :
 {
-	ArrayList<Symbol> parList;
+	ArrayList<Attributes> parList;
 	Attributes attr;
 }
 {
 	try {
 		(
 			attr = expresion() { 
-				switch (attr.type)  {
-					case INT:
-						parList.add(new SymbolInt(attr.name, attr.parClass));
-						break;
-					case CHAR:
-						parList.add(new SymbolChar(attr.name, attr.parClass));
-						break;
-					case BOOL:
-						parList.add(new SymbolBool(attr.name, attr.parClass));
-						break;
-				}
+				parList.add(attr);
 			}
 			(
 				<tCOMMA>
 				attr = expresion() { 
-					switch (attr.type)  {
-						case INT:
-							parList.add(new SymbolInt(attr.name, attr.parClass));
-							break;
-						case CHAR:
-							parList.add(new SymbolChar(attr.name, attr.parClass));
-							break;
-						case BOOL:
-							parList.add(new SymbolBool(attr.name, attr.parClass));
-							break;
-					}
+				parList.add(attr);
 				}
 			)*
 		)?
