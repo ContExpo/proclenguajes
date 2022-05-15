@@ -801,12 +801,13 @@ void inst_invoc_proc() :
 		<tPTOP>
 		parList = lista_exps()
 		{
-			expectedPars = (SymbolProcedure) func.parList;
-			if (expectedPars.length != parList.length)
+			SymbolProcedure expProc = (SymbolProcedure) func;
+			expectedPars = expProc.parList;
+			if (expectedPars.size() != parList.size())
 			{
 				es.deteccion("El número de parámetros no coincide con el esperado", procName);
 			}
-			for (int i = 0; i< parList.length; i++)
+			for (int i = 0; i< parList.size(); i++)
 			{
 				Symbol expPar = expectedPars.get(i);
 				Attributes givenPar = parList.get(i);
@@ -823,7 +824,7 @@ void inst_invoc_proc() :
 				
 				boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
 											expParArray.maxInd == givenParArray.maxInd;
-				if (givenPar.type == Type.ARRAY && !sameDimensions) {
+				if (givenPar.type == Symbol.Types.ARRAY && !sameDimensions) {
 					es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
 					+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", procName);
 				}
@@ -867,13 +868,13 @@ boolean inst_seleccion() :
 	boolean hayReturn1 = false;
 	boolean hayReturn2 = false;
 	boolean aux = false;
-	Symbol.Types tipo;
+	Attributes attr;
 }
 {
 	try {
 		<tIF>
-		tipo = expresion() {
-			if (tipo != Types.BOOL)
+		attr = expresion() {
+			if (attr.type != Symbol.Types.BOOL)
 				es.deteccion("El tipo de la expresion tiene que ser booleano", token);
 		}
 		<tTHEN>
@@ -939,7 +940,7 @@ boolean resto_if() :
 void asignable() :
 {
 	Token var;
-	Symbol.Types type;
+	Attributes attr;
 }
 {
 	try {
@@ -951,8 +952,8 @@ void asignable() :
 		}
 
 		<tSQOP>
-		type = expresion() {
-			if (type != Symbol.Types.INT) {
+		attr = expresion() {
+			if (attr.type != Symbol.Types.INT) {
 				es.deteccion("Tipo de indice incorrecto, esperaba un entero", procName);
 			}
 		}
@@ -1148,12 +1149,12 @@ Attributes expresion_simple() :
 			a2 = operador_aditivo() {
 				if (a2.type != a.type)
 					es.deteccion("Los tipos del operando y el termino no coinciden", token);
-				a.asignable = false;
+				a.referenciable = false;
 			}
 			a2 = termino() {
 				if (a2.type != a.type)
 					es.deteccion("Los tipos de los terminos de la suma no coinciden", token);
-				a.asignable = false;
+				a.referenciable = false;
 			}
 		)*
 	} catch (ParseException e) {
@@ -1216,7 +1217,7 @@ Attributes termino() :
 			a2 = factor() {
 				if (a2.type != a.type)
 					es.deteccion("Los tipos de los operandos no coinciden", token);
-				a.asignable = false;
+				a.referenciable = false;
 			}
 		)*
 		{
@@ -1336,8 +1337,8 @@ Attributes factor() :
 	|	LOOKAHEAD(2) 
 		t = <tID>	//Esto es id de array
 		{
-			Symbol s = st.getSymbol(s.image);
-			if (!st.containsSymbol(s.image))
+			s = st.getSymbol(t.image);
+			if (!st.containsSymbol(t.image))
 				es.deteccion(new SymbolNotFoundException(), t);
 			if (s.type != Symbol.Types.ARRAY)
 				es.deteccion(t.image + "no es identificador de array", t);
@@ -1354,8 +1355,8 @@ Attributes factor() :
 		<tSQCL>
 	|	t = <tID>
 		{
-			Symbol s = st.getSymbol(s.image);
-			if (!st.containsSymbol(s.image))
+			s = st.getSymbol(t.image);
+			if (!st.containsSymbol(t.image))
 				es.deteccion(new SymbolNotFoundException(), t);
 			if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE)
 				es.deteccion(t.image + "no puede ser utilizado como variable simple", t);
