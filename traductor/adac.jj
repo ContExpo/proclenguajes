@@ -10,7 +10,7 @@
 options {
   // IGNORE_CASE = false;
   // COMMON_TOKEN_ACTION = false;
-  DEBUG_PARSER = true;
+  DEBUG_PARSER = false;
 }
 
 PARSER_BEGIN(adac)
@@ -558,7 +558,6 @@ ArrayList<Symbol> dec_parametros() :
 		par = id_or_array(type)	//El token
 		{
 			par.parClass = parClass;
-			par.type = type;
 			parList.add(par);
 		}
 		(
@@ -566,7 +565,6 @@ ArrayList<Symbol> dec_parametros() :
 			par = id_or_array(type)
 			{
 				par.parClass = parClass;
-				par.type = type;
 				parList.add(par);
 			}
 		)*
@@ -1231,14 +1229,14 @@ Attributes expresion_simple() :
 			a2 = operador_aditivo() {
 				if (a2.type != a.type)
 					es.deteccion("Los tipos del operando y el termino no coinciden", token);
-					if (a.type == Symbol.Types.Array )
+					if (a.type == Symbol.Types.ARRAY )
 						es.deteccion("Utilizado operator aditivo con array", token);
 				a.referenciable = false;
 			}
 			a2 = termino() {
 				if (a2.type != a.type)
 					es.deteccion("Los tipos de los terminos de la suma no coinciden", token);
-				if (a2.type == Symbol.Types.Array )
+				if (a2.type == Symbol.Types.ARRAY )
 						es.deteccion("Suma entre array y otra variable", token);
 				a.referenciable = false;
 			}
@@ -1419,17 +1417,18 @@ Attributes factor() :
 	|	LOOKAHEAD(2) 
 		t = <tID>	//Esto es id de array
 		{
-			s = st.getSymbol(t.image);
 			if (!st.containsSymbol(t.image)) {
 				es.deteccion(new SymbolNotFoundException(), t);
 			} else {
+				s = st.getSymbol(t.image);
 				if (s.type != Symbol.Types.ARRAY) {
-					es.deteccion(t.image + "no es identificador de array", t);
+					es.deteccion(t.image + " no es identificador de array, es de tipo: " + s.type, t);
 				}
-				a.type = s.type;
+				SymbolArray sArr = (SymbolArray) s;
+				a.type = sArr.baseType;
 				a.referenciable = true;
 				a.name = t.image;
-				a.simbolo = st.getSymbol(t.image);
+				a.simbolo = s;
 			}
 		}
 		<tSQOP>
