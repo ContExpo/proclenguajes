@@ -1231,11 +1231,15 @@ Attributes expresion_simple() :
 			a2 = operador_aditivo() {
 				if (a2.type != a.type)
 					es.deteccion("Los tipos del operando y el termino no coinciden", token);
+					if (a.type == Symbol.Types.Array )
+						es.deteccion("Utilizado operator aditivo con array", token);
 				a.referenciable = false;
 			}
 			a2 = termino() {
 				if (a2.type != a.type)
 					es.deteccion("Los tipos de los terminos de la suma no coinciden", token);
+				if (a2.type == Symbol.Types.Array )
+						es.deteccion("Suma entre array y otra variable", token);
 				a.referenciable = false;
 			}
 		)*
@@ -1440,7 +1444,7 @@ Attributes factor() :
 				es.deteccion(new SymbolNotFoundException(), t);
 			} else {
 				s = st.getSymbol(t.image);
-				if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE) {
+				if (s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE) {
 					es.deteccion(t.image + "no puede ser utilizado como variable simple", t);
 				}
 				a.type = s.type;
