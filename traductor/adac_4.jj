@@ -948,12 +948,13 @@ boolean inst_seleccion() :
 {
 	boolean hayReturn1 = false;
 	boolean hayReturn2 = true;
-	boolean aux = false;
+	boolean warning = false;	//Si no hay ningún return no hay que dar warning
+	Token tokenIf;
 	Attributes attr;
 }
 {
 	try {
-		<tIF>
+		tokenIf = <tIF>
 		attr = expresion() {
 			if (attr.type != Symbol.Types.BOOL)
 				es.deteccion("El tipo de la expresion tiene que ser booleano", token);
@@ -963,12 +964,15 @@ boolean inst_seleccion() :
 			aux = instruccion()
 			{
 				hayReturn1 |= aux;
+				//En caso de que solo haya if, y haya un return, dar warning
+				warning = hayReturn1;
 			}
 		)*
 		(
-			aux = resto_if()
+			hayReturn2 = resto_if()
 			{
-				hayReturn2 |= aux;
+				//Hay que dar warning si solo hay return en uno de los dos casos
+				warning = (hayReturn1 && !hayReturn2) || (!hayReturn1 && hayReturn2);
 			}
 		)?
 		<tEND>
@@ -980,6 +984,9 @@ boolean inst_seleccion() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
+		if (warning) {
+			es.warning("Es posible que el return no se ejecute", tokenIf);
+		}
 		return hayReturn1 && hayReturn2;
 	}
 }
