@@ -2,6 +2,7 @@ procedure mergesort is
 
 	integer i;
 	integer a[11];
+	integer b[11];
 
 	procedure merging(val integer low, mid, high) is
 		

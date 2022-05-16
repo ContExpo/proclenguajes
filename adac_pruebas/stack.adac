@@ -1,5 +1,5 @@
 procedure stack is
-	integer stack[100], n, top;
+	integer stacc[100], n, top;
 -------------------------------------------------------------
 	procedure push(val integer value) is
 	begin
@@ -8,7 +8,7 @@ procedure stack is
 			put_line();
 		else
 			top := top + 1;
-			stack[top] := value;
+			stacc[top] := value;
 		end
 	end
 -------------------------------------------------------------
@@ -21,7 +21,7 @@ procedure stack is
 			put_line("The popped element is ",  stack[top]);
 			top := top-1;
 		end
-		return stack[top];
+		return stacc[top];
 	end
 -------------------------------------------------------------
 	procedure display() is 
@@ -33,7 +33,7 @@ procedure stack is
 			put_line("Printing stack :");
 			i := top; 
 			while i >= 0 do
-				put(stack[i], "  ");
+				put(stacc[i], "  ");
 			end
 		else
 			put_line("Stack is empty");
