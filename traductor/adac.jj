@@ -1027,7 +1027,7 @@ void asignable() :
 	LOOKAHEAD(3)
 		token = <tID> {
 			if (!st.containsSymbol(token.image)) {
-				throw new SymbolNotFoundException();
+				es.deteccion(new SymbolNotFoundException(), token);
 			}
 		}
 
