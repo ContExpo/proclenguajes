@@ -1433,8 +1433,8 @@ Attributes factor() :
 		}
 		<tSQOP>
 		temp = expresion() { 
-			if (a.type != Symbol.Types.INT)
-				es.deteccion("El indice de elemento de array tiene que ser intero", t);
+			if (temp.type != Symbol.Types.INT)
+				es.deteccion("El indice de elemento de array tiene que ser entero", t);
 		}
 		<tSQCL>
 	|	t = <tID>
@@ -1444,7 +1444,7 @@ Attributes factor() :
 			} else {
 				s = st.getSymbol(t.image);
 				if (s.type == Symbol.Types.FUNCTION || s.type == Symbol.Types.PROCEDURE) {
-					es.deteccion(t.image + "no puede ser utilizado como variable simple", t);
+					es.deteccion(t.image + " no puede ser utilizado como variable simple", t);
 				}
 				a.type = s.type;
 				a.referenciable = true;
