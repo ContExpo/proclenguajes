@@ -1,0 +1,73 @@
+procedure calculadora is
+
+integer a, b, z;
+
+--Utilizamo este programa para comprobar los varios tipos de pasos de parametros y las llamadas recursivas 
+    procedure sum(val integer x, y; ref integer result ) is 
+        integer z;
+    begin 
+        z := x+y;
+        put_line("El valor ", result, " se ha puesto en Z");
+    end
+
+    procedure sum_ref(ref integer x, y; ref integer result ) is 
+    begin 
+        result := x+y;
+        put_line("El valor ", result, " se ha puesto en Z");
+    end
+
+    procedure sum_arr_val(val integer x[2]; ref integer result ) is 
+    begin 
+        result := x[0]+x[1];
+        put_line("El valor ", result, " se ha puesto en Z");
+    end
+
+    procedure sum_arr_ref(ref integer x[2]; ref integer result ) is 
+    begin 
+        result := x[0]+x[1];
+        put_line("El valor ", result, " se ha puesto en Z");
+    end
+
+    function integer diff(ref integer x, y) is 
+        integer z;
+    begin 
+        z :=x+y;
+        put_line("El resultado es ", z);
+        return z; 
+    end
+
+    procedure swap(ref integer x, y) is
+        
+        integer z;
+
+    begin
+        z :=x;
+        x :=y;
+        y :=z;
+    end
+
+--------------------------------------------------
+    integer c[11];
+    integer d[3];
+    integer e;
+    integer f[2];
+    begin
+        a  := 10;
+        b  := 5;
+        sum(5, 10, c); --no deberia funcionar porque a es un vector
+        sum(5, 10, c[10]); --deberia funcionar
+        sum_ref(5, 10, b) --no deberia funcionar porque 5 y 10 no son referenciables
+        sum(true, 'c', a); --no deberia funcionar porque los tipos son incorrectos
+        sum_arr_val(f, c); --tamaño f correcto, a incorrecto
+        sum_arr_val(d, c); --tamaño d correcto, a incorrecto
+        sum_arr_val(d, c[0]); --tamaño d correcto, a incorrecto
+        sum_arr_ref(f, c); --tamaño f correcto, a incorrecto
+        sum_arr_ref(d, c); --tamaño d correcto, a incorrecto
+        sum_arr_ref(d, c[0]); --tamaño d correcto, a incorrecto
+        put_line("Main-sum: El resultado es ", z);
+        z := diff(a,b);
+        put_line("Main-sub: El resultado es ", z);
+        put_line("A y B antes del swap", a, "  " ,b);
+        swap(a,b);
+        put_line("A y B despues del swap", a, "  " ,b);
+    end
