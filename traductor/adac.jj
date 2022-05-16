@@ -793,46 +793,46 @@ void inst_invoc_proc() :
 	Symbol func;
 	ArrayList<Attributes> parList = new ArrayList<Attributes>();
 	ArrayList<Symbol> expectedPars;
+	SymbolProcedure expFunc = null;
 }
 {
 	try {
 		funcName = <tID>
-		{
-			func = st.getSymbol(funcName.image);
-			if (func.type != Symbol.Types.PROCEDURE) {
-				es.deteccion(new SymbolNotFoundException(), funcName);
-			}
-		}
 		<tPTOP>
 		parList = lista_exps()
 		{
-			SymbolProcedure expFunc = (SymbolProcedure) func;
-			expectedPars = expFunc.parList;
-			if (expectedPars.size() != parList.size())
-			{
-				es.deteccion("El número de parámetros no coincide con el esperado", funcName);
-			}
-			for (int i = 0; i< parList.size(); i++)
-			{
-				Symbol expPar = expectedPars.get(i);
-				Attributes givenPar = parList.get(i);
-				if (givenPar.type != expPar.type) {
-					es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type, funcName);
+			func = st.getSymbol(funcName.image);
+			if (func.type != Symbol.Types.PROCEDURE) {
+				es.deteccion("El símbolo utilizado no es un procedimiento", funcName);
+			} else {
+				expFunc = (SymbolProcedure) func;
+				expectedPars = expFunc.parList;
+				if (expectedPars.size() != parList.size())
+				{
+					es.deteccion("El número de parámetros no coincide con el esperado", funcName);
 				}
-				//Si paso por referencia, tiene que ser asignable
-				if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
-					es.deteccion("El parámetro " + i + " no es referenciable", funcName);
-				}
-				//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
-				if (givenPar.type == Symbol.Types.ARRAY){
-					SymbolArray expParArray = (SymbolArray) expPar;
-					SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
-				
-					boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
-											expParArray.maxInd == givenParArray.maxInd;
-					if (!sameDimensions) {
-						es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
-						+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+				for (int i = 0; i< parList.size(); i++)
+				{
+					Symbol expPar = expectedPars.get(i);
+					Attributes givenPar = parList.get(i);
+					if (givenPar.type != expPar.type) {
+						es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type, funcName);
+					}
+					//Si paso por referencia, tiene que ser asignable
+					if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
+						es.deteccion("El parámetro " + i + " no es referenciable", funcName);
+					}
+					//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
+					if (givenPar.type == Symbol.Types.ARRAY){
+						SymbolArray expParArray = (SymbolArray) expPar;
+						SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
+					
+						boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
+												expParArray.maxInd == givenParArray.maxInd;
+						if (!sameDimensions) {
+							es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
+							+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+						}
 					}
 				}
 			}

@@ -34,7 +34,7 @@ integer a, b, z;
         b  := 5;
         sum(a,b, z);
         put_line("Main-sum: El resultado es ", z);
-        diff(a,b);
+        z := diff(a,b);
         put_line("Main-sub: El resultado es ", z);
         put_line("A y B antes del swap", a, "  " ,b);
         swap(a,b);
