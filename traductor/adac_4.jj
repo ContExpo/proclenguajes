@@ -1,5 +1,5 @@
 //*****************************************************************
-// File:   adac.jj
+// File:   adac_4.jj
 // Author: ...........
 // Date:   ...........
 // Coms:   Un tutorial sobre el análisis léxico con javacc
@@ -13,7 +13,7 @@ options {
   DEBUG_PARSER = false;
 }
 
-PARSER_BEGIN(adac)
+PARSER_BEGIN(adac_4)
 package traductor;
 import java.util.Set;
 import java.util.HashSet;
@@ -23,7 +23,7 @@ import lib.attributes.Attributes;
 import lib.symbolTable.exceptions.*;
 import java.util.ArrayList;
 
-public class adac {
+public class adac_4 {
 
 	static SymbolTable st = new SymbolTable();
 	static ErrorSemantico es;
@@ -39,14 +39,14 @@ public class adac {
 	}
 
     public static void main(String[] args) {
-    	adac parser;
+    	adac_4 parser;
 
     	try {
 	    	if(args.length == 0) { //entrada desde stdin
-				parser = new adac(System.in);
+				parser = new adac_4(System.in);
 			}
 			else { //entrada desde fichero en args[0]
-	            parser = new adac(new java.io.FileInputStream(args[0])); 
+	            parser = new adac_4(new java.io.FileInputStream(args[0])); 
 			}
 			parser.S(); //invoca símbolo inicial de la gramática
 		}
@@ -61,7 +61,7 @@ public class adac {
         } 
     }
 }
-PARSER_END(adac)
+PARSER_END(adac_4)
 //------------ descripción del AL
 
 TOKEN_MGR_DECLS : 
@@ -817,21 +817,22 @@ void inst_invoc_proc() :
 					Attributes givenPar = parList.get(i);
 					if (givenPar.type != expPar.type) {
 						es.deteccion("El parámetro " + i + " es " + givenPar.type + " y se esperaba: " + expPar.type, funcName);
-					}
-					//Si paso por referencia, tiene que ser asignable
-					if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
-						es.deteccion("El parámetro " + i + " no es referenciable", funcName);
-					}
-					//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
-					if (givenPar.type == Symbol.Types.ARRAY){
-						SymbolArray expParArray = (SymbolArray) expPar;
-						SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
-					
-						boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
-												expParArray.maxInd == givenParArray.maxInd;
-						if (!sameDimensions) {
-							es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
-							+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+					} else {
+						//Si paso por referencia, tiene que ser asignable
+						if (expPar.parClass == Symbol.ParameterClass.REF && !givenPar.referenciable) {
+							es.deteccion("El parámetro " + i + " no es referenciable", funcName);
+						}
+						//Comprobar en caso de ser un vector, que tiene las mismas dimensiones.
+						if (givenPar.type == Symbol.Types.ARRAY){
+							SymbolArray expParArray = (SymbolArray) expPar;
+							SymbolArray givenParArray = (SymbolArray) givenPar.simbolo;
+						
+							boolean sameDimensions =	expParArray.minInd == givenParArray.minInd &&
+													expParArray.maxInd == givenParArray.maxInd;
+							if (!sameDimensions) {
+								es.deteccion("El parámetro " + i + " tiene rango: ("+ givenParArray.minInd + "," + givenParArray.maxInd + ")"
+								+" y se esperaba: ("+ expParArray.minInd + "," + expParArray.maxInd + ")", funcName);
+							}
 						}
 					}
 				}
