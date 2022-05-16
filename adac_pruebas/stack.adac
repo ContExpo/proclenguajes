@@ -18,7 +18,7 @@ procedure stack is
 			put_line("No hay nada en el stack");
 			put_line();
 		else 
-			put_line("The popped element is ",  stack[top]);
+			put_line("The popped element is ",  stacc[top]);
 			top := top-1;
 		end
 		return stacc[top];
