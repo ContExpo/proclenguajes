@@ -95,7 +95,7 @@ begin
 	--Febrero
 	if numMes = 1 then
 		--Si el año es bisiesto
-		if anyo mod 400 = 0 or ( (anyo mod 4 = 0) and (anyo mod 100 <> 0) ) then
+		if (anyo mod 400 = 0) or ( (anyo mod 4 = 0) and (anyo mod 100 <> 0) ) then
 			return 29;
 		else
 			return 28;
@@ -182,5 +182,5 @@ end
 --------------------------------------------------------------------
 begin
 	get(anyo);
-	imprimirCalendario(n);
+	imprimirCalendario(anyo);
 end

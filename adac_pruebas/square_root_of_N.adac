@@ -13,7 +13,7 @@ begin
 	inicio := 0;
 	final := n;
 	
-	while inicio <= final and not foundRoot do
+	while (inicio <= final) and (not encontrado) do
 	
 		--Encontrar la mitad
 		mitad := (inicio + final) div 2;
@@ -21,7 +21,7 @@ begin
 		--Si n tiene raíz entera, parar de buscar
 		if mitad*mitad = n then
 			sol := mitad;
-			foundRoot := true;
+			encontrado := true;
 		else
 			--Incrementar el inicio si la parte entera se encuentra
 			--a la derecha de la mitad.
