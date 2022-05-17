@@ -22,11 +22,13 @@ import lib.errores.*;
 import lib.attributes.Attributes;
 import lib.symbolTable.exceptions.*;
 import java.util.ArrayList;
+import lib.tools.codeGeneration.*;
 
 public class adac_4 {
 
 	static SymbolTable st = new SymbolTable();
 	static ErrorSemantico es;
+	static CGUtils cgu;
 	private static void initSymbolTable() {
 		boolean b;
 		String[] palsRes = {
@@ -39,14 +41,13 @@ public class adac_4 {
 	}
 
     public static void main(String[] args) {
-    	adac_4 parser;
-
-    	try {
+		adac_4 parser;
+		try {
 	    	if(args.length == 0) { //entrada desde stdin
 				parser = new adac_4(System.in);
 			}
 			else { //entrada desde fichero en args[0]
-	            parser = new adac_4(new java.io.FileInputStream(args[0])); 
+				parser = new adac_4(new java.io.FileInputStream(args[0])); 
 			}
 			parser.S(); //invoca símbolo inicial de la gramática
 		}
@@ -54,10 +55,10 @@ public class adac_4 {
 			System.err.println ("Fichero " + args[0] + " no encontrado.");
 		}
 		catch (TokenMgrError e) {
-        	System.err.println("LEX_ERROR: " + e.getMessage());
+			System.err.println("LEX_ERROR: " + e.getMessage());
         }
         catch (ParseException e) {
-        	System.err.println("SINT_ERROR: " + e.getMessage());
+			System.err.println("SINT_ERROR: " + e.getMessage());
         } 
     }
 }
@@ -74,7 +75,7 @@ TOKEN_MGR_DECLS :
 
 TOKEN :
 {
- 	< #LETTER: (["a"-"z","A"-"Z"]) >
+	< #LETTER: (["a"-"z","A"-"Z"]) >
 |	< #DIGIT: ["0"-"9"] >
 |	< #NUM : (<DIGIT>)+ >
 |	< #WORD: ["a"-"z","A"-"Z"](~[" ","\t","\n","\r","0"-"9"])*>
@@ -155,7 +156,10 @@ SPECIAL_TOKEN:
 //------------ Símbolo inicial de la gramática. Para análisis léxico no hace falta más
 void S () : 
 {
+	CodeBlock cb = new CodeBlock();
 	Token t1 = new Token();
+	String mainLabel;
+	Attributes dec_vars, dec_procs_funcs, main;
 }
 {
 	try {
@@ -163,12 +167,27 @@ void S () :
 		t1 = <tID>
 		<tIS>
 		{
+			cgu.memorySpaces[0] = 3;
 			SymbolProcedure s = new SymbolProcedure(t1.image, new ArrayList<Symbol>());
 			st.insertSymbol(s);
+			cb.addComment("Programa " + t1.image);
+			mainLabel = cgu.newLabel();
+			cb.addInst(PCodeInstruction.OpCode.ENP, mainLabel);
 		}
-		declaracion_variables()
-		declaracion_procs_funcs()
-		bloque_sentencias(t1.image, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED)
+		dec_vars = declaracion_variables()
+		{
+			cb.addBlock(dec_vars.block);
+		}
+		dec_procs_funcs = declaracion_procs_funcs()
+		{
+			cb.addBlock(dec_procs_funcs.block);
+			cb.addLabel(mainLabel);
+		}
+		main = bloque_sentencias(t1.image, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED)
+		{
+			main.block.encloseXMLTags("procedimiento_principal");
+			cb.addBlock(main.block);
+		}
 		<EOF>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -178,18 +197,27 @@ void S () :
 	} catch(AlreadyDefinedSymbolException e) {
 		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
+	{
+		cb.addInst(PCodeInstruction.OpCode.LVP, mainLabel);
+		cb.encloseXMLTags(t1.image);
+		cb.toString();
+	}
 }
 
 //declaracion_variables : ( declaracion <tSCOL> )*
-void declaracion_variables() :
+Attributes declaracion_variables() :
 {
-	
+	Attributes a = new Attributes();
+	Attributes temp;
 }
 {
 	try {
 		(
-			declaracion()
+			temp = declaracion()
 			<tSCOL>
+			{
+				a.block.addBlock(temp.block);
+			}
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -197,22 +225,31 @@ void declaracion_variables() :
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		a.block.encloseXMLTags("declaracion_variables");
+		return a;
+	}	
 }
 
 //declaracion : tipo_variable lista_vars
-void declaracion() :
+Attributes declaracion() :
 {
 	Symbol.Types type;
+	ArrayList<Attributes> vars, temp;
+	Attributes toRet;
 }
 {
 	try {
 		type = tipo_variable()
-		lista_vars(type)
+		toRet = lista_vars(type)
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return toRet;
 	}
 }
 
@@ -244,16 +281,23 @@ Symbol.Types tipo_variable() :
 }
 
 //lista_vars : variable ( <tCOMMA> variable )*
-void lista_vars(Symbol.Types type) :
+Attributes lista_vars(Symbol.Types type) :
 {
-	
+	Attributes a = new Attributes();
+	Attributes temp;
 }
 {
 	try {
-		variable(type)
+		temp = variable(type)
+		{
+			a.block.addBlock(temp.block);
+		}
 		(
 			<tCOMMA>
-			variable(type)
+			temp = variable(type)
+			{
+				a.block.addBlock(temp.block);
+			}
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -267,10 +311,12 @@ void lista_vars(Symbol.Types type) :
 //variable : LOOKAHEAD(2)
 //				<tID> <tACOR> <tCONST_INT> <tCCOR>
 //			|	<tID>
-void variable(Symbol.Types type) :
+Attributes variable(Symbol.Types type) :
 {
 	Token t1;
 	Token t2;
+	Attributes a = new Attributes();
+
 }
 {
 	try {
@@ -282,7 +328,10 @@ void variable(Symbol.Types type) :
 		{
 			try {
 				SymbolArray sArr = new SymbolArray(t1.image, Integer.parseInt(t2.image), type);
+				sArr.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(sArr);
+				a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
+					sArr.name, sArr.type + "[" + sArr.baseType + "]", sArr.nivel, sArr.dir));
 			} catch(AlreadyDefinedSymbolException e) {
 				System.err.println("Error: " + t1.image + " ya está declarado");
 			}
@@ -293,17 +342,26 @@ void variable(Symbol.Types type) :
 				switch (type) {
 					case INT : 
 						SymbolInt sInt = new SymbolInt(t1.image);
+						sInt.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sInt);
+						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
+							sInt.name, sInt.type, sInt.nivel, sInt.dir));
 						break;
 						
 					case CHAR : 
 						SymbolChar sChar = new SymbolChar(t1.image);
+						sChar.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sChar);
+						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
+							sChar.name, sChar.type, sChar.nivel, sChar.dir));
 						break;
 						
 					case BOOL :
 						SymbolBool sBool = new SymbolBool(t1.image);
+						sBool.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sBool);
+						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
+							sBool.name, sBool.type, sBool.nivel, sBool.dir));
 						break;
 					default: System.err.println("Error: " + type + " no es un tipo válido");
 				}
@@ -318,10 +376,13 @@ void variable(Symbol.Types type) :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		return a;
+	}
 }
 
 //declaracion_procs_funcs : ( declaracion_proc_func )*
-void declaracion_procs_funcs() :
+Attributes declaracion_procs_funcs() :
 {
 	
 }
@@ -341,9 +402,12 @@ void declaracion_procs_funcs() :
 //						|	declaracion_funcion
 void declaracion_proc_func() :
 {
-	
+
 }
 {
+	{
+		cgu.memorySpaces[st.level] = 3;
+	}
 	try {
 		declaracion_proceso()
 	|	declaracion_funcion()
@@ -395,6 +459,7 @@ String cabecera_proceso() :
 			st.insertSymbol(s);
 			st.insertBlock();
 			for (Symbol par : parList) {
+				par.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(par);
 			}
 		}
@@ -453,6 +518,7 @@ Attributes cabecera_funcion() :
 			st.insertSymbol(s);
 			st.insertBlock();
 			for (Symbol par : parList) {
+				par.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(par);
 			}
 			nomYTipo.type = type;
@@ -472,7 +538,7 @@ Attributes cabecera_funcion() :
 }
 
 //bloque_sentencias : <tBEGIN> ( instruccion )* <tEND>
-void bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types retType) :
+Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types retType) :
 {
 	boolean hayReturn = false;
 	boolean aux = false;
@@ -496,7 +562,7 @@ void bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types retTy
 			if (proc_or_func == Symbol.Types.FUNCTION && !hayReturn) {
 				System.err.println("Error: No hay return en la función");
 			}
-			System.err.println(st.toString());
+			//System.err.println(st.toString());
 			st.removeBlock();
 		}
 	} catch (ParseException e) {
@@ -768,13 +834,13 @@ void inst_escribir() :
 //inst_escribir_linea : <tPUTL> <tPTOP> lista_exps <tPTCL>
 void inst_escribir_linea() :
 {
-	
+	ArrayList<Attributes> pars;
 }
 {
 	try {
 		<tPUTL>
 		<tPTOP>
-		lista_exps()
+			pars = lista_exps()
 		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -783,6 +849,9 @@ void inst_escribir_linea() :
 		conjSinc.add(tSCOL);
 		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+
 	}
 }
 
@@ -951,6 +1020,7 @@ boolean inst_seleccion() :
 	boolean warning = false;	//Si no hay ningún return no hay que dar warning
 	Token tokenIf;
 	Attributes attr;
+	boolean aux;
 }
 {
 	try {
@@ -1511,7 +1581,7 @@ Set<Integer> infoParseException(ParseException e) {
     System.err.println("Se esperaba uno de los siguientes tokens:");
     for(int i = 0; i<e.expectedTokenSequences.length; i++) {
         esperados.add(e.expectedTokenSequences[i][0]);
-        System.err.println("\t" + adacConstants.tokenImage[e.expectedTokenSequences[i][0]]);
+        System.err.println("\t" + adac_4Constants.tokenImage[e.expectedTokenSequences[i][0]]);
     }
     return esperados;
 }
@@ -1525,7 +1595,7 @@ void recuperacionPanico(Token tInesperado, Set <Integer> conjSinc) {
     Token t = getNextToken();
     while (!conjSinc.contains(t. kind) && t.kind != EOF){ 
         System.err.println("Descartando token ("
-        + adacConstants.tokenImage[t.kind]
+        + adac_4Constants.tokenImage[t.kind]
         + "," + t.image + ")"); t = getNextToken();
     }
 }

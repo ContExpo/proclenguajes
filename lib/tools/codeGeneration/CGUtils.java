@@ -20,6 +20,7 @@ public class CGUtils {
 	}
 	
 	// campo requeridos para la generación de código
+	///Guarda la primera direcciòn libre para cada bloque
 	public static int memorySpaces[] = new int[100];
 	
 }

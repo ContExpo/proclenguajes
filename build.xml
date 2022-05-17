@@ -51,7 +51,7 @@
 	<target name="jcc" depends="init"> 
 	  	<!-- Generar el código fuente del traductor desde ${src_compiler} hasta ${jcc_files} -->
 	  	<javacc target="${jcc_src}/${project}.jj"
-	      	javacchome="/mnt/c/Users/GABRIEL/javacc/target"
+	      	javacchome="/home/conte/Desktop/target/"
 	      	outputdirectory="${jcc_files}"
 	      	static="true"
 	  	/>

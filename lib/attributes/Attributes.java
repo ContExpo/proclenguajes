@@ -11,6 +11,7 @@ package lib.attributes;
 import lib.symbolTable.*;
 import java.util.ArrayList;
 import java.util.AbstractMap.SimpleEntry;
+import lib.tools.codeGeneration.*;
 
 public class Attributes implements Cloneable {
     public Symbol.Types type;
@@ -25,8 +26,11 @@ public class Attributes implements Cloneable {
     public boolean referenciable;
     public Symbol simbolo;
 
+    public CodeBlock block;
+
     public Attributes() {
         name = null;
+        block = new CodeBlock();
     }
 
     public Attributes clone() {
