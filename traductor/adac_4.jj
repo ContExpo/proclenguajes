@@ -158,7 +158,7 @@ void S () :
 {
 	CodeBlock cb = new CodeBlock();
 	Token t1 = new Token();
-	String mainLabel;
+	String mainLabel = "";
 	Attributes dec_vars, dec_procs_funcs, main;
 }
 {
@@ -236,7 +236,7 @@ Attributes declaracion() :
 {
 	Symbol.Types type;
 	ArrayList<Attributes> vars, temp;
-	Attributes toRet;
+	Attributes toRet = null;
 }
 {
 	try {
@@ -305,6 +305,9 @@ Attributes lista_vars(Symbol.Types type) :
 		conjSinc.add(tSCOL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return a;
 	}
 }
 
@@ -395,6 +398,9 @@ Attributes declaracion_procs_funcs() :
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return new Attributes();
 	}
 }
 
@@ -570,6 +576,9 @@ Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return new Attributes();
 	}
 }
 
@@ -1020,7 +1029,7 @@ boolean inst_seleccion() :
 	boolean warning = false;	//Si no hay ningún return no hay que dar warning
 	Token tokenIf;
 	Attributes attr;
-	boolean aux;
+	boolean aux = false;
 }
 {
 	try {
@@ -1046,18 +1055,18 @@ boolean inst_seleccion() :
 			}
 		)?
 		<tEND>
+		{
+			if (warning) {
+				es.warning("Es posible que el return no se ejecute", tokenIf);
+			}
+			return hayReturn1 && hayReturn2;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
-	}
-	{
-		if (warning) {
-			es.warning("Es posible que el return no se ejecute", tokenIf);
-		}
-		return hayReturn1 && hayReturn2;
 	}
 }
 
