@@ -366,7 +366,7 @@ Attributes variable(Symbol.Types type) :
 						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
 							sBool.name, sBool.type, sBool.nivel, sBool.dir));
 						break;
-					default: System.err.println("Error: " + type + " no es un tipo válido");
+					default: es.deteccion("Error: " + type + " no es un tipo válido", token);
 				}
 			} catch(AlreadyDefinedSymbolException e) {
 				System.err.println("Error: " + t1.image + " ya está declarado");
@@ -814,7 +814,7 @@ Attributes inst_leer() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		toRet.encloseXMLTags("get")
+		toRet.block.encloseXMLTags("get");
 		return toRet;
 	}
 }
@@ -1140,37 +1140,78 @@ Attributes inst_seleccion() :
 	boolean hayReturn2 = true;
 	boolean warning = false;	//Si no hay ningún return no hay que dar warning
 	Token tokenIf;
-	Attributes attr;
+	Attributes attrIf = null;
+	Attributes attrThen = null;
+	Attributes attrElse = null;
 	Attributes toRet = new Attributes();
+	String labelFinIf = "";
+	String labelFinElse = "";
 	boolean aux = false;
 }
 {
 	try {
 		tokenIf = <tIF>
-		attr = expresion() {
-			if (attr.type != Symbol.Types.BOOL)
+		attrIf = expresion() {
+			if (attrIf.type != Symbol.Types.BOOL)
 				es.deteccion("El tipo de la expresion tiene que ser booleano", token);
+			
+			attrIf.block.encloseXMLTags("condicion");
+			toRet.block.addBlock(attrIf.block);
+			labelFinIf = cgu.newLabel();
+			//De momento no sabemos si hay else,
+			//así que en caso de no haberlo se salta al fin del if
+			labelFinElse = labelFinIf;
+			toRet.block.addInst(PCodeInstruction.OpCode.JMF, labelFinIf);
 		}
 		<tTHEN>
 		(
-			attr = instruccion()
+			attrThen = instruccion()
 			{
-				aux = attr.hayReturn;
+				aux = attrThen.hayReturn;
 				hayReturn1 |= aux;
 				//En caso de que solo haya if, y haya un return, dar warning
 				warning = hayReturn1;
 			}
 		)*
 		(
-			attr = resto_if()
+			attrElse = resto_if()
 			{
-				hayReturn2 = attr.hayReturn;
+				//Generar la etiqueta de fin de else porque hay else
+				labelFinElse = cgu.newLabel();
+				
+				//Incluir el final del bloque then tras obtener la etiqueta de fin de else
+				attrThen.block.addInst(PCodeInstruction.OpCode.JMP, labelFinElse);
+				attrThen.block.encloseXMLTags("then");
+				toRet.block.addBlock(attrThen.block);
+				
+				//Hay que poner la etiqueta de fin de if lo primero
+				CodeBlock swapBlock = new CodeBlock();
+				swapBlock.addLabel(labelFinIf);
+				swapBlock.addBlock(attrElse.block);
+				attrElse.block = swapBlock;
+				attrElse.block.encloseXMLTags("else");
+				toRet.block.addBlock(attrElse.block);
+				
+				hayReturn2 = attrElse.hayReturn;
 				//Hay que dar warning si solo hay return en uno de los dos casos
 				warning = (hayReturn1 && !hayReturn2) || (!hayReturn1 && hayReturn2);
 			}
 		)?
 		<tEND>
 		{
+			if (attrElse != null) {
+				//Añadir etiqueta de fin de else
+				toRet.block.addLabel(labelFinElse);
+			} else {
+				//Incluir el final del bloque then sin añadir el salto a la etiqueta de fin de else
+				attrThen.block.encloseXMLTags("then");
+				toRet.block.addBlock(attrThen.block);
+				//Incluir el labelFinElse porque no se ha añadido al principio del else
+				toRet.block.addLabel(labelFinIf);
+			}
+			
+			toRet.block.encloseXMLTags("if-then");
+			
 			if (warning) {
 				es.warning("Es posible que el return no se ejecute", tokenIf);
 			}
@@ -1200,6 +1241,7 @@ Attributes resto_if() :
 		(
 			temp = instruccion()
 			{
+				toRet.block = temp.block;
 				aux = temp.hayReturn;
 				hayReturn |= aux;
 			}
@@ -1380,8 +1422,7 @@ Attributes expresion() :
 				if (attrExpresion2.type != attrExpresion1.type)
 					es.deteccion("Tipos incoerentes entre variables", token);
 				attrExpresion1.referenciable = false;
-			}
-			{
+				
 				return retAttribute; //Si hay operador relacional devuelve un Attributes booleano
 			}
 		)?
