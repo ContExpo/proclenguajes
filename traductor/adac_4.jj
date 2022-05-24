@@ -198,9 +198,9 @@ void S () :
 		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
 	{
-		cb.addInst(PCodeInstruction.OpCode.LVP, mainLabel);
+		cb.addInst(PCodeInstruction.OpCode.LVP);
 		cb.encloseXMLTags(t1.image);
-		cb.toString();
+		System.out.println(cb.toString());
 	}
 }
 
@@ -548,6 +548,8 @@ Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types
 {
 	boolean hayReturn = false;
 	boolean aux = false;
+	Attributes temp = null;
+	Attributes toRet = new Attributes();
 }
 {
 	try {
@@ -558,8 +560,10 @@ Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types
 			System.err.println("***********************");
 		}
 		(
-			aux = instruccion()
+			temp = instruccion()
 			{
+				toRet.block.addBlock(temp.block);
+				aux = temp.hayReturn;
 				hayReturn |= aux;
 			}
 		)*
@@ -578,7 +582,7 @@ Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		return new Attributes();
+		return toRet;
 	}
 }
 
@@ -740,29 +744,29 @@ Symbol.ParameterClass clase_parametros() :
 //				|	inst_seleccion
 //				|	inst_iteracion
 //				|	inst_return <tSCOL>
-boolean instruccion() :
+Attributes instruccion() :
 {
-	boolean hayReturn = false;
+	Attributes ret = null;
 }
 {
 	try {
-		inst_leer()
-		<tSCOL> { return false; }
-	|	inst_saltar_linea()
-		<tSCOL> { return false; }
-	|	inst_escribir()
-		<tSCOL> { return false; }
-	|	inst_escribir_linea() 
-		<tSCOL> { return false; }
+		ret = inst_leer()
+		<tSCOL>
+	|	ret = inst_saltar_linea()
+		<tSCOL>
+	|	ret = inst_escribir()
+		<tSCOL>
+	|	ret = inst_escribir_linea() 
+		<tSCOL>
 	|LOOKAHEAD(2)
-		inst_invoc_proc()
-		<tSCOL> { return false; }
-	|	inst_asignacion()
-		<tSCOL> { return false; }
-	|	hayReturn = inst_seleccion() { return hayReturn; }
-	|	hayReturn = inst_iteracion() { return hayReturn; }
-	|	inst_return()
-		<tSCOL> { return true; }
+		ret = inst_invoc_proc()
+		<tSCOL>
+	|	ret = inst_asignacion()
+		<tSCOL>
+	|	ret = inst_seleccion()
+	|	ret = inst_iteracion()
+	|	ret = inst_return()
+		<tSCOL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -770,21 +774,34 @@ boolean instruccion() :
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		return ret;
+	}
 }
 
 //inst_leer : <tGET> <tPTOP> asignable ( <tCOMMA> asignable )* <tPTCL>
-void inst_leer() :
+Attributes inst_leer() :
 {
+	Attributes toRet = new Attributes();
 	Token token;
+	Attributes temp = null;
 }
 {
 	try {
 		<tGET>
 		<tPTOP>
-		asignable()
+		temp = asignable()
+		{
+			toRet.block.addBlock(temp.block);
+			toRet.block.addInst(PCodeInstruction.OpCode.RD, 1);
+		}
 		(
 			<tCOMMA>
-			asignable()
+			temp = asignable() 
+			{
+				toRet.block.addBlock(temp.block);
+				toRet.block.addInst(PCodeInstruction.OpCode.RD, 1);
+			}
 		)*
 		<tPTCL>
 	} catch (ParseException e) {
@@ -796,11 +813,15 @@ void inst_leer() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		toRet.encloseXMLTags("get")
+		return toRet;
+	}
 }
 
 //Aqui no hay nada que comprobar
 //inst_saltar_linea : <tSKIPL> <tPTOP> <tPTCL>
-void inst_saltar_linea() :
+Attributes inst_saltar_linea() :
 {
 	
 }
@@ -817,39 +838,57 @@ void inst_saltar_linea() :
 		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		return null;
+	}
 }
 
 //inst_escribir : <tPUT> <tPTOP> lista_exps <tPTCL>
-void inst_escribir() :
+Attributes inst_escribir() :
 {
-	
+	ArrayList<Attributes> exps = null;
+	Attributes toRet = new Attributes();
+	Attributes temp = null;
 }
 {
 	try {
 		<tPUT>
 		<tPTOP>
-		lista_exps()
-		<tPTCL>
-	} catch (ParseException e) {
-		Set<Integer> conjSinc = infoParseException(e);
-		//añadir tokens al conj de sincronización
-		conjSinc.add(tEND);
-		conjSinc.add(tSCOL);
-		conjSinc.add(tPTCL);
-		recuperacionPanico(e.currentToken.next, conjSinc);
-	}
-}
-
-//inst_escribir_linea : <tPUTL> <tPTOP> lista_exps <tPTCL>
-void inst_escribir_linea() :
-{
-	ArrayList<Attributes> pars;
-}
-{
-	try {
-		<tPUTL>
-		<tPTOP>
-			pars = lista_exps()
+		exps = lista_exps()
+		{
+			for (int i = exps.size()-1; i>=0; i--) {
+				temp = exps.get(i);
+				//Si es invocacion a funcion el tipo FUNCTION se cambia por el tipo de retorno
+				if (temp.type == Symbol.Types.FUNCTION) {
+					temp.type = ((SymbolFunction)temp.simbolo).returnType;
+				}
+				switch (temp.type) {
+					case INT:
+						toRet.block.addComment("Escribiendo un tipo " + temp.type);
+						toRet.block.addBlock(temp.block);
+						toRet.block.addInst(PCodeInstruction.OpCode.WRT, 1);
+						break;
+					case CHAR:
+						toRet.block.addComment("Escribiendo un tipo " + temp.type + " val: "
+							+ temp.valChar);
+						toRet.block.addBlock(temp.block);
+						toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+						break;
+					case STRING:
+						toRet.block.addComment("Escribiendo un tipo " + temp.type +
+							" val: " + temp.valString + " length: " + temp.valString.length());
+						toRet.block.addBlock(temp.block);
+						for (int j = temp.valString.length(); j>=0 ; j--) {
+							toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+						}
+						break;
+					default:
+						System.err.println("No se puede escribir el tipo" + exps.get(i).type);
+						break;
+				}
+				
+			}
+		}
 		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -860,12 +899,79 @@ void inst_escribir_linea() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
+		toRet.block.encloseXMLTags("put");
+		return toRet;
+	}
+}
 
+//inst_escribir_linea : <tPUTL> <tPTOP> lista_exps <tPTCL>
+Attributes inst_escribir_linea() :
+{
+	ArrayList<Attributes> exps;
+	Attributes toRet = new Attributes();
+	Attributes temp = null;
+}
+{
+	try {
+		<tPUTL>
+		<tPTOP>
+			exps = lista_exps()
+			{
+				for (int i = exps.size()-1; i>=0; i--) {
+					temp = exps.get(i);
+					//Si es invocacion a funcion el tipo FUNCTION se cambia por el tipo de retorno
+					if (temp.type == Symbol.Types.FUNCTION) {
+						temp.type = ((SymbolFunction)temp.simbolo).returnType;
+					}
+					switch (temp.type) {
+						case INT:
+							toRet.block.addComment("Escribiendo un tipo " + temp.type);
+							toRet.block.addBlock(temp.block);
+							toRet.block.addInst(PCodeInstruction.OpCode.WRT, 1);
+							break;
+						case CHAR:
+							toRet.block.addComment("Escribiendo un tipo " + temp.type + " val: "
+								+ temp.valChar);
+							toRet.block.addBlock(temp.block);
+							toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+							break;
+						case STRING:
+							toRet.block.addComment("Escribiendo un tipo " + temp.type +
+								" val: " + temp.valString + " length: " + temp.valString.length());
+							toRet.block.addBlock(temp.block);
+							for (int j = temp.valString.length(); j>=0 ; j--) {
+								toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+							}
+							break;
+						default:
+							System.err.println("No se puede escribir el tipo" + exps.get(i).type);
+							break;
+					}
+				}
+				//Despues de todo escribimos CR/LF
+				toRet.block.addComment("CR/LF");
+				toRet.block.addInst(PCodeInstruction.OpCode.STC, 13);
+				toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+				toRet.block.addInst(PCodeInstruction.OpCode.STC, 10);
+				toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+			}
+		<tPTCL>
+	} catch (ParseException e) {
+		Set<Integer> conjSinc = infoParseException(e);
+		//añadir tokens al conj de sincronización
+		conjSinc.add(tEND);
+		conjSinc.add(tSCOL);
+		conjSinc.add(tPTCL);
+		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		toRet.block.encloseXMLTags("put_line");
+		return toRet;
 	}
 }
 
 //inst_invoc_proc : <tID> <tPTOP> lista_exps <tPTCL>
-void inst_invoc_proc() :
+Attributes inst_invoc_proc() :
 {
 	Token funcName;
 	Symbol func;
@@ -926,6 +1032,9 @@ void inst_invoc_proc() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	} catch (SymbolNotFoundException e) {
 		es.deteccion(e, token);
+	}
+	{
+		return null;
 	}
 }
 
@@ -1003,7 +1112,7 @@ Attributes inst_invoc_func() :
 
 
 //inst_asignacion : asignable <tASIG> expresion
-void inst_asignacion() :
+Attributes inst_asignacion() :
 {
 	
 }
@@ -1019,16 +1128,20 @@ void inst_asignacion() :
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		return null;
+	}
 }
 
 //inst_seleccion :	<tIF> expresion <tTHEN> ( instruccion )* resto_if <tEND>
-boolean inst_seleccion() :
+Attributes inst_seleccion() :
 {
 	boolean hayReturn1 = false;
 	boolean hayReturn2 = true;
 	boolean warning = false;	//Si no hay ningún return no hay que dar warning
 	Token tokenIf;
 	Attributes attr;
+	Attributes toRet = new Attributes();
 	boolean aux = false;
 }
 {
@@ -1040,16 +1153,18 @@ boolean inst_seleccion() :
 		}
 		<tTHEN>
 		(
-			aux = instruccion()
+			attr = instruccion()
 			{
+				aux = attr.hayReturn;
 				hayReturn1 |= aux;
 				//En caso de que solo haya if, y haya un return, dar warning
 				warning = hayReturn1;
 			}
 		)*
 		(
-			hayReturn2 = resto_if()
+			attr = resto_if()
 			{
+				hayReturn2 = attr.hayReturn;
 				//Hay que dar warning si solo hay return en uno de los dos casos
 				warning = (hayReturn1 && !hayReturn2) || (!hayReturn1 && hayReturn2);
 			}
@@ -1059,7 +1174,8 @@ boolean inst_seleccion() :
 			if (warning) {
 				es.warning("Es posible que el return no se ejecute", tokenIf);
 			}
-			return hayReturn1 && hayReturn2;
+			toRet.hayReturn =  hayReturn1 && hayReturn2;
+			return toRet;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1071,17 +1187,20 @@ boolean inst_seleccion() :
 }
 
 //resto_if : <tELSE> ( instruccion )*
-boolean resto_if() :
+Attributes resto_if() :
 {
 	boolean hayReturn = false;
 	boolean aux = false;
+	Attributes toRet = new Attributes();
+	Attributes temp = null;
 }
 {
 	try {
 		<tELSE>
 		(
-			aux = instruccion()
+			temp = instruccion()
 			{
+				aux = temp.hayReturn;
 				hayReturn |= aux;
 			}
 		)*
@@ -1093,7 +1212,8 @@ boolean resto_if() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		return hayReturn;
+		toRet.hayReturn = hayReturn;
+		return toRet;
 	}
 }
 
@@ -1104,10 +1224,12 @@ boolean resto_if() :
 //
 //Desde asignable tenemos que comprobar que el nombre existe, así que no haga falta mirarlo en los varios lugares donde llamamos esta funcion
 
-void asignable() :
+Attributes asignable() :
 {
 	Token token;
 	Attributes attr;
+	Attributes toRet = new Attributes();
+	Symbol s = null;
 }
 {
 	try {
@@ -1115,6 +1237,9 @@ void asignable() :
 		token = <tID> {
 			if (!st.containsSymbol(token.image)) {
 				es.deteccion(new SymbolNotFoundException(), token);
+			} else {
+				s = st.getSymbol(token.image);
+				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
 			}
 		}
 
@@ -1128,6 +1253,9 @@ void asignable() :
 	|	token = <tID> {
 			if (!st.containsSymbol(token.image)) {
 				es.deteccion(new SymbolNotFoundException(), token);
+			} else {
+				s = st.getSymbol(token.image);
+				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
 			}
 		}
 	} catch (ParseException e) {
@@ -1139,13 +1267,18 @@ void asignable() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		return toRet;
+	}
 }
 
 //inst_iteracion : <tWHIL> expresion <tDO> ( instruccion )* <tEND>
-boolean inst_iteracion() :
+Attributes inst_iteracion() :
 {
+	Attributes toRet = new Attributes();
 	boolean hayReturn = false;
 	boolean aux = false;
+	Attributes temp = null;
 }
 {
 	try {
@@ -1153,8 +1286,9 @@ boolean inst_iteracion() :
 		expresion()
 		<tDO>
 		(
-			aux = instruccion()
+			temp = instruccion()
 			{
+				aux = temp.hayReturn;
 				hayReturn |= aux;
 			}
 		)*
@@ -1167,14 +1301,15 @@ boolean inst_iteracion() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		return hayReturn;
+		toRet.hayReturn = hayReturn;
+		return toRet;
 	}
 }
 
 //inst_return : <tRET> expresion
-void inst_return() :
+Attributes inst_return() :
 {
-	
+	Attributes toRet = new Attributes();
 }
 {
 	try {
@@ -1186,6 +1321,10 @@ void inst_return() :
 		conjSinc.add(tEND);
 		conjSinc.add(tSCOL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		toRet.hayReturn = true;
+		return toRet;
 	}
 }
 
@@ -1464,6 +1603,7 @@ Attributes factor() :
 	Attributes temp;
 	Token t;
 	Symbol s;
+	Token tempTok;
 }
 {
 	try {
@@ -1541,30 +1681,38 @@ Attributes factor() :
 				a.simbolo = s;
 			}
 		}
-	|	<tNUM>
+	|	tempTok = <tNUM>
 		{
 			a.type = Symbol.Types.INT;
 			a.referenciable = false;
+			a.valInt = Integer.parseInt(tempTok.image);
 		}
-	|	<tCHAR>
+	|	tempTok = <tCHAR>
 		{
 			a.type = Symbol.Types.CHAR;
 			a.referenciable = false;
+			a.valChar = tempTok.image.charAt(1);
 		}
-	|	<tSTRING>
+	|	tempTok = <tSTRING>
 		{
 			a.type = Symbol.Types.STRING;
 			a.referenciable = false;
+			a.valString = tempTok.image.substring(1, tempTok.image.length()-1);
+			for (int i = a.valString.length()-1; i>=0 ;i--) {
+				a.block.addInst(PCodeInstruction.OpCode.STC, (int) a.valString.charAt(i));
+			}
 		}
 	|	<tTRUE>
 		{
 			a.type = Symbol.Types.BOOL;
 			a.referenciable = false;
+			a.valBool = true;
 		}
 	|	<tFALSE>
 		{
 			a.type = Symbol.Types.BOOL;
 			a.referenciable = false;
+			a.valBool = false;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);

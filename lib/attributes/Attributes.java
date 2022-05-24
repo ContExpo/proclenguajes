@@ -25,12 +25,14 @@ public class Attributes implements Cloneable {
     public String name;
     public boolean referenciable;
     public Symbol simbolo;
+    public boolean hayReturn;
 
     public CodeBlock block;
 
     public Attributes() {
         name = null;
         block = new CodeBlock();
+        hayReturn = false;
     }
 
     public Attributes clone() {
