@@ -200,7 +200,13 @@ void S () :
 	{
 		cb.addInst(PCodeInstruction.OpCode.LVP);
 		cb.encloseXMLTags(t1.image);
-		System.out.println(cb.toString());
+		
+		//Generar código solo si no hay errores
+		if (es.getContadorErrores() == 0) {
+			System.out.println(cb.toString());
+		} else {
+			System.out.println("Presencia de errores en el fichero fuente. Abortada la generación de código.");
+		}
 	}
 }
 
@@ -878,7 +884,7 @@ Attributes inst_escribir() :
 						toRet.block.addComment("Escribiendo un tipo " + temp.type +
 							" val: " + temp.valString + " length: " + temp.valString.length());
 						toRet.block.addBlock(temp.block);
-						for (int j = temp.valString.length(); j>=0 ; j--) {
+						for (int j = temp.valString.length()-1; j>=0 ; j--) {
 							toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
 						}
 						break;
@@ -939,7 +945,7 @@ Attributes inst_escribir_linea() :
 							toRet.block.addComment("Escribiendo un tipo " + temp.type +
 								" val: " + temp.valString + " length: " + temp.valString.length());
 							toRet.block.addBlock(temp.block);
-							for (int j = temp.valString.length(); j>=0 ; j--) {
+							for (int j = temp.valString.length()-1; j>=0 ; j--) {
 								toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
 							}
 							break;
@@ -1281,7 +1287,9 @@ Attributes asignable() :
 				es.deteccion(new SymbolNotFoundException(), token);
 			} else {
 				s = st.getSymbol(token.image);
-				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
+				toRet.type = s.type;
+				toRet.name = s.name;
+				toRet.simbolo = s;
 			}
 		}
 
@@ -1289,6 +1297,9 @@ Attributes asignable() :
 		attr = expresion() {
 			if (attr.type != Symbol.Types.INT) {
 				es.deteccion("Tipo de indice incorrecto, esperaba un entero", token);
+			} else {
+				toRet.block.addComment(String.format("Obteniendo componente de vector \"%s[]\".", toRet.name));
+				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
 			}
 		}
 		<tSQCL>
@@ -1297,6 +1308,11 @@ Attributes asignable() :
 				es.deteccion(new SymbolNotFoundException(), token);
 			} else {
 				s = st.getSymbol(token.image);
+				toRet.type = s.type;
+				toRet.name = s.name;
+				toRet.simbolo = s;
+				
+				toRet.block.addComment(String.format("Obteniendo variable simple/parámetro \"%s\".", toRet.name));
 				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
 			}
 		}
@@ -1411,18 +1427,23 @@ Attributes expresion() :
 	Attributes retAttribute = new Attributes();
 	retAttribute.type = Symbol.Types.BOOL;
 	retAttribute.referenciable = false;
+	PCodeInstruction.OpCode opRel;
 }
 {
 	try {
 		attrExpresion1 = expresion_simple()
 		(
-			operador_relacional()
+			opRel = operador_relacional()
 			attrExpresion2 = expresion_simple()
 			{
-				if (attrExpresion2.type != attrExpresion1.type)
-					es.deteccion("Tipos incoerentes entre variables", token);
-				attrExpresion1.referenciable = false;
-				
+				if (attrExpresion2.type != attrExpresion1.type) {
+					es.deteccion("Tipos incoherentes entre variables", token);
+				} else {
+					//Añadir código para la generación de la comparación
+					retAttribute.block.addBlock(attrExpresion1.block);
+					retAttribute.block.addBlock(attrExpresion2.block);
+					retAttribute.block.addInst(opRel);
+				}	
 				return retAttribute; //Si hay operador relacional devuelve un Attributes booleano
 			}
 		)?
@@ -1445,18 +1466,35 @@ Attributes expresion() :
 //					|	<tLEQ> <=
 //					|	<tGEQ> >=
 //					|	<tDIFF> <>
-void operador_relacional() :
+PCodeInstruction.OpCode operador_relacional() :
 {
-	
 }
 {
 	try {
 		<tEQ>
+		{
+			return PCodeInstruction.OpCode.EQ;
+		}
 	|	<tLT>
+		{
+			return PCodeInstruction.OpCode.LT;
+		}
 	|	<tGT>
+		{
+			return PCodeInstruction.OpCode.GT;
+		}
 	|	<tLEQ>
+		{
+			return PCodeInstruction.OpCode.LTE;
+		}
 	|	<tGEQ>
+		{
+			return PCodeInstruction.OpCode.GTE;
+		}
 	|	<tDIFF>
+		{
+			return PCodeInstruction.OpCode.NEQ;
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1472,42 +1510,62 @@ void operador_relacional() :
 Attributes expresion_simple() :
 {
 	Attributes a = new Attributes();
-	Attributes a2 = null;
+	Attributes a2 = new Attributes();
+	Token t;
+	PCodeInstruction.OpCode opSig = null;
+	PCodeInstruction.OpCode opAd;
 }
 {
 	try {
 		(
-			<tADD> 	{
-				a2 = new Attributes();
+			<tADD>
+			{
+				opSig = PCodeInstruction.OpCode.PLUS;
 			}
-		|	<tSUB> {
-				a2 = new Attributes();
+		|	<tSUB>
+			{
+				opSig = PCodeInstruction.OpCode.SBT;
 			}
 		)?
 		a = termino()
 		{
-			if (a2!=null){
-				if (a.type != Symbol.Types.INT)
-					es.deteccion("La variable despues de +/- tiene que ser intera", token);
+			if (opSig != null) {
+				if (a.type != Symbol.Types.INT) {
+					es.deteccion("La variable despues de +/- tiene que ser entera", token);
+				}
 				a.referenciable = false;
 			}
 		}
 		(
-			a2 = operador_aditivo() {
-				if (a2.type != a.type)
+			opAd = operador_aditivo() {
+				if ((opAd == PCodeInstruction.OpCode.OR)
+					&& (a.type != Symbol.Types.BOOL)) {
 					es.deteccion("Los tipos del operando y el termino no coinciden: "
-						+ a.type + " vs " + a2.type, token);
-					if (a.type == Symbol.Types.ARRAY )
-						es.deteccion("Utilizado operator aditivo con array", token);
+						+ a.type + " vs BOOL", token);
+				}
+				if (a.type == Symbol.Types.ARRAY ) {
+					es.deteccion("Utilizado operator aditivo con array", token);
+				}
 				a.referenciable = false;
+				
+				//Si es una operación de resultado booleano, actualizar el tipo resultado
+				if (opAd == PCodeInstruction.OpCode.OR) {
+					a.type = Symbol.Types.BOOL;
+				}
 			}
 			a2 = termino() {
-				if (a2.type != a.type)
+				if (a2.type != a.type) {
 					es.deteccion("Los tipos de los terminos de la operación aditiva no coinciden "
 						+ a.type + " vs " + a2.type, token);
-				if (a2.type == Symbol.Types.ARRAY )
+				}
+				if (a2.type == Symbol.Types.ARRAY ) {
 						es.deteccion("Suma entre array y otra variable", token);
+				}
 				a.referenciable = false;
+				
+				//Añadir código de la adición de lo apilado anteriormente con el siguiente termino
+				a.block.addBlock(a2.block);
+				a.block.addInst(opAd);
 			}
 		)*
 	} catch (ParseException e) {
@@ -1520,6 +1578,9 @@ Attributes expresion_simple() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
+		if (opSig != null) {
+			a.block.addInst(opSig);
+		}
 		return a;
 	}
 }
@@ -1527,20 +1588,22 @@ Attributes expresion_simple() :
 //operador_aditivo :	<tADD>
 //					|	<tSUB>
 //					|	<tOR>
-Attributes operador_aditivo() :
+PCodeInstruction.OpCode operador_aditivo() :
 {
-	Attributes a = new Attributes();
 }
 {
 	try {
-		<tADD> {
-			a.type = Symbol.Types.INT;
+		<tADD>
+		{
+			return PCodeInstruction.OpCode.PLUS;
 		}
-	|	<tSUB> {
-			a.type = Symbol.Types.INT;
+	|	<tSUB>
+		{
+			return PCodeInstruction.OpCode.SBT;
 		}
-	|	<tOR> {
-			a.type = Symbol.Types.BOOL;
+	|	<tOR>
+		{
+			return PCodeInstruction.OpCode.OR;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1551,29 +1614,40 @@ Attributes operador_aditivo() :
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	{
-		return a;
-	}
 }
 
 //termino : factor ( operador_multiplicativo factor )*
 Attributes termino() :
 {
 	Attributes a = null;
-	Attributes a2 = null;
+	PCodeInstruction.OpCode opMul;
+	Attributes a2;
 }
 {
 	try {
 		a = factor()
 		(
-			a2 = operador_multiplicativo() {
-				if (a2.type != a.type)
-					es.deteccion("Los tipos del operando y el operator no coinciden", token);
+			opMul = operador_multiplicativo() {
+				if ((opMul == PCodeInstruction.OpCode.AND)
+					&& (a.type != Symbol.Types.BOOL)) {
+					es.deteccion("Los tipos del operando y el termino no coinciden: "
+						+ a.type + " vs BOOL", token);
+				}
 			}
 			a2 = factor() {
-				if (a2.type != a.type)
+				if (a2.type != a.type) {
 					es.deteccion("Los tipos de los operandos no coinciden: " + a.type + " vs " + a2.type, token);
+				}
 				a.referenciable = false;
+				
+				//Si es una operación de resultado booleano, actualizar el tipo resultado
+				if (opMul == PCodeInstruction.OpCode.AND) {
+					a.type = Symbol.Types.BOOL;
+				}
+				
+				//Añadir código de la multiplicación de lo apilado anteriormente con el siguiente termino
+				a.block.addBlock(a2.block);
+				a.block.addInst(opMul);
 			}
 		)*
 	} catch (ParseException e) {
@@ -1594,23 +1668,26 @@ Attributes termino() :
 //						|	<tMOD>
 //						|	<tDIV>
 //						|	<tAND>
-Attributes operador_multiplicativo() :
+PCodeInstruction.OpCode operador_multiplicativo() :
 {
-	Attributes a = new Attributes();
 }
 {
 	try {
-		<tMUL> {
-			a.type = Symbol.Types.INT;
+		<tMUL>
+		{
+			return PCodeInstruction.OpCode.TMS;
 		}
-	|	<tMOD> {
-			a.type = Symbol.Types.INT;
+	|	<tMOD>
+		{
+			return PCodeInstruction.OpCode.MOD;
 		}
-	|	<tDIV> {
-			a.type = Symbol.Types.INT;
+	|	<tDIV>
+		{
+			return PCodeInstruction.OpCode.DIV;
 		}
-	|	<tAND> {
-			a.type = Symbol.Types.BOOL;
+	|	<tAND>
+		{
+			return PCodeInstruction.OpCode.AND;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1620,9 +1697,6 @@ Attributes operador_multiplicativo() :
 		conjSinc.add(tPTCL);
 		conjSinc.add(tCOMMA);
 		recuperacionPanico(e.currentToken.next, conjSinc);
-	}
-	{
-		return a;
 	}
 }
 
@@ -1649,11 +1723,12 @@ Attributes factor() :
 {
 	try {
 		<tNOT>
-		a = factor(){ 
+		a = factor() { 
 			if (a.type != Symbol.Types.BOOL) {
-				es.deteccion("El tipo de la expresion tiene que ser booleano", token);
+				es.deteccion("El tipo de la expresión tiene que ser booleano", token);
 			}
 			a.referenciable = false;
+			a.block.addInst(PCodeInstruction.OpCode.NGB);
 		}
 	|	<tPTOP>
 		a = expresion()
@@ -1664,7 +1739,7 @@ Attributes factor() :
 		temp = expresion()
 		{
 			if (temp.type != Symbol.Types.INT) {
-				es.deteccion("El tipo de la expresion tiene que ser intero", token);
+				es.deteccion("El tipo de la expresión tiene que ser entero", token);
 			}
 			a.type = Symbol.Types.CHAR;
 			a.referenciable = false;
@@ -1676,7 +1751,7 @@ Attributes factor() :
 		temp = expresion()
 		{
 			if (temp.type != Symbol.Types.CHAR) {
-				es.deteccion("El tipo de la expresion tiene que ser character", token);
+				es.deteccion("El tipo de la expresión tiene que ser caracter", token);
 			}
 			a.type = Symbol.Types.INT;
 			a.referenciable = false;
@@ -1720,6 +1795,9 @@ Attributes factor() :
 				a.referenciable = true;
 				a.name = t.image;
 				a.simbolo = s;
+				a.block.addComment(String.format("Variable simple/parámetro \"%s\".", a.name));
+				a.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
+				a.block.addInst(PCodeInstruction.OpCode.DRF);
 			}
 		}
 	|	tempTok = <tNUM>
@@ -1727,12 +1805,14 @@ Attributes factor() :
 			a.type = Symbol.Types.INT;
 			a.referenciable = false;
 			a.valInt = Integer.parseInt(tempTok.image);
+			a.block.addInst(PCodeInstruction.OpCode.STC, (int) a.valInt);
 		}
 	|	tempTok = <tCHAR>
 		{
 			a.type = Symbol.Types.CHAR;
 			a.referenciable = false;
 			a.valChar = tempTok.image.charAt(1);
+			a.block.addInst(PCodeInstruction.OpCode.STC, (int) a.valChar);
 		}
 	|	tempTok = <tSTRING>
 		{
