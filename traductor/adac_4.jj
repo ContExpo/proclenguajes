@@ -202,6 +202,7 @@ void S () :
 		
 		//Generar código solo si no hay errores
 		if (es.getContadorErrores() == 0) {
+			System.out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			System.out.println(cb.toString());
 		} else {
 			System.out.println("Presencia de errores en el fichero fuente. Abortada la generación de código.");
@@ -424,7 +425,7 @@ Attributes declaracion_proc_func() :
 		cgu.memorySpaces[st.level] = 3;
 	}
 	try {
-		declaracion_proceso()
+		toRet = declaracion_proceso()
 	|	toRet = declaracion_funcion()
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -437,29 +438,51 @@ Attributes declaracion_proc_func() :
 }
 
 //declaracion_proceso : cabecera_proceso declaracion_variables declaracion_procs_funcs bloque_sentencias
-void declaracion_proceso() :
+Attributes declaracion_proceso() :
 {
-	String nom;
+	Attributes attrCab;
+	Attributes attrDecl;
+	Attributes attrDeclPF;
+	Attributes attrBloque;
+	Attributes toRet = new Attributes();
 }
 {
 	try {
-		nom = cabecera_proceso()
-		declaracion_variables()
-		declaracion_procs_funcs()
-		bloque_sentencias(nom, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED)
+		attrCab = cabecera_proceso()
+		{
+			toRet.block.addBlock(attrCab.block);
+		}
+		attrDecl = declaracion_variables()
+		{
+			toRet.block.addBlock(attrDecl.block);
+		}
+		attrDeclPF = declaracion_procs_funcs()
+		{
+			toRet.block.addBlock(attrDeclPF.block);
+			//Añadimos la etiqueta de inicio del procedimiento
+			//Dentro de cabecera_funcion ya se ha reservado ésta dirección
+			toRet.block.addLabel("L"+(attrCab.simbolo.dir+1));
+		}
+		attrBloque = bloque_sentencias(attrCab.name, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED)
+		{
+			toRet.block.addBlock(attrBloque.block);
+			toRet.block.encloseXMLTags("procedimiento_" + attrCab.name);
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
+	{
+		return toRet;
+	}
 }
 
 //cabecera_proceso : <tPROC> <tID> ( decs_parametros )? <tIS>
-String cabecera_proceso() :
+Attributes cabecera_proceso() :
 {
+	Attributes toRet = new Attributes();
 	Token t1 = new Token();
-	//TODO Aqui nos cogemos un ArrayList<Symbol>, pero creo sería mejor cojer un ArrayList<Symbol.Type>, así que
-	//cuando en la invocacion funcion cogemos las expresiones parametros podremos hacer una comparación más sencilla
 	ArrayList<Symbol> parList = new ArrayList<Symbol>();
 }
 {
@@ -467,20 +490,51 @@ String cabecera_proceso() :
 		<tPROC>
 		t1 = <tID>
 		(
-			//Todo
-			//Aquí tenemos 
 			parList = decs_parametros()
 		)?
 		<tIS>
 		{
 			SymbolProcedure s = new SymbolProcedure(t1.image, parList);
+			
+			//El procedimiento no lo queremos reservar en memoria.
+			//Solo necesitamos saber cuál es el número de su etiqueta de inicio
+			String labelInicio = cgu.newLabel();
+			s.dir = Integer.parseInt(labelInicio.substring(1));
+			
 			st.insertSymbol(s);
 			st.insertBlock();
 			cgu.memorySpaces[st.level] = 3;
+			
+			//Generación de la etiqueta de inicio
+			toRet.block.addLabel("L"+s.dir);
+			
 			for (Symbol par : parList) {
 				par.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(par);
+				
+				//Comentario de declaración de parámetro
+				toRet.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
+							par.name, par.type, par.nivel, par.dir));
 			}
+			
+			//Recuperación de cada variable en el stack (en orden inverso)
+			for (int i = parList.size()-1; i >= 0; i--) {
+				Symbol par = parList.get(i);
+				CodeBlock cod = new CodeBlock();
+				
+				cod.addComment(String.format("Recuperando parámetro %s, por %s, de tipo %s, nivel %d, dirección[%d]!",
+							par.name, par.parClass, par.type, par.nivel, par.dir));
+				cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
+				cod.addInst(PCodeInstruction.OpCode.ASGI);
+				cod.encloseXMLTags(String.format("recuperar_parámetro_%d",i+1));
+				toRet.block.addBlock(cod);
+			}
+			//Sabemos que siempre vamos a saltar al label siguiente del de inicio de función
+			toRet.block.addInst(PCodeInstruction.OpCode.JMP, cgu.newLabel());
+			
+			toRet.type = s.type;
+			toRet.name = s.name;
+			toRet.simbolo = s;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -491,7 +545,7 @@ String cabecera_proceso() :
 		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
 	{
-		return t1.image;
+		return toRet;
 	}
 }
 
@@ -594,7 +648,7 @@ Attributes cabecera_funcion() :
 			//Sabemos que siempre vamos a saltar al label siguiente del de inicio de función
 			toRet.block.addInst(PCodeInstruction.OpCode.JMP, cgu.newLabel());
 			
-			toRet.type = s.type;
+			toRet.type = s.returnType;
 			toRet.name = s.name;
 			toRet.simbolo = s;
 		}
@@ -1417,6 +1471,11 @@ Attributes asignable() :
 			} else {
 				toRet.block.addComment(String.format("Obteniendo componente de vector \"%s[]\".", toRet.name));
 				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
+				//Hay que dereferenciar la dirección de la referencia,
+				//para obtener la dirección de la variable referenciada
+				if (s.parClass == Symbol.ParameterClass.REF) {
+					toRet.block.addInst(PCodeInstruction.OpCode.DRF);
+				}
 			}
 		}
 		<tSQCL>
@@ -1431,6 +1490,11 @@ Attributes asignable() :
 				
 				toRet.block.addComment(String.format("Obteniendo variable simple/parámetro \"%s\".", toRet.name));
 				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
+				//Hay que dereferenciar la dirección de la referencia,
+				//para obtener la dirección de la variable referenciada
+				if (s.parClass == Symbol.ParameterClass.REF) {
+					toRet.block.addInst(PCodeInstruction.OpCode.DRF);
+				}
 			}
 		}
 	} catch (ParseException e) {
@@ -1944,6 +2008,11 @@ Attributes factor() :
 				a.block.addComment(String.format("Variable simple/parámetro \"%s\".", a.name));
 				a.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
 				a.block.addInst(PCodeInstruction.OpCode.DRF);
+				//Hay que dereferenciar la dirección de la variable referenciada,
+				//para obtener el valor de ésta
+				if (s.parClass == Symbol.ParameterClass.REF) {
+					a.block.addInst(PCodeInstruction.OpCode.DRF);
+				}
 			}
 		}
 	|	tempTok = <tNUM>

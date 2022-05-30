@@ -16,6 +16,6 @@ public class Comment extends CodeElement{
 	}
 	
 	public String toString () {
-		return "; --"+comment; 
+		return "; --- "+comment; 
 	}
 }
