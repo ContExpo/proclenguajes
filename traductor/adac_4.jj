@@ -167,7 +167,7 @@ void S () :
 		t1 = <tID>
 		<tIS>
 		{
-			cgu.memorySpaces[0] = 3;
+			cgu.memorySpaces[st.level] = 3;
 			SymbolProcedure s = new SymbolProcedure(t1.image, new ArrayList<Symbol>());
 			st.insertSymbol(s);
 			cb.addComment("Programa " + t1.image);
@@ -185,7 +185,6 @@ void S () :
 		}
 		main = bloque_sentencias(t1.image, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED)
 		{
-			main.block.encloseXMLTags("procedimiento_principal");
 			cb.addBlock(main.block);
 		}
 		<EOF>
@@ -339,7 +338,7 @@ Attributes variable(Symbol.Types type) :
 				SymbolArray sArr = new SymbolArray(t1.image, Integer.parseInt(t2.image), type);
 				sArr.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(sArr);
-				a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
+				a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
 					sArr.name, sArr.type + "[" + sArr.baseType + "]", sArr.nivel, sArr.dir));
 			} catch(AlreadyDefinedSymbolException e) {
 				System.err.println("Error: " + t1.image + " ya está declarado");
@@ -353,7 +352,7 @@ Attributes variable(Symbol.Types type) :
 						SymbolInt sInt = new SymbolInt(t1.image);
 						sInt.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sInt);
-						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
+						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
 							sInt.name, sInt.type, sInt.nivel, sInt.dir));
 						break;
 						
@@ -361,7 +360,7 @@ Attributes variable(Symbol.Types type) :
 						SymbolChar sChar = new SymbolChar(t1.image);
 						sChar.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sChar);
-						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
+						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
 							sChar.name, sChar.type, sChar.nivel, sChar.dir));
 						break;
 						
@@ -393,12 +392,16 @@ Attributes variable(Symbol.Types type) :
 //declaracion_procs_funcs : ( declaracion_proc_func )*
 Attributes declaracion_procs_funcs() :
 {
-	
+	Attributes toRet = new Attributes();
+	Attributes decPF = null;
 }
 {
 	try {
 		(
-			declaracion_proc_func()
+			decPF = declaracion_proc_func()
+			{
+				toRet.block.addBlock(decPF.block);
+			}
 		)*
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -406,15 +409,15 @@ Attributes declaracion_procs_funcs() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		return new Attributes();
+		return toRet;
 	}
 }
 
 //declaracion_proc_func :	declaracion_proceso
 //						|	declaracion_funcion
-void declaracion_proc_func() :
+Attributes declaracion_proc_func() :
 {
-
+	Attributes toRet = null;
 }
 {
 	{
@@ -422,11 +425,14 @@ void declaracion_proc_func() :
 	}
 	try {
 		declaracion_proceso()
-	|	declaracion_funcion()
+	|	toRet = declaracion_funcion()
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return toRet;
 	}
 }
 
@@ -470,6 +476,7 @@ String cabecera_proceso() :
 			SymbolProcedure s = new SymbolProcedure(t1.image, parList);
 			st.insertSymbol(s);
 			st.insertBlock();
+			cgu.memorySpaces[st.level] = 3;
 			for (Symbol par : parList) {
 				par.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(par);
@@ -491,27 +498,50 @@ String cabecera_proceso() :
 
 
 //declaracion_funcion : cabecera_funcion declaracion_variables declaracion_procs_funcs bloque_sentencias
-void declaracion_funcion() :
+Attributes declaracion_funcion() :
 {
-	Attributes nomYTipo;
+	Attributes attrCab;
+	Attributes attrDecl;
+	Attributes attrDeclPF;
+	Attributes attrBloque;
+	Attributes toRet = new Attributes();
 }
 {
 	try {
-		nomYTipo = cabecera_funcion()
-		declaracion_variables()
-		declaracion_procs_funcs()
-		bloque_sentencias(nomYTipo.valString, Symbol.Types.FUNCTION, nomYTipo.type)
+		attrCab = cabecera_funcion()
+		{
+			toRet.block.addBlock(attrCab.block);
+		}
+		attrDecl = declaracion_variables()
+		{
+			toRet.block.addBlock(attrDecl.block);
+		}
+		attrDeclPF = declaracion_procs_funcs()
+		{
+			toRet.block.addBlock(attrDeclPF.block);
+			//Añadimos la etiqueta de inicio de la función
+			//Dentro de cabecera_funcion ya se ha reservado ésta dirección
+			toRet.block.addLabel("L"+(attrCab.simbolo.dir+1));
+		}
+		attrBloque = bloque_sentencias(attrCab.name, Symbol.Types.FUNCTION, attrCab.type)
+		{
+			toRet.block.addBlock(attrBloque.block);
+			toRet.block.encloseXMLTags("función_" + attrCab.name);
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
 		recuperacionPanico(e.currentToken.next, conjSinc);
+	}
+	{
+		return toRet;
 	}
 }
 
 //cabecera_funcion : <tFUNC> tipo_variable <tID> ( decs_parametros )? <tIS>
 Attributes cabecera_funcion() :
 {
-	Attributes nomYTipo = new Attributes();
+	Attributes toRet = new Attributes();
 	Token t1 = new Token();
 	Symbol.Types type;
 	ArrayList<Symbol> parList = new ArrayList<Symbol>();
@@ -527,14 +557,46 @@ Attributes cabecera_funcion() :
 		<tIS>
 		{
 			SymbolFunction s = new SymbolFunction(t1.image, parList, type);
+			
+			//La función no la queremos reservar en memoria.
+			//Solo necesitamos saber cuál es el número de su etiqueta de inicio
+			String labelInicio = cgu.newLabel();
+			s.dir = Integer.parseInt(labelInicio.substring(1));
+			
 			st.insertSymbol(s);
 			st.insertBlock();
+			cgu.memorySpaces[st.level] = 3;
+			
+			//Generación de la etiqueta de inicio
+			toRet.block.addLabel("L"+s.dir);
+			
 			for (Symbol par : parList) {
 				par.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(par);
+				
+				//Comentario de declaración de parámetro
+				toRet.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
+							par.name, par.type, par.nivel, par.dir));
 			}
-			nomYTipo.type = type;
-			nomYTipo.valString = t1.image;
+			
+			//Recuperación de cada variable en el stack (en orden inverso)
+			for (int i = parList.size()-1; i >= 0; i--) {
+				Symbol par = parList.get(i);
+				CodeBlock cod = new CodeBlock();
+				
+				cod.addComment(String.format("Recuperando parámetro %s, por %s, de tipo %s, nivel %d, dirección[%d]!",
+							par.name, par.parClass, par.type, par.nivel, par.dir));
+				cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
+				cod.addInst(PCodeInstruction.OpCode.ASGI);
+				cod.encloseXMLTags(String.format("recuperar_parámetro_%d",i+1));
+				toRet.block.addBlock(cod);
+			}
+			//Sabemos que siempre vamos a saltar al label siguiente del de inicio de función
+			toRet.block.addInst(PCodeInstruction.OpCode.JMP, cgu.newLabel());
+			
+			toRet.type = s.type;
+			toRet.name = s.name;
+			toRet.simbolo = s;
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -545,7 +607,7 @@ Attributes cabecera_funcion() :
 		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
 	{
-		return nomYTipo;
+		return toRet;
 	}
 }
 
@@ -578,8 +640,6 @@ Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types
 			if (proc_or_func == Symbol.Types.FUNCTION && !hayReturn) {
 				System.err.println("Error: No hay return en la función");
 			}
-			//System.err.println(st.toString());
-			st.removeBlock();
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -588,6 +648,15 @@ Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
+		//Si no estamos en el bloque de instrucciones del procedimiento principal
+		//hay que añadir la instrucción para recuperar el stack frame
+		toRet.block.addComment("Bloque de instrucciones de nivel "+st.level);
+		if (st.level > 0) {
+			toRet.block.addInst(PCodeInstruction.OpCode.CSF);
+		}
+		toRet.block.encloseXMLTags("bloque_instrucciones_"+nom);
+		//System.err.println(st.toString());
+		st.removeBlock();
 		return toRet;
 	}
 }
@@ -752,7 +821,7 @@ Symbol.ParameterClass clase_parametros() :
 //				|	inst_return <tSCOL>
 Attributes instruccion() :
 {
-	Attributes ret = null;
+	Attributes ret = new Attributes();
 }
 {
 	try {
@@ -829,11 +898,19 @@ Attributes inst_leer() :
 //inst_saltar_linea : <tSKIPL> <tPTOP> <tPTCL>
 Attributes inst_saltar_linea() :
 {
-	
+	Attributes toRet = new Attributes();
 }
 {
 	try {
 		<tSKIPL>
+		{
+			//Para saltar la línea escribimos CR/LF
+			toRet.block.addComment("CR/LF");
+			toRet.block.addInst(PCodeInstruction.OpCode.STC, 13);
+			toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+			toRet.block.addInst(PCodeInstruction.OpCode.STC, 10);
+			toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+		}
 		<tPTOP>
 		<tPTCL>
 	} catch (ParseException e) {
@@ -844,8 +921,9 @@ Attributes inst_saltar_linea() :
 		conjSinc.add(tPTCL);
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
-	{
-		return null;
+	{	
+		toRet.block.encloseXMLTags("put_line");
+		return toRet;
 	}
 }
 
@@ -862,37 +940,39 @@ Attributes inst_escribir() :
 		<tPTOP>
 		exps = lista_exps()
 		{
-			for (int i = exps.size()-1; i>=0; i--) {
+			for (int i = 0; i < exps.size(); i++) {
 				temp = exps.get(i);
+				CodeBlock put = new CodeBlock();
 				//Si es invocacion a funcion el tipo FUNCTION se cambia por el tipo de retorno
 				if (temp.type == Symbol.Types.FUNCTION) {
 					temp.type = ((SymbolFunction)temp.simbolo).returnType;
 				}
 				switch (temp.type) {
 					case INT:
-						toRet.block.addComment("Escribiendo un tipo " + temp.type);
-						toRet.block.addBlock(temp.block);
-						toRet.block.addInst(PCodeInstruction.OpCode.WRT, 1);
+						put.addBlock(temp.block);
+						put.addComment("Escribiendo un tipo " + temp.type);
+						put.addInst(PCodeInstruction.OpCode.WRT, 1);
 						break;
 					case CHAR:
-						toRet.block.addComment("Escribiendo un tipo " + temp.type + " val: "
+						put.addComment("Escribiendo un tipo " + temp.type + " val: "
 							+ temp.valChar);
-						toRet.block.addBlock(temp.block);
-						toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+						put.addBlock(temp.block);
+						put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						break;
 					case STRING:
-						toRet.block.addComment("Escribiendo un tipo " + temp.type +
+						put.addComment("Escribiendo un tipo " + temp.type +
 							" val: " + temp.valString + " length: " + temp.valString.length());
-						toRet.block.addBlock(temp.block);
+						put.addBlock(temp.block);
 						for (int j = temp.valString.length()-1; j>=0 ; j--) {
-							toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+							put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						}
 						break;
 					default:
 						System.err.println("No se puede escribir el tipo" + exps.get(i).type);
 						break;
 				}
-				
+				put.encloseXMLTags("put");
+				toRet.block.addBlock(put);
 			}
 		}
 		<tPTCL>
@@ -905,7 +985,6 @@ Attributes inst_escribir() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		toRet.block.encloseXMLTags("put");
 		return toRet;
 	}
 }
@@ -921,46 +1000,52 @@ Attributes inst_escribir_linea() :
 	try {
 		<tPUTL>
 		<tPTOP>
-			exps = lista_exps()
-			{
-				for (int i = exps.size()-1; i>=0; i--) {
-					temp = exps.get(i);
-					//Si es invocacion a funcion el tipo FUNCTION se cambia por el tipo de retorno
-					if (temp.type == Symbol.Types.FUNCTION) {
-						temp.type = ((SymbolFunction)temp.simbolo).returnType;
-					}
-					switch (temp.type) {
-						case INT:
-							toRet.block.addComment("Escribiendo un tipo " + temp.type);
-							toRet.block.addBlock(temp.block);
-							toRet.block.addInst(PCodeInstruction.OpCode.WRT, 1);
-							break;
-						case CHAR:
-							toRet.block.addComment("Escribiendo un tipo " + temp.type + " val: "
-								+ temp.valChar);
-							toRet.block.addBlock(temp.block);
-							toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
-							break;
-						case STRING:
-							toRet.block.addComment("Escribiendo un tipo " + temp.type +
-								" val: " + temp.valString + " length: " + temp.valString.length());
-							toRet.block.addBlock(temp.block);
-							for (int j = temp.valString.length()-1; j>=0 ; j--) {
-								toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
-							}
-							break;
-						default:
-							System.err.println("No se puede escribir el tipo" + exps.get(i).type);
-							break;
-					}
+		exps = lista_exps()
+		{
+			for (int i = 0; i < exps.size(); i++) {
+				temp = exps.get(i);
+				CodeBlock put = new CodeBlock();
+				//Si es invocacion a funcion el tipo FUNCTION se cambia por el tipo de retorno
+				if (temp.type == Symbol.Types.FUNCTION) {
+					temp.type = ((SymbolFunction)temp.simbolo).returnType;
 				}
-				//Despues de todo escribimos CR/LF
-				toRet.block.addComment("CR/LF");
-				toRet.block.addInst(PCodeInstruction.OpCode.STC, 13);
-				toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
-				toRet.block.addInst(PCodeInstruction.OpCode.STC, 10);
-				toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+				switch (temp.type) {
+					case INT:
+						put.addBlock(temp.block);
+						put.addComment("Escribiendo un tipo " + temp.type);
+						put.addInst(PCodeInstruction.OpCode.WRT, 1);
+						break;
+					case CHAR:
+						put.addComment("Escribiendo un tipo " + temp.type + " val: "
+							+ temp.valChar);
+						put.addBlock(temp.block);
+						put.addInst(PCodeInstruction.OpCode.WRT, 0);
+						break;
+					case STRING:
+						put.addComment("Escribiendo un tipo " + temp.type +
+							" val: " + temp.valString + " length: " + temp.valString.length());
+						put.addBlock(temp.block);
+						for (int j = temp.valString.length()-1; j>=0 ; j--) {
+							put.addInst(PCodeInstruction.OpCode.WRT, 0);
+						}
+						break;
+					default:
+						System.err.println("No se puede escribir el tipo" + exps.get(i).type);
+						break;
+				}
+				put.encloseXMLTags("put");
+				toRet.block.addBlock(put);
 			}
+			//Despues de todo escribimos salto de linea
+			temp.block = new CodeBlock();
+			temp.block.addComment("CR/LF");
+			temp.block.addInst(PCodeInstruction.OpCode.STC, 13);
+			temp.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+			temp.block.addInst(PCodeInstruction.OpCode.STC, 10);
+			temp.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+			temp.block.encloseXMLTags("put_line");
+			toRet.block.addBlock(temp.block);
+		}
 		<tPTCL>
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -971,7 +1056,6 @@ Attributes inst_escribir_linea() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		toRet.block.encloseXMLTags("put_line");
 		return toRet;
 	}
 }
@@ -980,10 +1064,11 @@ Attributes inst_escribir_linea() :
 Attributes inst_invoc_proc() :
 {
 	Token funcName;
-	Symbol func;
+	Symbol proc;
 	ArrayList<Attributes> parList = new ArrayList<Attributes>();
 	ArrayList<Symbol> expectedPars;
 	SymbolProcedure expFunc = null;
+	Attributes toRet = new Attributes();
 }
 {
 	try {
@@ -991,18 +1076,17 @@ Attributes inst_invoc_proc() :
 		<tPTOP>
 		parList = lista_exps()
 		{
-			func = st.getSymbol(funcName.image);
-			if (func.type != Symbol.Types.PROCEDURE) {
+			proc = st.getSymbol(funcName.image);
+			if (proc.type != Symbol.Types.PROCEDURE) {
 				es.deteccion("El símbolo utilizado no es un procedimiento", funcName);
 			} else {
-				expFunc = (SymbolProcedure) func;
+				expFunc = (SymbolProcedure) proc;
 				expectedPars = expFunc.parList;
 				if (expectedPars.size() != parList.size())
 				{
 					es.deteccion("El número de parámetros no coincide con el esperado", funcName);
 				}
-				for (int i = 0; i< parList.size(); i++)
-				{
+				for (int i = 0; i< parList.size(); i++) {
 					Symbol expPar = expectedPars.get(i);
 					Attributes givenPar = parList.get(i);
 					if (givenPar.type != expPar.type) {
@@ -1026,6 +1110,15 @@ Attributes inst_invoc_proc() :
 						}
 					}
 				}
+			
+				//Generación de código
+				for (int i = 0; i < parList.size(); i++) {
+					Attributes givenPar = parList.get(i);
+					givenPar.block.encloseXMLTags(String.format("parámetro_%d", i+1));
+					toRet.block.addBlock(givenPar.block);
+				}
+				toRet.block.addOSFInst(3 + parList.size(), st.level - proc.nivel, "L"+proc.dir);
+				toRet.block.encloseXMLTags("llamada_a_funcion_"+proc.name);
 			}
 		}
 		<tPTCL>
@@ -1040,7 +1133,7 @@ Attributes inst_invoc_proc() :
 		es.deteccion(e, token);
 	}
 	{
-		return null;
+		return toRet;
 	}
 }
 
@@ -1066,14 +1159,14 @@ Attributes inst_invoc_func() :
 		<tPTOP>
 		parList = lista_exps()
 		{
+			//Comprobaciones semánticas
 			expFunc = (SymbolFunction) func;
 			expectedPars = expFunc.parList;
 			if (expectedPars.size() != parList.size())
 			{
 				es.deteccion("El número de parámetros no coincide con el esperado", funcName);
 			}
-			for (int i = 0; i< parList.size(); i++)
-			{
+			for (int i = 0; i< parList.size(); i++) {
 				Symbol expPar = expectedPars.get(i);
 				Attributes givenPar = parList.get(i);
 				if (givenPar.type != expPar.type) {
@@ -1096,6 +1189,15 @@ Attributes inst_invoc_func() :
 					}
 				}
 			}
+			
+			//Generación de código
+			for (int i = 0; i < parList.size(); i++) {
+				Attributes givenPar = parList.get(i);
+				givenPar.block.encloseXMLTags(String.format("parámetro_%d", i+1));
+				toRet.block.addBlock(givenPar.block);
+			}
+			toRet.block.addOSFInst(3 + parList.size(), st.level - func.nivel, "L"+func.dir);
+			toRet.block.encloseXMLTags("llamada_a_funcion_"+func.name);
 		}
 		<tPTCL>
 	} catch (ParseException e) {
@@ -1120,13 +1222,24 @@ Attributes inst_invoc_func() :
 //inst_asignacion : asignable <tASIG> expresion
 Attributes inst_asignacion() :
 {
-	
+	Attributes asig;
+	Attributes expr;
+	Attributes toRet = new Attributes();
 }
 {
 	try {
-		asignable()
+		asig = asignable()
+		{
+			toRet.block.addBlock(asig.block);
+		}
 		<tASIG>
-		expresion()
+		expr = expresion()
+		{
+			toRet.block.addBlock(expr.block);
+			//Asignar a la variable asig la expresión expr
+			toRet.block.addInst(PCodeInstruction.OpCode.ASG);
+			toRet.block.encloseXMLTags(String.format("asignación_en_variable_simple_%s", asig.name));
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1135,7 +1248,7 @@ Attributes inst_asignacion() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
-		return null;
+		return toRet;
 	}
 }
 
@@ -1147,7 +1260,8 @@ Attributes inst_seleccion() :
 	boolean warning = false;	//Si no hay ningún return no hay que dar warning
 	Token tokenIf;
 	Attributes attrIf = null;
-	Attributes attrThen = null;
+	Attributes attrThen = new Attributes();
+	Attributes attrInst = null;
 	Attributes attrElse = null;
 	Attributes toRet = new Attributes();
 	String labelFinIf = "";
@@ -1161,7 +1275,7 @@ Attributes inst_seleccion() :
 			if (attrIf.type != Symbol.Types.BOOL)
 				es.deteccion("El tipo de la expresion tiene que ser booleano", token);
 			
-			attrIf.block.encloseXMLTags("condicion");
+			attrIf.block.encloseXMLTags("condición");
 			toRet.block.addBlock(attrIf.block);
 			labelFinIf = cgu.newLabel();
 			//De momento no sabemos si hay else,
@@ -1171,12 +1285,15 @@ Attributes inst_seleccion() :
 		}
 		<tTHEN>
 		(
-			attrThen = instruccion()
+			attrInst = instruccion()
 			{
-				aux = attrThen.hayReturn;
+				aux = attrInst.hayReturn;
 				hayReturn1 |= aux;
 				//En caso de que solo haya if, y haya un return, dar warning
 				warning = hayReturn1;
+				
+				//Añadir la instrucción al bloque de instrucciones del then
+				attrThen.block.addBlock(attrInst.block);
 			}
 		)*
 		(
@@ -1333,24 +1450,47 @@ Attributes asignable() :
 //inst_iteracion : <tWHIL> expresion <tDO> ( instruccion )* <tEND>
 Attributes inst_iteracion() :
 {
-	Attributes toRet = new Attributes();
 	boolean hayReturn = false;
 	boolean aux = false;
-	Attributes temp = null;
+	Attributes toRet = new Attributes();
+	Attributes attrCond = null;
+	Attributes attrDo = new Attributes();
+	Attributes attrInst = null;
+	String labelInicio = cgu.newLabel();
+	String labelFin = cgu.newLabel();
 }
 {
 	try {
 		<tWHIL>
-		expresion()
+		attrCond = expresion()
+		{
+			toRet.block.addLabel(labelInicio);
+			
+			attrCond.block.encloseXMLTags("condición");
+			toRet.block.addBlock(attrCond.block);
+			toRet.block.addInst(PCodeInstruction.OpCode.JMF, labelFin);
+		}
 		<tDO>
 		(
-			temp = instruccion()
+			attrInst = instruccion()
 			{
-				aux = temp.hayReturn;
+				aux = attrInst.hayReturn;
 				hayReturn |= aux;
+				
+				//Añadir la instrucción al bloque de instrucciones del do
+				attrDo.block.addBlock(attrInst.block);
 			}
 		)*
 		<tEND>
+		{
+			//Finalizar el bloque de instrucciones del while
+			attrDo.block.encloseXMLTags("bloque_instrucciones_while");
+			toRet.block.addBlock(attrDo.block);
+			//Finalizar el while
+			toRet.block.addInst(PCodeInstruction.OpCode.JMP, labelInicio);
+			toRet.block.addLabel(labelFin);
+			toRet.block.encloseXMLTags("while");
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1368,11 +1508,15 @@ Attributes inst_iteracion() :
 Attributes inst_return() :
 {
 	Attributes toRet = new Attributes();
+	Attributes expr;
 }
 {
 	try {
 		<tRET>
-		expresion()
+		expr = expresion()
+		{
+			toRet.block.addBlock(expr.block);
+		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
 		//añadir tokens al conj de sincronización
@@ -1381,6 +1525,8 @@ Attributes inst_return() :
 		recuperacionPanico(e.currentToken.next, conjSinc);
 	}
 	{
+		toRet.block.addInst(PCodeInstruction.OpCode.CSF);
+		toRet.block.encloseXMLTags("return");
 		toRet.hayReturn = true;
 		return toRet;
 	}
