@@ -1088,14 +1088,16 @@ Attributes inst_escribir_linea() :
 				toRet.block.addBlock(put);
 			}
 			//Despues de todo escribimos salto de linea
-			temp.block = new CodeBlock();
-			temp.block.addComment("CR/LF");
-			temp.block.addInst(PCodeInstruction.OpCode.STC, 13);
-			temp.block.addInst(PCodeInstruction.OpCode.WRT, 0);
-			temp.block.addInst(PCodeInstruction.OpCode.STC, 10);
-			temp.block.addInst(PCodeInstruction.OpCode.WRT, 0);
-			temp.block.encloseXMLTags("put_line");
-			toRet.block.addBlock(temp.block);
+			CodeBlock putL = new CodeBlock();
+			//Si no hay ningún put escribimos el put vacío
+			putL.encloseXMLTags("put");
+			putL.addComment("CR/LF");
+			putL.addInst(PCodeInstruction.OpCode.STC, 13);
+			putL.addInst(PCodeInstruction.OpCode.WRT, 0);
+			putL.addInst(PCodeInstruction.OpCode.STC, 10);
+			putL.addInst(PCodeInstruction.OpCode.WRT, 0);
+			putL.encloseXMLTags("put_line");
+			toRet.block.addBlock(putL);
 		}
 		<tPTCL>
 	} catch (ParseException e) {
@@ -1437,7 +1439,7 @@ Attributes resto_if() :
 		(
 			temp = instruccion()
 			{
-				toRet.block = temp.block;
+				toRet.block.addBlock(temp.block);
 				aux = temp.hayReturn;
 				hayReturn |= aux;
 			}
