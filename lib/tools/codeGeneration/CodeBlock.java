@@ -38,6 +38,10 @@ public class CodeBlock {
 	public void addOSFInst (int s, int l, String label) {
 		code.add(new PCodeInstruction(OpCode.OSF, s, l, label)); 
 	}
+	
+	public void delLastInst() {
+		code.remove(code.size()-1);
+	}
 
 	public void encloseXMLTags(String XMLLabel) {
 		code.add(0, new XMLTag("<"+XMLLabel+">"));

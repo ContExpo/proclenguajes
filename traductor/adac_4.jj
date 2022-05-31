@@ -339,8 +339,8 @@ Attributes variable(Symbol.Types type) :
 				SymbolArray sArr = new SymbolArray(t1.image, Integer.parseInt(t2.image), type);
 				sArr.dir = cgu.memorySpaces[st.level]++;
 				st.insertSymbol(sArr);
-				a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
-					sArr.name, sArr.type + "[" + sArr.baseType + "]", sArr.nivel, sArr.dir));
+				a.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+					sArr.name, sArr.type + "[" + sArr.baseType + "]", sArr.parClass, sArr.nivel, sArr.dir));
 			} catch(AlreadyDefinedSymbolException e) {
 				System.err.println("Error: " + t1.image + " ya está declarado");
 			}
@@ -353,24 +353,24 @@ Attributes variable(Symbol.Types type) :
 						SymbolInt sInt = new SymbolInt(t1.image);
 						sInt.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sInt);
-						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
-							sInt.name, sInt.type, sInt.nivel, sInt.dir));
+						a.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+							sInt.name, sInt.type, sInt.parClass, sInt.nivel, sInt.dir));
 						break;
 						
 					case CHAR : 
 						SymbolChar sChar = new SymbolChar(t1.image);
 						sChar.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sChar);
-						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
-							sChar.name, sChar.type, sChar.nivel, sChar.dir));
+						a.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+							sChar.name, sChar.type, sChar.parClass, sChar.nivel, sChar.dir));
 						break;
 						
 					case BOOL :
 						SymbolBool sBool = new SymbolBool(t1.image);
 						sBool.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sBool);
-						a.block.addComment(String.format("Variable %s de tipo %s, nivel %d, address[%d]",
-							sBool.name, sBool.type, sBool.nivel, sBool.dir));
+						a.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, address[%d]",
+							sBool.name, sBool.type, sBool.parClass, sBool.nivel, sBool.dir));
 						break;
 					default: es.deteccion("Error: " + type + " no es un tipo válido", token);
 				}
@@ -421,9 +421,6 @@ Attributes declaracion_proc_func() :
 	Attributes toRet = null;
 }
 {
-	{
-		cgu.memorySpaces[st.level] = 3;
-	}
 	try {
 		toRet = declaracion_proceso()
 	|	toRet = declaracion_funcion()
@@ -513,8 +510,8 @@ Attributes cabecera_proceso() :
 				st.insertSymbol(par);
 				
 				//Comentario de declaración de parámetro
-				toRet.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
-							par.name, par.type, par.nivel, par.dir));
+				toRet.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+							par.name, par.type, par.parClass, par.nivel, par.dir));
 			}
 			
 			//Recuperación de cada variable en el stack (en orden inverso)
@@ -629,8 +626,8 @@ Attributes cabecera_funcion() :
 				st.insertSymbol(par);
 				
 				//Comentario de declaración de parámetro
-				toRet.block.addComment(String.format("Variable %s de tipo %s, nivel %d, dirección[%d]!",
-							par.name, par.type, par.nivel, par.dir));
+				toRet.block.addComment(String.format("Variable %s, de tipo %s por %s, nivel %d, dirección[%d]!",
+							par.name, par.type, par.parClass, par.nivel, par.dir));
 			}
 			
 			//Recuperación de cada variable en el stack (en orden inverso)
@@ -704,7 +701,7 @@ Attributes bloque_sentencias(String nom, Symbol.Types proc_or_func, Symbol.Types
 	{
 		//Si no estamos en el bloque de instrucciones del procedimiento principal
 		//hay que añadir la instrucción para recuperar el stack frame
-		toRet.block.addComment("Bloque de instrucciones de nivel "+st.level);
+		//toRet.block.addComment("Bloque de instrucciones de nivel "+st.level);
 		if (st.level > 0) {
 			toRet.block.addInst(PCodeInstruction.OpCode.CSF);
 		}
@@ -1167,11 +1164,22 @@ Attributes inst_invoc_proc() :
 			
 				//Generación de código
 				for (int i = 0; i < parList.size(); i++) {
+					Symbol expPar = expectedPars.get(i);
 					Attributes givenPar = parList.get(i);
+						
+					if (expPar.parClass == Symbol.ParameterClass.REF
+						&& givenPar.parClass != Symbol.ParameterClass.REF) { //Puede ser VAL o NONE
+						//Hay que quitar la dereferencia, que es la última instrucción
+						givenPar.block.delLastInst();
+					} else if (expPar.parClass == Symbol.ParameterClass.VAL
+						&& givenPar.parClass == Symbol.ParameterClass.REF) {
+						//Hay que dereferenciar una vez más, para obtener el valor de la variable original
+						givenPar.block.addInst(PCodeInstruction.OpCode.DRF);
+					}
 					givenPar.block.encloseXMLTags(String.format("parámetro_%d", i+1));
 					toRet.block.addBlock(givenPar.block);
 				}
-				toRet.block.addOSFInst(3 + parList.size(), st.level - proc.nivel, "L"+proc.dir);
+				toRet.block.addOSFInst(cgu.memorySpaces[st.level], st.level - proc.nivel, "L"+proc.dir);
 				toRet.block.encloseXMLTags("llamada_a_funcion_"+proc.name);
 			}
 		}
@@ -1246,11 +1254,22 @@ Attributes inst_invoc_func() :
 			
 			//Generación de código
 			for (int i = 0; i < parList.size(); i++) {
+				Symbol expPar = expectedPars.get(i);
 				Attributes givenPar = parList.get(i);
+				
+				if (expPar.parClass == Symbol.ParameterClass.REF
+					&& givenPar.parClass != Symbol.ParameterClass.REF) { //Puede ser VAL o NONE
+					//Hay que quitar la dereferencia, que es la última instrucción
+					givenPar.block.delLastInst();
+				} else if (expPar.parClass == Symbol.ParameterClass.VAL
+					&& givenPar.parClass == Symbol.ParameterClass.REF) {
+					//Hay que dereferenciar una vez más, para obtener el valor de la variable original
+					givenPar.block.addInst(PCodeInstruction.OpCode.DRF);
+				}
 				givenPar.block.encloseXMLTags(String.format("parámetro_%d", i+1));
 				toRet.block.addBlock(givenPar.block);
 			}
-			toRet.block.addOSFInst(3 + parList.size(), st.level - func.nivel, "L"+func.dir);
+			toRet.block.addOSFInst(cgu.memorySpaces[st.level], st.level - func.nivel, "L"+func.dir);
 			toRet.block.encloseXMLTags("llamada_a_funcion_"+func.name);
 		}
 		<tPTCL>
@@ -2008,8 +2027,12 @@ Attributes factor() :
 				a.block.addComment(String.format("Variable simple/parámetro \"%s\".", a.name));
 				a.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
 				a.block.addInst(PCodeInstruction.OpCode.DRF);
-				//Hay que dereferenciar la dirección de la variable referenciada,
-				//para obtener el valor de ésta
+				
+				//Suponemos que queremos siempre el valor de la variable.
+				//En caso de no ser lo que queramos podemos eliminar el DRF más adelante. 
+				//Para ello:
+				//si es una referencia, hay que dereferenciar la dirección de
+				//la variable referenciada, para obtener el valor de la variable original.
 				if (s.parClass == Symbol.ParameterClass.REF) {
 					a.block.addInst(PCodeInstruction.OpCode.DRF);
 				}
