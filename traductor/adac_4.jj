@@ -29,6 +29,9 @@ public class adac_4 {
 	static SymbolTable st = new SymbolTable();
 	static ErrorSemantico es;
 	static CGUtils cgu;
+	//Variable booleana para decidir si se genera código para hacer comprobaciones
+	//en tiempo de ejecución
+	static boolean genErrEjec = true;
 	private static void initSymbolTable() {
 		boolean b;
 		String[] palsRes = {
@@ -337,10 +340,13 @@ Attributes variable(Symbol.Types type) :
 		{
 			try {
 				SymbolArray sArr = new SymbolArray(t1.image, Integer.parseInt(t2.image), type);
-				sArr.dir = cgu.memorySpaces[st.level]++;
+				sArr.dir = cgu.memorySpaces[st.level];
+				//Reservar tanto espacio en memoria como componentes tenga el vector
+				int tamanyo = sArr.maxInd - sArr.minInd + 1;
+				cgu.memorySpaces[st.level] += tamanyo;
 				st.insertSymbol(sArr);
-				a.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
-					sArr.name, sArr.type + "[" + sArr.baseType + "]", sArr.parClass, sArr.nivel, sArr.dir));
+				a.block.addComment(String.format("Variable %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d:%d]!",
+					sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir, sArr.dir + tamanyo - 1));
 			} catch(AlreadyDefinedSymbolException e) {
 				System.err.println("Error: " + t1.image + " ya está declarado");
 			}
@@ -369,7 +375,7 @@ Attributes variable(Symbol.Types type) :
 						SymbolBool sBool = new SymbolBool(t1.image);
 						sBool.dir = cgu.memorySpaces[st.level]++;
 						st.insertSymbol(sBool);
-						a.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, address[%d]",
+						a.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
 							sBool.name, sBool.type, sBool.parClass, sBool.nivel, sBool.dir));
 						break;
 					default: es.deteccion("Error: " + type + " no es un tipo válido", token);
@@ -510,8 +516,26 @@ Attributes cabecera_proceso() :
 				st.insertSymbol(par);
 				
 				//Comentario de declaración de parámetro
-				toRet.block.addComment(String.format("Variable %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
-							par.name, par.type, par.parClass, par.nivel, par.dir));
+				//Distinción del caso de vector
+				if (par.type == Symbol.Types.ARRAY) {
+					SymbolArray sArr = (SymbolArray) par;
+					int tamanyo = sArr.maxInd - sArr.minInd + 1;
+					
+					//En caso de ser vector por referencia, no hace falta declarar cada componente,
+					//solo la dirección de inicio
+					if (par.parClass == Symbol.ParameterClass.REF) {
+						toRet.block.addComment(String.format("Parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir));
+					} else {
+						cgu.memorySpaces[st.level] += tamanyo - 1;
+						
+						toRet.block.addComment(String.format("Parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d:%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir, sArr.dir + tamanyo - 1));
+					}
+				} else {
+					toRet.block.addComment(String.format("Parámetro %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+								par.name, par.type, par.parClass, par.nivel, par.dir));
+				}
 			}
 			
 			//Recuperación de cada variable en el stack (en orden inverso)
@@ -519,10 +543,36 @@ Attributes cabecera_proceso() :
 				Symbol par = parList.get(i);
 				CodeBlock cod = new CodeBlock();
 				
-				cod.addComment(String.format("Recuperando parámetro %s, por %s, de tipo %s, nivel %d, dirección[%d]!",
-							par.name, par.parClass, par.type, par.nivel, par.dir));
-				cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
-				cod.addInst(PCodeInstruction.OpCode.ASGI);
+				//Distinción del caso de vector
+				if (par.type == Symbol.Types.ARRAY) {
+					SymbolArray sArr = (SymbolArray) par;
+					int tamanyo = sArr.maxInd - sArr.minInd + 1;
+					
+					//En caso de ser vector por referencia, no hace falta recuperar cada componente,
+					//solo la dirección de inicio
+					if (par.parClass == Symbol.ParameterClass.REF) {
+						cod.addComment(String.format("Recuperando parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir));
+						
+						cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
+						cod.addInst(PCodeInstruction.OpCode.ASGI);
+					} else {
+						cod.addComment(String.format("Recuperando parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d:%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir, sArr.dir + tamanyo - 1));
+						
+						for (int j = (int)sArr.dir + tamanyo - 1; j >= sArr.dir; j--) {
+							cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , j);
+							cod.addInst(PCodeInstruction.OpCode.ASGI);
+						}
+					}
+				} else {
+					cod.addComment(String.format("Recuperando parámetro %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+								par.name, par.type, par.parClass, par.nivel, par.dir));
+					
+					cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
+					cod.addInst(PCodeInstruction.OpCode.ASGI);
+				}
+				
 				cod.encloseXMLTags(String.format("recuperar_parámetro_%d",i+1));
 				toRet.block.addBlock(cod);
 			}
@@ -626,8 +676,26 @@ Attributes cabecera_funcion() :
 				st.insertSymbol(par);
 				
 				//Comentario de declaración de parámetro
-				toRet.block.addComment(String.format("Variable %s, de tipo %s por %s, nivel %d, dirección[%d]!",
-							par.name, par.type, par.parClass, par.nivel, par.dir));
+				//Distinción del caso de vector
+				if (par.type == Symbol.Types.ARRAY) {
+					SymbolArray sArr = (SymbolArray) par;
+					int tamanyo = sArr.maxInd - sArr.minInd + 1;
+					
+					//En caso de ser vector por referencia, no hace falta declarar cada componente,
+					//solo la dirección de inicio
+					if (par.parClass == Symbol.ParameterClass.REF) {
+						toRet.block.addComment(String.format("Parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir));
+					} else {
+						cgu.memorySpaces[st.level] += tamanyo - 1;
+						
+						toRet.block.addComment(String.format("Parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d:%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir, sArr.dir + tamanyo - 1));
+					}
+				} else {
+					toRet.block.addComment(String.format("Parámetro %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+								par.name, par.type, par.parClass, par.nivel, par.dir));
+				}
 			}
 			
 			//Recuperación de cada variable en el stack (en orden inverso)
@@ -635,10 +703,36 @@ Attributes cabecera_funcion() :
 				Symbol par = parList.get(i);
 				CodeBlock cod = new CodeBlock();
 				
-				cod.addComment(String.format("Recuperando parámetro %s, por %s, de tipo %s, nivel %d, dirección[%d]!",
-							par.name, par.parClass, par.type, par.nivel, par.dir));
-				cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
-				cod.addInst(PCodeInstruction.OpCode.ASGI);
+				//Distinción del caso de vector
+				if (par.type == Symbol.Types.ARRAY) {
+					SymbolArray sArr = (SymbolArray) par;
+					int tamanyo = sArr.maxInd - sArr.minInd + 1;
+					
+					//En caso de ser vector por referencia, no hace falta recuperar cada componente,
+					//solo la dirección de inicio
+					if (par.parClass == Symbol.ParameterClass.REF) {
+						cod.addComment(String.format("Recuperando parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir));
+						
+						cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
+						cod.addInst(PCodeInstruction.OpCode.ASGI);
+					} else {
+						cod.addComment(String.format("Recuperando parámetro %s, de tipo %s, de tamaño %d, por %s, nivel %d, dirección[%d:%d]!",
+							sArr.name, sArr.type + "[" + sArr.baseType + "]", tamanyo, sArr.parClass, sArr.nivel, sArr.dir, sArr.dir + tamanyo - 1));
+						
+						for (int j = (int)sArr.dir + tamanyo - 1; j >= sArr.dir; j--) {
+							cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , j);
+							cod.addInst(PCodeInstruction.OpCode.ASGI);
+						}
+					}
+				} else {
+					cod.addComment(String.format("Recuperando parámetro %s, de tipo %s, por %s, nivel %d, dirección[%d]!",
+								par.name, par.type, par.parClass, par.nivel, par.dir));
+					
+					cod.addInst(PCodeInstruction.OpCode.SRF, st.level - par.nivel , (int)par.dir);
+					cod.addInst(PCodeInstruction.OpCode.ASGI);
+				}
+				
 				cod.encloseXMLTags(String.format("recuperar_parámetro_%d",i+1));
 				toRet.block.addBlock(cod);
 			}
@@ -1012,7 +1106,7 @@ Attributes inst_escribir() :
 						break;
 					case STRING:
 						put.addComment("Escribiendo un tipo " + temp.type +
-							" val: " + temp.valString + " length: " + temp.valString.length());
+							" val: \"" + temp.valString + "\" length: " + temp.valString.length());
 						put.addBlock(temp.block);
 						for (int j = temp.valString.length()-1; j>=0 ; j--) {
 							put.addInst(PCodeInstruction.OpCode.WRT, 0);
@@ -1074,7 +1168,7 @@ Attributes inst_escribir_linea() :
 						break;
 					case STRING:
 						put.addComment("Escribiendo un tipo " + temp.type +
-							" val: " + temp.valString + " length: " + temp.valString.length());
+							" val: \"" + temp.valString + "\" length: " + temp.valString.length());
 						put.addBlock(temp.block);
 						for (int j = temp.valString.length()-1; j>=0 ; j--) {
 							put.addInst(PCodeInstruction.OpCode.WRT, 0);
@@ -1090,7 +1184,9 @@ Attributes inst_escribir_linea() :
 			//Despues de todo escribimos salto de linea
 			CodeBlock putL = new CodeBlock();
 			//Si no hay ningún put escribimos el put vacío
-			putL.encloseXMLTags("put");
+			if (temp == null) {
+				putL.encloseXMLTags("put");
+			}
 			putL.addComment("CR/LF");
 			putL.addInst(PCodeInstruction.OpCode.STC, 13);
 			putL.addInst(PCodeInstruction.OpCode.WRT, 0);
@@ -1313,7 +1409,12 @@ Attributes inst_asignacion() :
 			toRet.block.addBlock(expr.block);
 			//Asignar a la variable asig la expresión expr
 			toRet.block.addInst(PCodeInstruction.OpCode.ASG);
-			toRet.block.encloseXMLTags(String.format("asignación_en_variable_simple_%s", asig.name));
+			
+			if (asig.type == Symbol.Types.ARRAY) {
+				toRet.block.encloseXMLTags(String.format("asignación_en_componente_de_vector_%s", asig.name));	
+			} else {
+				toRet.block.encloseXMLTags(String.format("asignación_en_variable_simple_%s", asig.name));
+			}
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
@@ -1460,7 +1561,7 @@ Attributes resto_if() :
 //asignable : LOOKAHEAD(2)
 //				<tID> <tSQOP> expresion <tSQCL>
 //			|	<tID>
-//Un asignable es el nombre de una variable escalar o de un array con un indice (que puede ser una expresion)
+//Un asignable es el nombre de una variable escalar o de un vector con un indice (que puede ser una expresion)
 //
 //Desde asignable tenemos que comprobar que el nombre existe, así que no haga falta mirarlo en los varios lugares donde llamamos esta funcion
 
@@ -1490,8 +1591,58 @@ Attributes asignable() :
 			if (attr.type != Symbol.Types.INT) {
 				es.deteccion("Tipo de indice incorrecto, esperaba un entero", token);
 			} else {
-				toRet.block.addComment(String.format("Obteniendo componente de vector \"%s[]\".", toRet.name));
+				//Código que da el resultado de la expresión
+				toRet.block.addBlock(attr.block);
+				
+				if (genErrEjec) {
+					//Para acceder a componentes específicas de vector
+					SymbolArray sArr = (SymbolArray) s;
+					String lblIniError = cgu.newLabel();
+					String lblFinError = cgu.newLabel();
+					String error = String.format("Error: Índice fuera de límites para el vector \"%s\".", s.name);
+					
+					//Escribir código para comprobar si el índice está dentro de rango
+					toRet.block.addComment(String.format("Comprobando si el índice es válido para el vector \"%s\"", s.name));
+					
+					//Duplicamos el resultado para no perderlo con las comprobaciones
+					toRet.block.addInst(PCodeInstruction.OpCode.DUP);
+					toRet.block.addInst(PCodeInstruction.OpCode.STC, sArr.minInd);
+					toRet.block.addInst(PCodeInstruction.OpCode.GTE);
+					toRet.block.addInst(PCodeInstruction.OpCode.JMF, lblIniError);
+					toRet.block.addInst(PCodeInstruction.OpCode.DUP);
+					toRet.block.addInst(PCodeInstruction.OpCode.STC, sArr.maxInd);
+					toRet.block.addInst(PCodeInstruction.OpCode.LTE);
+					toRet.block.addInst(PCodeInstruction.OpCode.JMT, lblFinError);
+					
+					//Añadir etiqueta de inicio de error
+					toRet.block.addLabel(lblIniError);
+					toRet.block.addComment(String.format("Escribiendo: \"%s\"", error));
+					
+					//En caso de que no hayamos saltado más adelante, aquí mostramos por pantalla el error
+					for (int i = 0; i < error.length(); i++) {
+						toRet.block.addInst(PCodeInstruction.OpCode.STC, (int) error.charAt(i));
+						toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+					}
+					//Añadir salto de línea
+					toRet.block.addComment("CR/LF");
+					toRet.block.addInst(PCodeInstruction.OpCode.STC, 13);
+					toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+					toRet.block.addInst(PCodeInstruction.OpCode.STC, 10);
+					toRet.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+					
+					//Salir del programa a causa del error
+					toRet.block.addInst(PCodeInstruction.OpCode.LVP);
+					
+					//Añadir etiqueta de fin de error
+					toRet.block.addLabel(lblFinError);
+				}
+				
+				toRet.block.addComment(String.format("Dirección inicial de vector \"%s\".", s.name));
 				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
+				//Se le suma a la dirección inicial, el índice
+				toRet.block.addInst(PCodeInstruction.OpCode.PLUS);
+				toRet.block.addInst(PCodeInstruction.OpCode.DRF);
+				
 				//Hay que dereferenciar la dirección de la referencia,
 				//para obtener la dirección de la variable referenciada
 				if (s.parClass == Symbol.ParameterClass.REF) {
@@ -1775,7 +1926,7 @@ Attributes expresion_simple() :
 						+ a.type + " vs BOOL", token);
 				}
 				if (a.type == Symbol.Types.ARRAY ) {
-					es.deteccion("Utilizado operator aditivo con array", token);
+					es.deteccion("Utilizado operator aditivo con vector", token);
 				}
 				a.referenciable = false;
 				
@@ -1790,7 +1941,7 @@ Attributes expresion_simple() :
 						+ a.type + " vs " + a2.type, token);
 				}
 				if (a2.type == Symbol.Types.ARRAY ) {
-						es.deteccion("Suma entre array y otra variable", token);
+						es.deteccion("Suma entre vector y otra variable", token);
 				}
 				a.referenciable = false;
 				
@@ -1936,7 +2087,7 @@ PCodeInstruction.OpCode operador_multiplicativo() :
 //		|	<tINT2CHAR> <tPTOP> expresion <tPTCL>
 //		|	<tCHAR2INT> <tPTOP> expresion <tPTCL>
 //		|	LOOKAHEAD(2)  <tID> <tPTOP> lista_exps <tPTCL> Esta es una llamada a funcion
-//		|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>  componente array
+//		|	LOOKAHEAD(2)  <tID> <tSQOP> expresion <tSQCL>  componente vector
 //		|	<tID>
 //		|	<tNUM>
 //		|	<tCHAR>
@@ -1991,14 +2142,14 @@ Attributes factor() :
 	|	LOOKAHEAD(2) 
 		a = inst_invoc_func()
 	|	LOOKAHEAD(2) 
-		t = <tID>	//Esto es id de array
+		t = <tID>	//Esto es id de vector
 		{
 			if (!st.containsSymbol(t.image)) {
 				es.deteccion(new SymbolNotFoundException(), t);
 			} else {
 				s = st.getSymbol(t.image);
 				if (s.type != Symbol.Types.ARRAY) {
-					es.deteccion(t.image + " no es identificador de array, es de tipo: " + s.type, t);
+					es.deteccion(t.image + " no es identificador de vector, es de tipo: " + s.type, t);
 				}
 				SymbolArray sArr = (SymbolArray) s;
 				a.type = sArr.baseType;
@@ -2009,8 +2160,62 @@ Attributes factor() :
 		}
 		<tSQOP>
 		temp = expresion() { 
-			if (temp.type != Symbol.Types.INT)
-				es.deteccion("El indice de elemento de array tiene que ser entero", t);
+			if (temp.type != Symbol.Types.INT) {
+				es.deteccion("El indice de elemento de vector tiene que ser entero", t);
+			}
+			//Código que da el resultado de la expresión
+			a.block.addBlock(temp.block);
+			
+			if (genErrEjec) {
+				//Para acceder a componentes específicas de vector
+				SymbolArray sArr = (SymbolArray) a.simbolo;
+				String lblIniError = cgu.newLabel();
+				String lblFinError = cgu.newLabel();
+				String error = String.format("Error: Índice fuera de límites para el vector \"%s\".", a.name);
+				
+				//Escribir código para comprobar si el índice está dentro de rango
+				a.block.addComment(String.format("Comprobando si el índice es válido para el vector \"%s\"", a.name));
+				
+				//Duplicamos el resultado para no perderlo con las comprobaciones
+				a.block.addInst(PCodeInstruction.OpCode.DUP);
+				a.block.addInst(PCodeInstruction.OpCode.STC, sArr.minInd);
+				a.block.addInst(PCodeInstruction.OpCode.GTE);
+				a.block.addInst(PCodeInstruction.OpCode.JMF, lblIniError);
+				a.block.addInst(PCodeInstruction.OpCode.DUP);
+				a.block.addInst(PCodeInstruction.OpCode.STC, sArr.maxInd);
+				a.block.addInst(PCodeInstruction.OpCode.LTE);
+				a.block.addInst(PCodeInstruction.OpCode.JMT, lblFinError);
+				
+				//Añadir etiqueta de inicio de error
+				a.block.addLabel(lblIniError);
+				a.block.addComment(String.format("Escribiendo: \"%s\"", error));
+				
+				//En caso de que no hayamos saltado más adelante, aquí mostramos por pantalla el error
+				for (int i = 0; i < error.length(); i++) {
+					a.block.addInst(PCodeInstruction.OpCode.STC, (int) error.charAt(i));
+					a.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+				}
+				//Añadir salto de línea
+				a.block.addComment("CR/LF");
+				a.block.addInst(PCodeInstruction.OpCode.STC, 13);
+				a.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+				a.block.addInst(PCodeInstruction.OpCode.STC, 10);
+				a.block.addInst(PCodeInstruction.OpCode.WRT, 0);
+				
+				//Salir del programa a causa del error
+				a.block.addInst(PCodeInstruction.OpCode.LVP);
+				
+				//Añadir etiqueta de fin de error
+				a.block.addLabel(lblFinError);
+			}
+			
+			a.block.addComment(String.format("Dirección inicial de vector \"%s\".", a.name));
+			a.block.addInst(PCodeInstruction.OpCode.SRF, st.level - a.simbolo.nivel , (int)a.simbolo.dir);
+			//Se le suma a la dirección inicial, el índice
+			a.block.addInst(PCodeInstruction.OpCode.PLUS);
+			a.block.addInst(PCodeInstruction.OpCode.DRF);
+			
+			a.block.encloseXMLTags(String.format("componente_de_vector_%s", a.name));
 		}
 		<tSQCL>
 	|	t = <tID>
@@ -2068,12 +2273,14 @@ Attributes factor() :
 			a.type = Symbol.Types.BOOL;
 			a.referenciable = false;
 			a.valBool = true;
+			a.block.addInst(PCodeInstruction.OpCode.STC, 1);
 		}
 	|	<tFALSE>
 		{
 			a.type = Symbol.Types.BOOL;
 			a.referenciable = false;
 			a.valBool = false;
+			a.block.addInst(PCodeInstruction.OpCode.STC, 0);
 		}
 	} catch (ParseException e) {
 		Set<Integer> conjSinc = infoParseException(e);
