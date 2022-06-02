@@ -1648,15 +1648,18 @@ Attributes asignable() :
 				
 				toRet.block.addComment(String.format("Dirección inicial de vector \"%s\".", s.name));
 				toRet.block.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel , (int)s.dir);
-				//Se le suma a la dirección inicial, el índice
-				toRet.block.addInst(PCodeInstruction.OpCode.PLUS);
-				toRet.block.addInst(PCodeInstruction.OpCode.DRF);
-				
+
 				//Hay que dereferenciar la dirección de la referencia,
 				//para obtener la dirección de la variable referenciada
 				if (s.parClass == Symbol.ParameterClass.REF) {
 					toRet.block.addInst(PCodeInstruction.OpCode.DRF);
 				}
+				//Ahora que hemos obtenido la direccion de vett[0]
+				//Se le suma a la dirección inicial, el índice
+				toRet.block.addInst(PCodeInstruction.OpCode.PLUS);
+				//Este hay que quitarlo porquè ya hemos hecho un DRF, y nos hace falta
+				//La direccion de v[indice] para asignarle lo que sea
+				//toRet.block.addInst(PCodeInstruction.OpCode.DRF);
 			}
 		}
 		<tSQCL>
@@ -2108,7 +2111,7 @@ Attributes factor() :
 	Attributes a = new Attributes();
 	Attributes temp;
 	Token t;
-	Symbol s;
+	Symbol s = null;
 	Token tempTok;
 }
 {
@@ -2220,8 +2223,13 @@ Attributes factor() :
 			
 			a.block.addComment(String.format("Dirección inicial de vector \"%s\".", a.name));
 			a.block.addInst(PCodeInstruction.OpCode.SRF, st.level - a.simbolo.nivel , (int)a.simbolo.dir);
+			//Se el array que estamos utilizando es por referencia, me hace falta este
+			if (s.parClass == Symbol.ParameterClass.REF) {
+				a.block.addInst(PCodeInstruction.OpCode.DRF);
+			}
 			//Se le suma a la dirección inicial, el índice
 			a.block.addInst(PCodeInstruction.OpCode.PLUS);
+			//Este segundo DRF se come la direccion y pone el valor
 			a.block.addInst(PCodeInstruction.OpCode.DRF);
 			
 			a.block.encloseXMLTags(String.format("componente_de_vector_%s", a.name));
