@@ -1104,6 +1104,13 @@ Attributes inst_escribir() :
 						put.addBlock(temp.block);
 						put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						break;
+					case BOOL:
+						put.addComment("Escribiendo un tipo " + temp.type + " val: "
+							+ temp.valBool);
+						put.addBlock(temp.block);
+						put.addInst(PCodeInstruction.OpCode.WRT, 0);
+						//TODO: esto no funcionará, hay que hacer 2 label y un goto para imprimir los codigos ascii de true y false
+						break;
 					case STRING:
 						put.addComment("Escribiendo un tipo " + temp.type +
 							" val: \"" + temp.valString + "\" length: " + temp.valString.length());
@@ -1112,6 +1119,7 @@ Attributes inst_escribir() :
 							put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						}
 						break;
+					
 					default:
 						System.err.println("No se puede escribir el tipo" + exps.get(i).type);
 						break;
@@ -1166,6 +1174,7 @@ Attributes inst_escribir_linea() :
 						put.addBlock(temp.block);
 						put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						break;
+					//TODO añadir bool cómo antes
 					case STRING:
 						put.addComment("Escribiendo un tipo " + temp.type +
 							" val: \"" + temp.valString + "\" length: " + temp.valString.length());
