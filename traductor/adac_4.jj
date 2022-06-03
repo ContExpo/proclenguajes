@@ -1299,7 +1299,8 @@ Attributes inst_invoc_proc() :
 						expPar.type == Symbol.Types.ARRAY) {
 						givenPar.block.addComment("Array pasado por referencia");
 						givenPar.block.addInst(PCodeInstruction.OpCode.SRF, st.level - givenPar.simbolo.nivel , (int)givenPar.simbolo.dir);
-						givenPar.block.addInst(PCodeInstruction.OpCode.DRF);
+						//Esto no me hace falta, porque si lo pongo estoy escribiendo el valor
+						//givenPar.block.addInst(PCodeInstruction.OpCode.DRF);
 					}
 						givenPar.block.encloseXMLTags(String.format("parámetro_%d", i+1));
 						toRet.block.addBlock(givenPar.block);
