@@ -98,5 +98,6 @@ de código que se ocupan de quitar/añadir un DRF si fuese necesario.
 Para el cálculo de las expresiones, se genera el código (osea el STC/STR y DRF y las instrucciones para los calculos) mientras que se leyen los tokens.
 
 Además, hemos añadido un chequeo runtime para comprobar si el indice utilizado para acceder a un elemento de array es correcto, y en caso contrario se imprime un error y se termina la ejecución.
+Dicho chequeo se pone en el código solo si la variable genErrEjec está puesta true.
 
 Para todas las otras producciones, no hemos tenido que añadir operaciónes especiales para qué funcionen.
