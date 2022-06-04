@@ -4,7 +4,8 @@ Alessio Esposito Inchiostro - 847803
 Pràctica 1: creaciòn de un analizador lèxico para el lenguaje ADAC. Para
 compilar, ejecutar el comando "ant" en la carpeta raìz del proyecto
 
-Pràctica 2: Analizador sintàctico En esta secciòn se explicarà de manera
+Pràctica 2: Analizador sintàctico
+En esta secciòn se explicarà de manera
 discursiva como el compilador ejecuta reparaciòn de errores para cada secciòn
 del còdigo.
  
@@ -44,7 +45,8 @@ A los componente de las expresiones hemos puesto ")", "end", ";" y ",", pero en
 concreto es muy dificil recuperar en modo panic dentro de una singula expresiòn,
 y por eso seguramente el ; es el màs eficaz.
 
-Pràctica 3: Analizador semantico En esta sección se describirá la lógica del
+Pràctica 3: Analizador semantico
+En esta sección se describirá la lógica del
 analisís semantico. Se instancia la tabla de simbolos para guardar todos los
 simbolos. Se tiene que tener en cuenta que no pueda existir una variable global
 (nivel 0) que tenga el mismo nombre que la procedura principal. El analisís es
@@ -74,11 +76,27 @@ elemento de array. Además, si el parametro es un array se comprueba qué el
 tamaño del array sea lo esperado. No está permitido invocar funciones fuera de
 expresiónes o proceduras cómo parte de una expresión.
 
-Pràctica 4 - Generaciòn de còdigo Siendo que nuestro compilador en muchas
+Pràctica 4 - Generaciòn de còdigo
+Siendo que nuestro compilador en muchas
 funciones devuelve recursivamente un objeto Attributes que contiene varias
 informaciones necesarias para los anàlisis que se cumplen antes de la
 compilaciòn, hemos pensado que la idea mejor fuese anyadir un campo CodeBlock a
 Attributes para devolver tambièn el bloque de còdigo generado, y luego juntarlo
 y devolverlo recursivamente hasta la funciòn S(). Hemos anyadido un contador de
 errores para comprobar si hay errores que puedan impedir la generaciòn de
-còdigo.
+còdigo. Para el código del if, las labes se generan de siguente manera: en la función inst_seleccion, se genera una label de fine if, suponendo que también sea la de fine else.
+Si, luego es encuentra el bloque else, se genera su label normalmente. De hecho, si la condición es falsa, se ejecuta un jump a la fin del if, osea se ejecuta el bloque de código else.
+De otra manera, se ejecuta el if y luego se salta el else.
+
+Sobre las variables, para utilizar una varible por valor simplemente se utilizan las instrucciones SRF y DRF para escribir sus valor en la pila. Esto se utiliza para utilizarlas en expresiones,
+pasarlas cómo parametros por valor y para escribirlas por pantalla.
+Cuando se pasa un array por valor, se trata de pushear todos los elementos del array en la pila a través de un loop, y luego cuando se invoca la función considerar dicha zona de memoria
+la zona del "nuevo" array. 
+De contrario, para pasar variables por referencia, si son vectores o array simplemente se utiliza es SRF para escribir en la pila sus dirección.
+En caso fuese necesario pasar cómo parametro por referencia una variable recibida por referencia, en la sección de generación de código de inst_invoc_proc y inst_invoc_func hay unas lineas
+de código que se ocupan de quitar/añadir un DRF si fuese necesario.
+Para el cálculo de las expresiones, se genera el código (osea el STC/STR y DRF y las instrucciones para los calculos) mientras que se leyen los tokens.
+
+Además, hemos añadido un chequeo runtime para comprobar si el indice utilizado para acceder a un elemento de array es correcto, y en caso contrario se imprime un error y se termina la ejecución.
+
+Para todas las otras producciones, no hemos tenido que añadir operaciónes especiales para qué funcionen.
