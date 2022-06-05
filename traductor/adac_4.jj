@@ -17,6 +17,8 @@ PARSER_BEGIN(adac_4)
 package traductor;
 import java.util.Set;
 import java.util.HashSet;
+import java.io.FileWriter;
+import java.io.IOException;
 import lib.symbolTable.*;
 import lib.errores.*;
 import lib.attributes.Attributes;
@@ -51,7 +53,7 @@ public class adac_4 {
 				return;
 			}
 			else { //entrada desde fichero en args[0]
-				parser = new adac_4(new java.io.FileInputStream(args[0])); 
+				parser = new adac_4(new java.io.FileInputStream(args[0] + ".adac")); 
 			}
 			parser.S(args[0]); //invoca símbolo inicial de la gramática
 		}
@@ -201,18 +203,23 @@ void S (String fileName) :
 		System.err.println("Error: " + t1.image + " ya está declarado");
 	}
 	{
-		cb.addInst(PCodeInstruction.OpCode.LVP);
-		cb.encloseXMLTags(t1.image);
-		
-		//Generar código solo si no hay errores
-		if (es.getContadorErrores() == 0) {
-			File file = new File(fileName + ".pcode");
-			file.writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			file.writeLine(cb.toString());
-			file.close()
-			System.out.println("Compilado correctamente el fichero " + fileName + ".pcode");
-		} else {
-			System.out.println("Presencia de errores en el fichero fuente. Abortada la generación de código.");
+		try {
+			cb.addInst(PCodeInstruction.OpCode.LVP);
+			cb.encloseXMLTags(t1.image);
+			
+			//Generar código solo si no hay errores
+			if (es.getContadorErrores() == 0) {
+				FileWriter file = new FileWriter(fileName + ".pcode");
+				file.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+				file.write("\n");
+				file.write(cb.toString());
+				file.close();
+				System.out.println("Compilado correctamente el fichero " + fileName + ".pcode");
+			} else {
+				System.out.println("Presencia de errores en el fichero fuente. Abortada la generación de código.");
+			}
+		} catch (Exception e) {
+			System.err.println("Error al imprimir del fichero");
 		}
 	}
 }

@@ -1,498 +1,494 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <goldbach>
+; --- Programa goldbach
   ENP L0
-<variable_declaration>
-; --- Simple variable "n", type 0, level 0,  address [3]!
-; --- Simple variable "i", type 0, level 0,  address [4]!
-</variable_declaration>
-<function_pedir_entero>
+<declaracion_variables>
+; --- Variable n, de tipo INT, por NONE, nivel 0, dirección[3]!
+; --- Variable i, de tipo INT, por NONE, nivel 0, dirección[4]!
+</declaracion_variables>
+<función_pedir_entero>
 L1:
   JMP L2
-<variable_declaration>
-; --- Simple variable "n", type 0, level 1,  address [3]!
-</variable_declaration>
+<declaracion_variables>
+; --- Variable n, de tipo INT, por NONE, nivel 1, dirección[3]!
+</declaracion_variables>
 L2:
-<pedir_entero_instruction_block>
-<Assignment_to__simple_variable_n>
-; --- Address of variable / parameter "n"
+<bloque_instrucciones_pedir_entero>
+<asignación_en_variable_simple_n>
+; --- Obteniendo variable simple/parámetro "n".
   SRF  0  3
   STC  0
-  ASG 
-</Assignment_to__simple_variable_n>
+  ASG
+</asignación_en_variable_simple_n>
 <while>
 L3:
-<condition>
-; --- Variable / parameter "n"
+<condición>
+; --- Variable simple/parámetro "n".
   SRF  0  3
-  DRF 
+  DRF
   STC  2
-  LTE 
-; --- Variable / parameter "n"
+  LTE
+; --- Variable simple/parámetro "n".
   SRF  0  3
-  DRF 
+  DRF
   STC  2
-  MOD 
+  MOD
   STC  0
-  NEQ 
-  OR 
-</condition>
+  NEQ
+  OR
+</condición>
   JMF L4
-<while_instruction_block>
+<bloque_instrucciones_while>
 <put>
-; --- Put STRING "Dame un numero PAR mayor que 2: " (length 32)
-; --- Standard string writing
+; --- Escribiendo un tipo STRING val: "Dame un numero PAR mayor que 2: " length: 32
+  STC 32
+  STC 58
+  STC 50
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 32
+  STC 114
+  STC 111
+  STC 121
+  STC 97
+  STC 109
+  STC 32
+  STC 82
+  STC 65
+  STC 80
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 109
+  STC 97
   STC 68
   WRT  0
-  STC 97
   WRT  0
-  STC 109
   WRT  0
-  STC 101
   WRT  0
-  STC 32
   WRT  0
-  STC 117
   WRT  0
-  STC 110
   WRT  0
-  STC 32
   WRT  0
-  STC 110
   WRT  0
-  STC 117
   WRT  0
-  STC 109
   WRT  0
-  STC 101
   WRT  0
-  STC 114
   WRT  0
-  STC 111
   WRT  0
-  STC 32
   WRT  0
-  STC 80
   WRT  0
-  STC 65
   WRT  0
-  STC 82
   WRT  0
-  STC 32
   WRT  0
-  STC 109
   WRT  0
-  STC 97
   WRT  0
-  STC 121
   WRT  0
-  STC 111
   WRT  0
-  STC 114
   WRT  0
-  STC 32
   WRT  0
-  STC 113
   WRT  0
-  STC 117
   WRT  0
-  STC 101
   WRT  0
-  STC 32
   WRT  0
-  STC 50
   WRT  0
-  STC 58
   WRT  0
-  STC 32
   WRT  0
 </put>
 <get>
-; --- Get simple variable/parameter "n".
+; --- Obteniendo variable simple/parámetro "n".
   SRF  0  3
   RD  1
 </get>
-</while_instruction_block>
+</bloque_instrucciones_while>
   JMP L3
 L4:
 </while>
 <return>
-; --- Variable / parameter "n"
+; --- Variable simple/parámetro "n".
   SRF  0  3
-  DRF 
-  CSF 
+  DRF
+  CSF
 </return>
-  CSF 
-</pedir_entero_instruction_block>
-</function_pedir_entero>
-<function_es_primo>
+  CSF
+</bloque_instrucciones_pedir_entero>
+</función_pedir_entero>
+<función_es_primo>
 L5:
-; --- Simple parameter "k", type 0, class 0, level 1,  address [3]!
-<recover_argument_1>
-; --- Recover simple val / ref variable parameter "k" (number 1).
+; --- Parámetro k, de tipo INT, por VAL, nivel 1, dirección[3]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro k, de tipo INT, por VAL, nivel 1, dirección[3]!
   SRF  0  3
-  ASGI 
-</recover_argument_1>
+  ASGI
+</recuperar_parámetro_1>
   JMP L6
-<variable_declaration>
-; --- Simple variable "i", type 0, level 1,  address [4]!
-; --- Simple variable "primo", type 1, level 1,  address [5]!
-</variable_declaration>
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[4]!
+; --- Variable primo, de tipo BOOL, por NONE, nivel 1, dirección[5]!
+</declaracion_variables>
 L6:
-<es_primo_instruction_block>
-<Assignment_to__simple_variable_i>
-; --- Address of variable / parameter "i"
+<bloque_instrucciones_es_primo>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
   SRF  0  4
   STC  2
-  ASG 
-</Assignment_to__simple_variable_i>
-<Assignment_to__simple_variable_primo>
-; --- Address of variable / parameter "primo"
+  ASG
+</asignación_en_variable_simple_i>
+<asignación_en_variable_simple_primo>
+; --- Obteniendo variable simple/parámetro "primo".
   SRF  0  5
   STC  1
-  ASG 
-</Assignment_to__simple_variable_primo>
+  ASG
+</asignación_en_variable_simple_primo>
 <while>
 L7:
-<condition>
-; --- Variable / parameter "i"
+<condición>
+; --- Variable simple/parámetro "i".
   SRF  0  4
-  DRF 
-; --- Variable / parameter "k"
+  DRF
+; --- Variable simple/parámetro "k".
   SRF  0  3
-  DRF 
+  DRF
   STC  2
-  DIV 
-  LTE 
-; --- Variable / parameter "primo"
+  DIV
+  LTE
+; --- Variable simple/parámetro "primo".
   SRF  0  5
-  DRF 
-  AND 
-</condition>
+  DRF
+  AND
+</condición>
   JMF L8
-<while_instruction_block>
-<Assignment_to__simple_variable_primo>
-; --- Address of variable / parameter "primo"
+<bloque_instrucciones_while>
+<asignación_en_variable_simple_primo>
+; --- Obteniendo variable simple/parámetro "primo".
   SRF  0  5
-; --- Variable / parameter "k"
+; --- Variable simple/parámetro "k".
   SRF  0  3
-  DRF 
-; --- Variable / parameter "i"
+  DRF
+; --- Variable simple/parámetro "i".
   SRF  0  4
-  DRF 
-  MOD 
+  DRF
+  MOD
   STC  0
-  NEQ 
-  ASG 
-</Assignment_to__simple_variable_primo>
-<Assignment_to__simple_variable_i>
-; --- Address of variable / parameter "i"
+  NEQ
+  ASG
+</asignación_en_variable_simple_primo>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
   SRF  0  4
-; --- Variable / parameter "i"
+; --- Variable simple/parámetro "i".
   SRF  0  4
-  DRF 
+  DRF
   STC  1
-  PLUS 
-  ASG 
-</Assignment_to__simple_variable_i>
-</while_instruction_block>
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
   JMP L7
 L8:
 </while>
 <return>
-; --- Variable / parameter "primo"
+; --- Variable simple/parámetro "primo".
   SRF  0  5
-  DRF 
-  CSF 
+  DRF
+  CSF
 </return>
-  CSF 
-</es_primo_instruction_block>
-</function_es_primo>
-<function_hay_un_par>
+  CSF
+</bloque_instrucciones_es_primo>
+</función_es_primo>
+<función_hay_un_par>
 L9:
-; --- Simple parameter "k", type 0, class 0, level 1,  address [3]!
-<recover_argument_1>
-; --- Recover simple val / ref variable parameter "k" (number 1).
+; --- Parámetro k, de tipo INT, por VAL, nivel 1, dirección[3]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro k, de tipo INT, por VAL, nivel 1, dirección[3]!
   SRF  0  3
-  ASGI 
-</recover_argument_1>
+  ASGI
+</recuperar_parámetro_1>
   JMP L10
-<variable_declaration>
-; --- Simple variable "i", type 0, level 1,  address [4]!
-; --- Simple variable "n", type 0, level 1,  address [5]!
-; --- Simple variable "a", type 0, level 1,  address [6]!
-; --- Simple variable "b", type 0, level 1,  address [7]!
-</variable_declaration>
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[4]!
+; --- Variable n, de tipo INT, por NONE, nivel 1, dirección[5]!
+; --- Variable a, de tipo INT, por NONE, nivel 1, dirección[6]!
+; --- Variable b, de tipo INT, por NONE, nivel 1, dirección[7]!
+</declaracion_variables>
 L10:
-<hay_un_par_instruction_block>
-<Assignment_to__simple_variable_a>
-; --- Address of variable / parameter "a"
+<bloque_instrucciones_hay_un_par>
+<asignación_en_variable_simple_a>
+; --- Obteniendo variable simple/parámetro "a".
   SRF  0  6
   STC  2
-  ASG 
-</Assignment_to__simple_variable_a>
-<Assignment_to__simple_variable_b>
-; --- Address of variable / parameter "b"
+  ASG
+</asignación_en_variable_simple_a>
+<asignación_en_variable_simple_b>
+; --- Obteniendo variable simple/parámetro "b".
   SRF  0  7
   STC  2
-  ASG 
-</Assignment_to__simple_variable_b>
-<Assignment_to__simple_variable_n>
-; --- Address of variable / parameter "n"
+  ASG
+</asignación_en_variable_simple_b>
+<asignación_en_variable_simple_n>
+; --- Obteniendo variable simple/parámetro "n".
   SRF  0  5
   STC  0
-  ASG 
-</Assignment_to__simple_variable_n>
+  ASG
+</asignación_en_variable_simple_n>
 <put>
-; --- Variable / parameter "k"
+; --- Variable simple/parámetro "k".
   SRF  0  3
-  DRF 
-; --- Put INTEGER
+  DRF
+; --- Escribiendo un tipo INT
   WRT  1
 </put>
 <put>
-; --- Put STRING " es la suma de: " (length 16)
-; --- Standard string writing
+; --- Escribiendo un tipo STRING val: " es la suma de: " length: 16
   STC 32
-  WRT  0
-  STC 101
-  WRT  0
-  STC 115
-  WRT  0
-  STC 32
-  WRT  0
-  STC 108
-  WRT  0
-  STC 97
-  WRT  0
-  STC 32
-  WRT  0
-  STC 115
-  WRT  0
-  STC 117
-  WRT  0
-  STC 109
-  WRT  0
-  STC 97
-  WRT  0
-  STC 32
-  WRT  0
-  STC 100
-  WRT  0
-  STC 101
-  WRT  0
   STC 58
-  WRT  0
+  STC 101
+  STC 100
   STC 32
+  STC 97
+  STC 109
+  STC 117
+  STC 115
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 115
+  STC 101
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
   WRT  0
 </put>
 <while>
 L11:
-<condition>
-; --- Variable / parameter "a"
+<condición>
+; --- Variable simple/parámetro "a".
   SRF  0  6
-  DRF 
-; --- Variable / parameter "k"
+  DRF
+; --- Variable simple/parámetro "k".
   SRF  0  3
-  DRF 
-  LT 
-; --- Variable / parameter "b"
+  DRF
+  LT
+; --- Variable simple/parámetro "b".
   SRF  0  7
-  DRF 
-; --- Variable / parameter "k"
+  DRF
+; --- Variable simple/parámetro "k".
   SRF  0  3
-  DRF 
-  LT 
-  AND 
-</condition>
+  DRF
+  LT
+  AND
+</condición>
   JMF L12
-<while_instruction_block>
+<bloque_instrucciones_while>
 <if-then>
-<condition>
-<function_call_es_primo>
-<argument_1>
-; --- Variable / parameter "a"
+<condición>
+<llamada_a_funcion_es_primo>
+<parámetro_1>
+; --- Variable simple/parámetro "a".
   SRF  0  6
-  DRF 
-</argument_1>
+  DRF
+</parámetro_1>
   OSF  8  1 L5
-</function_call_es_primo>
-<function_call_es_primo>
-<argument_1>
-; --- Variable / parameter "b"
+</llamada_a_funcion_es_primo>
+<llamada_a_funcion_es_primo>
+<parámetro_1>
+; --- Variable simple/parámetro "b".
   SRF  0  7
-  DRF 
-</argument_1>
+  DRF
+</parámetro_1>
   OSF  8  1 L5
-</function_call_es_primo>
-  AND 
-; --- Variable / parameter "a"
+</llamada_a_funcion_es_primo>
+  AND
+; --- Variable simple/parámetro "a".
   SRF  0  6
-  DRF 
-; --- Variable / parameter "b"
+  DRF
+; --- Variable simple/parámetro "b".
   SRF  0  7
-  DRF 
-  PLUS 
-; --- Variable / parameter "k"
+  DRF
+  PLUS
+; --- Variable simple/parámetro "k".
   SRF  0  3
-  DRF 
-  EQ 
-  AND 
-</condition>
+  DRF
+  EQ
+  AND
+</condición>
   JMF L13
 <then>
 <put>
-; --- Variable / parameter "a"
+; --- Variable simple/parámetro "a".
   SRF  0  6
-  DRF 
-; --- Put INTEGER
+  DRF
+; --- Escribiendo un tipo INT
   WRT  1
 </put>
 <put>
-; --- Put STRING "+" (length 1)
-; --- Standard string writing
+; --- Escribiendo un tipo STRING val: "+" length: 1
   STC 43
   WRT  0
 </put>
 <put>
-; --- Variable / parameter "b"
+; --- Variable simple/parámetro "b".
   SRF  0  7
-  DRF 
-; --- Put INTEGER
+  DRF
+; --- Escribiendo un tipo INT
   WRT  1
 </put>
 <put>
-; --- Put STRING ", " (length 2)
-; --- Standard string writing
+; --- Escribiendo un tipo STRING val: ", " length: 2
+  STC 32
   STC 44
   WRT  0
-  STC 32
   WRT  0
 </put>
-<Assignment_to__simple_variable_n>
-; --- Address of variable / parameter "n"
+<asignación_en_variable_simple_n>
+; --- Obteniendo variable simple/parámetro "n".
   SRF  0  5
-; --- Variable / parameter "n"
+; --- Variable simple/parámetro "n".
   SRF  0  5
-  DRF 
+  DRF
   STC  1
-  PLUS 
-  ASG 
-</Assignment_to__simple_variable_n>
+  PLUS
+  ASG
+</asignación_en_variable_simple_n>
 </then>
 L13:
 </if-then>
-<Assignment_to__simple_variable_a>
-; --- Address of variable / parameter "a"
+<asignación_en_variable_simple_a>
+; --- Obteniendo variable simple/parámetro "a".
   SRF  0  6
-; --- Variable / parameter "a"
+; --- Variable simple/parámetro "a".
   SRF  0  6
-  DRF 
+  DRF
   STC  1
-  PLUS 
-  ASG 
-</Assignment_to__simple_variable_a>
+  PLUS
+  ASG
+</asignación_en_variable_simple_a>
 <if-then>
-<condition>
-; --- Variable / parameter "a"
+<condición>
+; --- Variable simple/parámetro "a".
   SRF  0  6
-  DRF 
-; --- Variable / parameter "k"
+  DRF
+; --- Variable simple/parámetro "k".
   SRF  0  3
-  DRF 
-  EQ 
-</condition>
+  DRF
+  EQ
+</condición>
   JMF L14
 <then>
-<Assignment_to__simple_variable_b>
-; --- Address of variable / parameter "b"
+<asignación_en_variable_simple_b>
+; --- Obteniendo variable simple/parámetro "b".
   SRF  0  7
-; --- Variable / parameter "b"
+; --- Variable simple/parámetro "b".
   SRF  0  7
-  DRF 
+  DRF
   STC  1
-  PLUS 
-  ASG 
-</Assignment_to__simple_variable_b>
-<Assignment_to__simple_variable_a>
-; --- Address of variable / parameter "a"
+  PLUS
+  ASG
+</asignación_en_variable_simple_b>
+<asignación_en_variable_simple_a>
+; --- Obteniendo variable simple/parámetro "a".
   SRF  0  6
-; --- Variable / parameter "b"
+; --- Variable simple/parámetro "b".
   SRF  0  7
-  DRF 
-  ASG 
-</Assignment_to__simple_variable_a>
+  DRF
+  ASG
+</asignación_en_variable_simple_a>
 </then>
 L14:
 </if-then>
-</while_instruction_block>
+</bloque_instrucciones_while>
   JMP L11
 L12:
 </while>
 <put>
-; --- Variable / parameter "n"
+; --- Variable simple/parámetro "n".
   SRF  0  5
-  DRF 
-; --- Put INTEGER
+  DRF
+; --- Escribiendo un tipo INT
   WRT  1
 </put>
 <put>
-; --- Put STRING " parejas de primos en total." (length 28)
-; --- Standard string writing
-  STC 32
-  WRT  0
-  STC 112
-  WRT  0
-  STC 97
-  WRT  0
-  STC 114
-  WRT  0
-  STC 101
-  WRT  0
-  STC 106
-  WRT  0
-  STC 97
-  WRT  0
-  STC 115
-  WRT  0
-  STC 32
-  WRT  0
-  STC 100
-  WRT  0
-  STC 101
-  WRT  0
-  STC 32
-  WRT  0
-  STC 112
-  WRT  0
-  STC 114
-  WRT  0
-  STC 105
-  WRT  0
-  STC 109
-  WRT  0
-  STC 111
-  WRT  0
-  STC 115
-  WRT  0
-  STC 32
-  WRT  0
-  STC 101
-  WRT  0
-  STC 110
-  WRT  0
-  STC 32
-  WRT  0
-  STC 116
-  WRT  0
-  STC 111
-  WRT  0
-  STC 116
-  WRT  0
-  STC 97
-  WRT  0
-  STC 108
-  WRT  0
+; --- Escribiendo un tipo STRING val: " parejas de primos en total." length: 28
   STC 46
+  STC 108
+  STC 97
+  STC 116
+  STC 111
+  STC 116
+  STC 32
+  STC 110
+  STC 101
+  STC 32
+  STC 115
+  STC 111
+  STC 109
+  STC 105
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 115
+  STC 97
+  STC 106
+  STC 101
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
   WRT  0
 </put>
 <put_line>
@@ -503,336 +499,330 @@ L12:
   WRT  0
 </put_line>
 <return>
-; --- Variable / parameter "n"
+; --- Variable simple/parámetro "n".
   SRF  0  5
-  DRF 
+  DRF
   STC  0
-  GT 
-  CSF 
+  GT
+  CSF
 </return>
-  CSF 
-</hay_un_par_instruction_block>
-</function_hay_un_par>
+  CSF
+</bloque_instrucciones_hay_un_par>
+</función_hay_un_par>
 L0:
-<goldbach_instruction_block>
+<bloque_instrucciones_goldbach>
 <put>
-; --- Put STRING "Conjetura de Golbach: todo número par mayor que 2 puede escribirse como suma de dos números primos." (length 101)
-; --- Standard string writing
-  STC 67
-  WRT  0
+; --- Escribiendo un tipo STRING val: "Conjetura de Golbach: todo número par mayor que 2 puede escribirse como suma de dos números primos." length: 99
+  STC 46
+  STC 115
   STC 111
-  WRT  0
-  STC 110
-  WRT  0
-  STC 106
-  WRT  0
-  STC 101
-  WRT  0
-  STC 116
-  WRT  0
-  STC 117
-  WRT  0
-  STC 114
-  WRT  0
-  STC 97
-  WRT  0
-  STC 32
-  WRT  0
-  STC 100
-  WRT  0
-  STC 101
-  WRT  0
-  STC 32
-  WRT  0
-  STC 71
-  WRT  0
-  STC 111
-  WRT  0
-  STC 108
-  WRT  0
-  STC 98
-  WRT  0
-  STC 97
-  WRT  0
-  STC 99
-  WRT  0
-  STC 104
-  WRT  0
-  STC 58
-  WRT  0
-  STC 32
-  WRT  0
-  STC 116
-  WRT  0
-  STC 111
-  WRT  0
-  STC 100
-  WRT  0
-  STC 111
-  WRT  0
-  STC 32
-  WRT  0
-  STC 110
-  WRT  0
-  STC -61
-  WRT  0
-  STC -70
-  WRT  0
   STC 109
-  WRT  0
-  STC 101
-  WRT  0
+  STC 105
   STC 114
-  WRT  0
-  STC 111
-  WRT  0
-  STC 32
-  WRT  0
   STC 112
-  WRT  0
-  STC 97
-  WRT  0
-  STC 114
-  WRT  0
   STC 32
-  WRT  0
-  STC 109
-  WRT  0
-  STC 97
-  WRT  0
-  STC 121
-  WRT  0
+  STC 115
   STC 111
-  WRT  0
   STC 114
-  WRT  0
-  STC 32
-  WRT  0
-  STC 113
-  WRT  0
-  STC 117
-  WRT  0
   STC 101
-  WRT  0
+  STC 109
+  STC 250
+  STC 110
   STC 32
-  WRT  0
+  STC 115
+  STC 111
+  STC 100
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 97
+  STC 109
+  STC 117
+  STC 115
+  STC 32
+  STC 111
+  STC 109
+  STC 111
+  STC 99
+  STC 32
+  STC 101
+  STC 115
+  STC 114
+  STC 105
+  STC 98
+  STC 105
+  STC 114
+  STC 99
+  STC 115
+  STC 101
+  STC 32
+  STC 101
+  STC 100
+  STC 101
+  STC 117
+  STC 112
+  STC 32
   STC 50
-  WRT  0
   STC 32
-  WRT  0
-  STC 112
-  WRT  0
+  STC 101
   STC 117
-  WRT  0
-  STC 101
-  WRT  0
-  STC 100
-  WRT  0
-  STC 101
-  WRT  0
+  STC 113
   STC 32
-  WRT  0
-  STC 101
-  WRT  0
-  STC 115
-  WRT  0
-  STC 99
-  WRT  0
   STC 114
-  WRT  0
-  STC 105
-  WRT  0
-  STC 98
-  WRT  0
-  STC 105
-  WRT  0
-  STC 114
-  WRT  0
-  STC 115
-  WRT  0
-  STC 101
-  WRT  0
-  STC 32
-  WRT  0
-  STC 99
-  WRT  0
   STC 111
-  WRT  0
-  STC 109
-  WRT  0
-  STC 111
-  WRT  0
-  STC 32
-  WRT  0
-  STC 115
-  WRT  0
-  STC 117
-  WRT  0
-  STC 109
-  WRT  0
+  STC 121
   STC 97
-  WRT  0
+  STC 109
   STC 32
-  WRT  0
-  STC 100
-  WRT  0
-  STC 101
-  WRT  0
+  STC 114
+  STC 97
+  STC 112
   STC 32
-  WRT  0
-  STC 100
-  WRT  0
   STC 111
-  WRT  0
-  STC 115
-  WRT  0
-  STC 32
-  WRT  0
+  STC 114
+  STC 101
+  STC 109
+  STC 250
   STC 110
-  WRT  0
-  STC -61
-  WRT  0
-  STC -70
-  WRT  0
-  STC 109
-  WRT  0
-  STC 101
-  WRT  0
-  STC 114
-  WRT  0
-  STC 111
-  WRT  0
-  STC 115
-  WRT  0
   STC 32
-  WRT  0
-  STC 112
-  WRT  0
-  STC 114
-  WRT  0
-  STC 105
-  WRT  0
-  STC 109
-  WRT  0
   STC 111
-  WRT  0
-  STC 115
-  WRT  0
-  STC 46
-  WRT  0
-</put>
-<put_line>
-; --- CR/LF
-  STC 13
-  WRT  0
-  STC 10
-  WRT  0
-</put_line>
-<put>
-; --- Put STRING "https://es.wikipedia.org/wiki/Conjetura_de_Goldbach" (length 51)
-; --- Standard string writing
-  STC 104
-  WRT  0
-  STC 116
-  WRT  0
-  STC 116
-  WRT  0
-  STC 112
-  WRT  0
-  STC 115
-  WRT  0
-  STC 58
-  WRT  0
-  STC 47
-  WRT  0
-  STC 47
-  WRT  0
-  STC 101
-  WRT  0
-  STC 115
-  WRT  0
-  STC 46
-  WRT  0
-  STC 119
-  WRT  0
-  STC 105
-  WRT  0
-  STC 107
-  WRT  0
-  STC 105
-  WRT  0
-  STC 112
-  WRT  0
-  STC 101
-  WRT  0
   STC 100
-  WRT  0
-  STC 105
-  WRT  0
-  STC 97
-  WRT  0
-  STC 46
-  WRT  0
   STC 111
-  WRT  0
+  STC 116
+  STC 32
+  STC 58
+  STC 104
+  STC 99
+  STC 97
+  STC 98
+  STC 108
+  STC 111
+  STC 71
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 97
   STC 114
-  WRT  0
-  STC 103
-  WRT  0
-  STC 47
-  WRT  0
-  STC 119
-  WRT  0
-  STC 105
-  WRT  0
-  STC 107
-  WRT  0
-  STC 105
-  WRT  0
-  STC 47
-  WRT  0
+  STC 117
+  STC 116
+  STC 101
+  STC 106
+  STC 110
+  STC 111
   STC 67
   WRT  0
-  STC 111
   WRT  0
-  STC 110
   WRT  0
-  STC 106
   WRT  0
-  STC 101
   WRT  0
-  STC 116
   WRT  0
-  STC 117
   WRT  0
-  STC 114
   WRT  0
-  STC 97
   WRT  0
-  STC 95
   WRT  0
-  STC 100
   WRT  0
-  STC 101
   WRT  0
-  STC 95
   WRT  0
-  STC 71
   WRT  0
-  STC 111
   WRT  0
-  STC 108
   WRT  0
-  STC 100
   WRT  0
-  STC 98
   WRT  0
-  STC 97
   WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "https://es.wikipedia.org/wiki/Conjetura_de_Goldbach" length: 51
+  STC 104
   STC 99
-  WRT  0
+  STC 97
+  STC 98
+  STC 100
+  STC 108
+  STC 111
+  STC 71
+  STC 95
+  STC 101
+  STC 100
+  STC 95
+  STC 97
+  STC 114
+  STC 117
+  STC 116
+  STC 101
+  STC 106
+  STC 110
+  STC 111
+  STC 67
+  STC 47
+  STC 105
+  STC 107
+  STC 105
+  STC 119
+  STC 47
+  STC 103
+  STC 114
+  STC 111
+  STC 46
+  STC 97
+  STC 105
+  STC 100
+  STC 101
+  STC 112
+  STC 105
+  STC 107
+  STC 105
+  STC 119
+  STC 46
+  STC 115
+  STC 101
+  STC 47
+  STC 47
+  STC 58
+  STC 115
+  STC 112
+  STC 116
+  STC 116
   STC 104
   WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
 </put>
 <put_line>
 ; --- CR/LF
@@ -841,9 +831,9 @@ L0:
   STC 10
   WRT  0
 </put_line>
+<put_line>
 <put>
 </put>
-<put_line>
 ; --- CR/LF
   STC 13
   WRT  0
@@ -851,141 +841,138 @@ L0:
   WRT  0
 </put_line>
 <put>
-; --- Put STRING "Este programa comprueba si es cierta hasta el número que le digas." (length 67)
-; --- Standard string writing
+; --- Escribiendo un tipo STRING val: "Este programa comprueba si es cierta hasta el número que le digas." length: 66
+  STC 46
+  STC 115
+  STC 97
+  STC 103
+  STC 105
+  STC 100
+  STC 32
+  STC 101
+  STC 108
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 250
+  STC 110
+  STC 32
+  STC 108
+  STC 101
+  STC 32
+  STC 97
+  STC 116
+  STC 115
+  STC 97
+  STC 104
+  STC 32
+  STC 97
+  STC 116
+  STC 114
+  STC 101
+  STC 105
+  STC 99
+  STC 32
+  STC 115
+  STC 101
+  STC 32
+  STC 105
+  STC 115
+  STC 32
+  STC 97
+  STC 98
+  STC 101
+  STC 117
+  STC 114
+  STC 112
+  STC 109
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
   STC 69
   WRT  0
-  STC 115
   WRT  0
-  STC 116
   WRT  0
-  STC 101
   WRT  0
-  STC 32
   WRT  0
-  STC 112
   WRT  0
-  STC 114
   WRT  0
-  STC 111
   WRT  0
-  STC 103
   WRT  0
-  STC 114
   WRT  0
-  STC 97
   WRT  0
-  STC 109
   WRT  0
-  STC 97
   WRT  0
-  STC 32
   WRT  0
-  STC 99
   WRT  0
-  STC 111
   WRT  0
-  STC 109
   WRT  0
-  STC 112
   WRT  0
-  STC 114
   WRT  0
-  STC 117
   WRT  0
-  STC 101
   WRT  0
-  STC 98
   WRT  0
-  STC 97
   WRT  0
-  STC 32
   WRT  0
-  STC 115
   WRT  0
-  STC 105
   WRT  0
-  STC 32
   WRT  0
-  STC 101
   WRT  0
-  STC 115
   WRT  0
-  STC 32
   WRT  0
-  STC 99
   WRT  0
-  STC 105
   WRT  0
-  STC 101
   WRT  0
-  STC 114
   WRT  0
-  STC 116
   WRT  0
-  STC 97
   WRT  0
-  STC 32
   WRT  0
-  STC 104
   WRT  0
-  STC 97
   WRT  0
-  STC 115
   WRT  0
-  STC 116
   WRT  0
-  STC 97
   WRT  0
-  STC 32
   WRT  0
-  STC 101
   WRT  0
-  STC 108
   WRT  0
-  STC 32
   WRT  0
-  STC 110
   WRT  0
-  STC -61
   WRT  0
-  STC -70
   WRT  0
-  STC 109
   WRT  0
-  STC 101
   WRT  0
-  STC 114
   WRT  0
-  STC 111
   WRT  0
-  STC 32
   WRT  0
-  STC 113
   WRT  0
-  STC 117
   WRT  0
-  STC 101
   WRT  0
-  STC 32
   WRT  0
-  STC 108
   WRT  0
-  STC 101
   WRT  0
-  STC 32
   WRT  0
-  STC 100
   WRT  0
-  STC 105
   WRT  0
-  STC 103
   WRT  0
-  STC 97
   WRT  0
-  STC 115
-  WRT  0
-  STC 46
   WRT  0
 </put>
 <put_line>
@@ -995,209 +982,207 @@ L0:
   STC 10
   WRT  0
 </put_line>
+<put_line>
 <put>
 </put>
-<put_line>
 ; --- CR/LF
   STC 13
   WRT  0
   STC 10
   WRT  0
 </put_line>
-<Assignment_to__simple_variable_n>
-; --- Address of variable / parameter "n"
+<asignación_en_variable_simple_n>
+; --- Obteniendo variable simple/parámetro "n".
   SRF  0  3
-<function_call_pedir_entero>
+<llamada_a_funcion_pedir_entero>
   OSF  5  0 L1
-</function_call_pedir_entero>
-  ASG 
-</Assignment_to__simple_variable_n>
-<Assignment_to__simple_variable_i>
-; --- Address of variable / parameter "i"
+</llamada_a_funcion_pedir_entero>
+  ASG
+</asignación_en_variable_simple_n>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
   SRF  0  4
   STC  4
-  ASG 
-</Assignment_to__simple_variable_i>
+  ASG
+</asignación_en_variable_simple_i>
 <while>
 L15:
-<condition>
-; --- Variable / parameter "i"
+<condición>
+; --- Variable simple/parámetro "i".
   SRF  0  4
-  DRF 
-; --- Variable / parameter "n"
+  DRF
+; --- Variable simple/parámetro "n".
   SRF  0  3
-  DRF 
-  LTE 
-</condition>
+  DRF
+  LTE
+</condición>
   JMF L16
-<while_instruction_block>
+<bloque_instrucciones_while>
 <if-then>
-<condition>
-<function_call_hay_un_par>
-<argument_1>
-; --- Variable / parameter "i"
+<condición>
+<llamada_a_funcion_hay_un_par>
+<parámetro_1>
+; --- Variable simple/parámetro "i".
   SRF  0  4
-  DRF 
-</argument_1>
+  DRF
+</parámetro_1>
   OSF  5  0 L9
-</function_call_hay_un_par>
-  NGB 
-</condition>
+</llamada_a_funcion_hay_un_par>
+  NGB
+</condición>
   JMF L17
 <then>
 <put>
-; --- Put STRING "L conjetura no se cumple para " (length 30)
-; --- Standard string writing
+; --- Escribiendo un tipo STRING val: "L conjetura no se cumple para " length: 30
+  STC 32
+  STC 97
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  STC 101
+  STC 108
+  STC 112
+  STC 109
+  STC 117
+  STC 99
+  STC 32
+  STC 101
+  STC 115
+  STC 32
+  STC 111
+  STC 110
+  STC 32
+  STC 97
+  STC 114
+  STC 117
+  STC 116
+  STC 101
+  STC 106
+  STC 110
+  STC 111
+  STC 99
+  STC 32
   STC 76
   WRT  0
-  STC 32
   WRT  0
-  STC 99
   WRT  0
-  STC 111
   WRT  0
-  STC 110
   WRT  0
-  STC 106
   WRT  0
-  STC 101
   WRT  0
-  STC 116
   WRT  0
-  STC 117
   WRT  0
-  STC 114
   WRT  0
-  STC 97
   WRT  0
-  STC 32
   WRT  0
-  STC 110
   WRT  0
-  STC 111
   WRT  0
-  STC 32
   WRT  0
-  STC 115
   WRT  0
-  STC 101
   WRT  0
-  STC 32
   WRT  0
-  STC 99
   WRT  0
-  STC 117
   WRT  0
-  STC 109
   WRT  0
-  STC 112
   WRT  0
-  STC 108
   WRT  0
-  STC 101
   WRT  0
-  STC 32
   WRT  0
-  STC 112
   WRT  0
-  STC 97
   WRT  0
-  STC 114
   WRT  0
-  STC 97
   WRT  0
-  STC 32
   WRT  0
 </put>
 <put>
-; --- Variable / parameter "i"
+; --- Variable simple/parámetro "i".
   SRF  0  4
-  DRF 
-; --- Put INTEGER
+  DRF
+; --- Escribiendo un tipo INT
   WRT  1
 </put>
 <put>
-; --- Put STRING "! (Seguro que por error del compilador!)" (length 40)
-; --- Standard string writing
-  STC 33
-  WRT  0
-  STC 32
-  WRT  0
-  STC 40
-  WRT  0
-  STC 83
-  WRT  0
-  STC 101
-  WRT  0
-  STC 103
-  WRT  0
-  STC 117
-  WRT  0
-  STC 114
-  WRT  0
-  STC 111
-  WRT  0
-  STC 32
-  WRT  0
-  STC 113
-  WRT  0
-  STC 117
-  WRT  0
-  STC 101
-  WRT  0
-  STC 32
-  WRT  0
-  STC 112
-  WRT  0
-  STC 111
-  WRT  0
-  STC 114
-  WRT  0
-  STC 32
-  WRT  0
-  STC 101
-  WRT  0
-  STC 114
-  WRT  0
-  STC 114
-  WRT  0
-  STC 111
-  WRT  0
-  STC 114
-  WRT  0
-  STC 32
-  WRT  0
-  STC 100
-  WRT  0
-  STC 101
-  WRT  0
-  STC 108
-  WRT  0
-  STC 32
-  WRT  0
-  STC 99
-  WRT  0
-  STC 111
-  WRT  0
-  STC 109
-  WRT  0
-  STC 112
-  WRT  0
-  STC 105
-  WRT  0
-  STC 108
-  WRT  0
-  STC 97
-  WRT  0
-  STC 100
-  WRT  0
-  STC 111
-  WRT  0
-  STC 114
-  WRT  0
-  STC 33
-  WRT  0
+; --- Escribiendo un tipo STRING val: "! (Seguro que por error del compilador!)" length: 40
   STC 41
+  STC 33
+  STC 114
+  STC 111
+  STC 100
+  STC 97
+  STC 108
+  STC 105
+  STC 112
+  STC 109
+  STC 111
+  STC 99
+  STC 32
+  STC 108
+  STC 101
+  STC 100
+  STC 32
+  STC 114
+  STC 111
+  STC 114
+  STC 114
+  STC 101
+  STC 32
+  STC 114
+  STC 111
+  STC 112
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 32
+  STC 111
+  STC 114
+  STC 117
+  STC 103
+  STC 101
+  STC 83
+  STC 40
+  STC 32
+  STC 33
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
   WRT  0
 </put>
 <put_line>
@@ -1210,20 +1195,20 @@ L15:
 </then>
 L17:
 </if-then>
-<Assignment_to__simple_variable_i>
-; --- Address of variable / parameter "i"
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
   SRF  0  4
-; --- Variable / parameter "i"
+; --- Variable simple/parámetro "i".
   SRF  0  4
-  DRF 
+  DRF
   STC  2
-  PLUS 
-  ASG 
-</Assignment_to__simple_variable_i>
-</while_instruction_block>
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
   JMP L15
 L16:
 </while>
-</goldbach_instruction_block>
-  LVP 
+</bloque_instrucciones_goldbach>
+  LVP
 </goldbach>

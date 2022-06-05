@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hello>
+; --- Programa hello
   ENP L0
-<variable_declaration>
-</variable_declaration>
+<declaracion_variables>
+</declaracion_variables>
 L0:
-<hello_instruction_block>
+<bloque_instrucciones_hello>
 <put>
-; --- Put STRING "Hello World!" (length 12)
-; --- Standard string writing
+; --- Escribiendo un tipo STRING val: "Hello World!" length: 12
+  STC 33
+  STC 100
+  STC 108
+  STC 114
+  STC 111
+  STC 87
+  STC 32
+  STC 111
+  STC 108
+  STC 108
+  STC 101
   STC 72
   WRT  0
-  STC 101
   WRT  0
-  STC 108
   WRT  0
-  STC 108
   WRT  0
-  STC 111
   WRT  0
-  STC 32
   WRT  0
-  STC 87
   WRT  0
-  STC 111
   WRT  0
-  STC 114
   WRT  0
-  STC 108
   WRT  0
-  STC 100
   WRT  0
-  STC 33
   WRT  0
 </put>
 <put_line>
@@ -40,6 +40,6 @@ L0:
   STC 10
   WRT  0
 </put_line>
-</hello_instruction_block>
-  LVP 
+</bloque_instrucciones_hello>
+  LVP
 </hello>
