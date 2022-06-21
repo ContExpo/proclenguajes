@@ -1297,7 +1297,7 @@ Attributes inst_invoc_proc() :
 					if (expPar.parClass == Symbol.ParameterClass.VAL && 
 					expPar.type == Symbol.Types.ARRAY) {
 						givenPar.block.addComment("Array pasado por valor");
-						for (int k = 0; k < ((SymbolArray)expPar).maxInd; k++)
+						for (int k = 0; k <= ((SymbolArray)expPar).maxInd; k++)
 						{
 							givenPar.block.addInst(PCodeInstruction.OpCode.SRF, st.level - givenPar.simbolo.nivel , (int)givenPar.simbolo.dir);
 							givenPar.block.addInst(PCodeInstruction.OpCode.DRF);
@@ -1405,7 +1405,7 @@ Attributes inst_invoc_func() :
 				if (expPar.parClass == Symbol.ParameterClass.VAL && 
 					expPar.type == Symbol.Types.ARRAY) {
 					givenPar.block.addComment("Array pasado por valor");
-					for (int k = 0; k < ((SymbolArray)expPar).maxInd; k++)
+					for (int k = 0; k <= ((SymbolArray)expPar).maxInd; k++)
 					{
 						givenPar.block.addInst(PCodeInstruction.OpCode.SRF, st.level - givenPar.simbolo.nivel , (int)givenPar.simbolo.dir);
 						givenPar.block.addInst(PCodeInstruction.OpCode.DRF);
