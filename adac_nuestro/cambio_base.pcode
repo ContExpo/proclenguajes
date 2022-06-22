@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cambio_base>
+; --- Programa cambio_base
+  ENP L0
+<declaracion_variables>
+; --- Variable num, de tipo INT, por NONE, nivel 0, dirección[3]!
+; --- Variable base, de tipo INT, por NONE, nivel 0, dirección[4]!
+; --- Variable enB, de tipo INT, por NONE, nivel 0, dirección[5]!
+</declaracion_variables>
+<función_b_dec>
+L1:
+; --- Parámetro n, de tipo INT, por VAL, nivel 1, dirección[3]!
+; --- Parámetro b, de tipo INT, por VAL, nivel 1, dirección[4]!
+<recuperar_parámetro_2>
+; --- Recuperando parámetro b, de tipo INT, por VAL, nivel 1, dirección[4]!
+  SRF  0  4
+  ASGI
+</recuperar_parámetro_2>
+<recuperar_parámetro_1>
+; --- Recuperando parámetro n, de tipo INT, por VAL, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L2
+<declaracion_variables>
+; --- Variable uc, de tipo INT, por NONE, nivel 1, dirección[5]!
+; --- Variable valRec, de tipo INT, por NONE, nivel 1, dirección[6]!
+</declaracion_variables>
+L2:
+<bloque_instrucciones_b_dec>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+  STC  0
+  EQ
+</condición>
+  JMF L3
+<then>
+<return>
+  STC  0
+  CSF
+</return>
+  JMP L4
+</then>
+<else>
+L3:
+<asignación_en_variable_simple_uc>
+; --- Obteniendo variable simple/parámetro "uc".
+  SRF  0  5
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+  STC 10
+  MOD
+  ASG
+</asignación_en_variable_simple_uc>
+<asignación_en_variable_simple_valRec>
+; --- Obteniendo variable simple/parámetro "valRec".
+  SRF  0  6
+<llamada_a_funcion_b_dec>
+<parámetro_1>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+  STC 10
+  DIV
+</parámetro_1>
+<parámetro_2>
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+</parámetro_2>
+  OSF  7  1 L1
+</llamada_a_funcion_b_dec>
+  ASG
+</asignación_en_variable_simple_valRec>
+<return>
+; --- Variable simple/parámetro "valRec".
+  SRF  0  6
+  DRF
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+  TMS
+; --- Variable simple/parámetro "uc".
+  SRF  0  5
+  DRF
+  PLUS
+  CSF
+</return>
+</else>
+L4:
+</if-then>
+  CSF
+</bloque_instrucciones_b_dec>
+</función_b_dec>
+<función_dec_b>
+L5:
+; --- Parámetro n, de tipo INT, por VAL, nivel 1, dirección[3]!
+; --- Parámetro b, de tipo INT, por VAL, nivel 1, dirección[4]!
+<recuperar_parámetro_2>
+; --- Recuperando parámetro b, de tipo INT, por VAL, nivel 1, dirección[4]!
+  SRF  0  4
+  ASGI
+</recuperar_parámetro_2>
+<recuperar_parámetro_1>
+; --- Recuperando parámetro n, de tipo INT, por VAL, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L6
+<declaracion_variables>
+; --- Variable resto, de tipo INT, por NONE, nivel 1, dirección[5]!
+; --- Variable valRec, de tipo INT, por NONE, nivel 1, dirección[6]!
+</declaracion_variables>
+L6:
+<bloque_instrucciones_dec_b>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+  LT
+</condición>
+  JMF L7
+<then>
+<return>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+  CSF
+</return>
+  JMP L8
+</then>
+<else>
+L7:
+<asignación_en_variable_simple_resto>
+; --- Obteniendo variable simple/parámetro "resto".
+  SRF  0  5
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+  MOD
+  ASG
+</asignación_en_variable_simple_resto>
+<asignación_en_variable_simple_valRec>
+; --- Obteniendo variable simple/parámetro "valRec".
+  SRF  0  6
+<llamada_a_funcion_dec_b>
+<parámetro_1>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+  DIV
+</parámetro_1>
+<parámetro_2>
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+</parámetro_2>
+  OSF  7  1 L5
+</llamada_a_funcion_dec_b>
+  ASG
+</asignación_en_variable_simple_valRec>
+<return>
+; --- Variable simple/parámetro "valRec".
+  SRF  0  6
+  DRF
+  STC 10
+  TMS
+; --- Variable simple/parámetro "resto".
+  SRF  0  5
+  DRF
+  PLUS
+  CSF
+</return>
+</else>
+L8:
+</if-then>
+  CSF
+</bloque_instrucciones_dec_b>
+</función_dec_b>
+L0:
+<bloque_instrucciones_cambio_base>
+<asignación_en_variable_simple_num>
+; --- Obteniendo variable simple/parámetro "num".
+  SRF  0  3
+  STC  4
+  ASG
+</asignación_en_variable_simple_num>
+<asignación_en_variable_simple_base>
+; --- Obteniendo variable simple/parámetro "base".
+  SRF  0  4
+  STC  2
+  ASG
+</asignación_en_variable_simple_base>
+<put>
+; --- Escribiendo un tipo STRING val: "Este programa convierte n=" length: 26
+  STC 69
+  WRT  0
+  STC 115
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 103
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 109
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 118
+  WRT  0
+  STC 105
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 110
+  WRT  0
+  STC 61
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "num".
+  SRF  0  3
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: " a base b=" length: 10
+  STC 32
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 98
+  WRT  0
+  STC 97
+  WRT  0
+  STC 115
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 98
+  WRT  0
+  STC 61
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "base".
+  SRF  0  4
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: ", y luego efecúa la conversión inversa." length: 39
+  STC 44
+  WRT  0
+  STC 32
+  WRT  0
+  STC 121
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 103
+  WRT  0
+  STC 111
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 102
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 250
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 115
+  WRT  0
+  STC 105
+  WRT  0
+  STC 243
+  WRT  0
+  STC 110
+  WRT  0
+  STC 32
+  WRT  0
+  STC 105
+  WRT  0
+  STC 110
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 115
+  WRT  0
+  STC 97
+  WRT  0
+  STC 46
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put_line>
+<put>
+</put>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "n: " length: 3
+  STC 110
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "num".
+  SRF  0  3
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "b: " length: 3
+  STC 98
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "base".
+  SRF  0  4
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<asignación_en_variable_simple_enB>
+; --- Obteniendo variable simple/parámetro "enB".
+  SRF  0  5
+<llamada_a_funcion_dec_b>
+<parámetro_1>
+; --- Variable simple/parámetro "num".
+  SRF  0  3
+  DRF
+</parámetro_1>
+<parámetro_2>
+; --- Variable simple/parámetro "base".
+  SRF  0  4
+  DRF
+</parámetro_2>
+  OSF  6  0 L5
+</llamada_a_funcion_dec_b>
+  ASG
+</asignación_en_variable_simple_enB>
+<put>
+; --- Escribiendo un tipo STRING val: "dec_b(" length: 6
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 95
+  WRT  0
+  STC 98
+  WRT  0
+  STC 40
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "num".
+  SRF  0  3
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: "," length: 1
+  STC 44
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "base".
+  SRF  0  4
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: "): " length: 3
+  STC 41
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "enB".
+  SRF  0  5
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "b_dec(" length: 6
+  STC 98
+  WRT  0
+  STC 95
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 40
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "enB".
+  SRF  0  5
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: "," length: 1
+  STC 44
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "base".
+  SRF  0  4
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: "): " length: 3
+  STC 41
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+</put>
+<put>
+<llamada_a_funcion_b_dec>
+<parámetro_1>
+; --- Variable simple/parámetro "enB".
+  SRF  0  5
+  DRF
+</parámetro_1>
+<parámetro_2>
+; --- Variable simple/parámetro "base".
+  SRF  0  4
+  DRF
+</parámetro_2>
+  OSF  6  0 L1
+</llamada_a_funcion_b_dec>
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put_line>
+<put>
+</put>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+</bloque_instrucciones_cambio_base>
+  LVP
+</cambio_base>

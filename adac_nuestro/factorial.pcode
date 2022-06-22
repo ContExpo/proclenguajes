@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factorial>
+; --- Programa factorial
+  ENP L0
+<declaracion_variables>
+; --- Variable n, de tipo INT, por NONE, nivel 0, dirección[3]!
+</declaracion_variables>
+<función_fact>
+L1:
+; --- Parámetro m, de tipo INT, por VAL, nivel 1, dirección[3]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro m, de tipo INT, por VAL, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L2
+<declaracion_variables>
+</declaracion_variables>
+L2:
+<bloque_instrucciones_fact>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "m".
+  SRF  0  3
+  DRF
+  STC  1
+  EQ
+</condición>
+  JMF L3
+<then>
+<return>
+  STC  1
+  CSF
+</return>
+  JMP L4
+</then>
+<else>
+L3:
+<return>
+; --- Variable simple/parámetro "m".
+  SRF  0  3
+  DRF
+<llamada_a_funcion_fact>
+<parámetro_1>
+; --- Variable simple/parámetro "m".
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+</parámetro_1>
+  OSF  4  1 L1
+</llamada_a_funcion_fact>
+  TMS
+  CSF
+</return>
+</else>
+L4:
+</if-then>
+  CSF
+</bloque_instrucciones_fact>
+</función_fact>
+L0:
+<bloque_instrucciones_factorial>
+<put>
+; --- Escribiendo un tipo STRING val: "" length: 0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "Calcula k! para k=1..20." length: 24
+  STC 67
+  WRT  0
+  STC 97
+  WRT  0
+  STC 108
+  WRT  0
+  STC 99
+  WRT  0
+  STC 117
+  WRT  0
+  STC 108
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 107
+  WRT  0
+  STC 33
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 107
+  WRT  0
+  STC 61
+  WRT  0
+  STC 49
+  WRT  0
+  STC 46
+  WRT  0
+  STC 46
+  WRT  0
+  STC 50
+  WRT  0
+  STC 48
+  WRT  0
+  STC 46
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "" length: 0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "Habrá MATH overflow en 13! porque los enteros en la máquina p son de 4 bytes." length: 77
+  STC 72
+  WRT  0
+  STC 97
+  WRT  0
+  STC 98
+  WRT  0
+  STC 114
+  WRT  0
+  STC 225
+  WRT  0
+  STC 32
+  WRT  0
+  STC 77
+  WRT  0
+  STC 65
+  WRT  0
+  STC 84
+  WRT  0
+  STC 72
+  WRT  0
+  STC 32
+  WRT  0
+  STC 111
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 102
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 119
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 110
+  WRT  0
+  STC 32
+  WRT  0
+  STC 49
+  WRT  0
+  STC 51
+  WRT  0
+  STC 33
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 113
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 110
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 110
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 109
+  WRT  0
+  STC 225
+  WRT  0
+  STC 113
+  WRT  0
+  STC 117
+  WRT  0
+  STC 105
+  WRT  0
+  STC 110
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 32
+  WRT  0
+  STC 115
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 52
+  WRT  0
+  STC 32
+  WRT  0
+  STC 98
+  WRT  0
+  STC 121
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 46
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "" length: 0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<asignación_en_variable_simple_n>
+; --- Obteniendo variable simple/parámetro "n".
+  SRF  0  3
+  STC  1
+  ASG
+</asignación_en_variable_simple_n>
+<while>
+L5:
+<condición>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+  STC 20
+  LTE
+</condición>
+  JMF L6
+<bloque_instrucciones_while>
+<put>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: "! = " length: 4
+  STC 33
+  WRT  0
+  STC 32
+  WRT  0
+  STC 61
+  WRT  0
+  STC 32
+  WRT  0
+</put>
+<put>
+<llamada_a_funcion_fact>
+<parámetro_1>
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+</parámetro_1>
+  OSF  4  0 L1
+</llamada_a_funcion_fact>
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<asignación_en_variable_simple_n>
+; --- Obteniendo variable simple/parámetro "n".
+  SRF  0  3
+; --- Variable simple/parámetro "n".
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_n>
+</bloque_instrucciones_while>
+  JMP L5
+L6:
+</while>
+</bloque_instrucciones_factorial>
+  LVP
+</factorial>

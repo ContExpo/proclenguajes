@@ -1290,7 +1290,6 @@ Attributes inst_invoc_proc() :
 				for (int i = 0; i < parList.size(); i++) {
 					Symbol expPar = expectedPars.get(i);
 					Attributes givenPar = parList.get(i);
-						
 					if (expPar.parClass == Symbol.ParameterClass.REF
 						&& givenPar.parClass != Symbol.ParameterClass.REF) { //Puede ser VAL o NONE
 						//Hay que quitar la dereferencia, que es la última instrucción
@@ -2287,6 +2286,8 @@ Attributes factor() :
 			//Se le suma a la dirección inicial, el índice
 			a.block.addInst(PCodeInstruction.OpCode.PLUS);
 			//Este segundo DRF se come la direccion y pone el valor
+			
+			//Este DRF causa errores en el paso por referencia
 			a.block.addInst(PCodeInstruction.OpCode.DRF);
 			
 			a.block.encloseXMLTags(String.format("componente_de_vector_%s", a.name));
