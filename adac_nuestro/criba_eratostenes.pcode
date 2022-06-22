@@ -39,65 +39,65 @@ L3:
 <bloque_instrucciones_while>
 <put>
 ; --- Escribiendo un tipo STRING val: "Dame un numero entre 1 y 100: " length: 30
-  STC 32
-  STC 58
-  STC 48
-  STC 48
-  STC 49
-  STC 32
-  STC 121
-  STC 32
-  STC 49
-  STC 32
-  STC 101
-  STC 114
-  STC 116
-  STC 110
-  STC 101
-  STC 32
-  STC 111
-  STC 114
-  STC 101
-  STC 109
-  STC 117
-  STC 110
-  STC 32
-  STC 110
-  STC 117
-  STC 32
-  STC 101
-  STC 109
-  STC 97
   STC 68
   WRT  0
+  STC 97
   WRT  0
+  STC 109
   WRT  0
+  STC 101
   WRT  0
+  STC 32
   WRT  0
+  STC 117
   WRT  0
+  STC 110
   WRT  0
+  STC 32
   WRT  0
+  STC 110
   WRT  0
+  STC 117
   WRT  0
+  STC 109
   WRT  0
+  STC 101
   WRT  0
+  STC 114
   WRT  0
+  STC 111
   WRT  0
+  STC 32
   WRT  0
+  STC 101
   WRT  0
+  STC 110
   WRT  0
+  STC 116
   WRT  0
+  STC 114
   WRT  0
+  STC 101
   WRT  0
+  STC 32
   WRT  0
+  STC 49
   WRT  0
+  STC 32
   WRT  0
+  STC 121
   WRT  0
+  STC 32
   WRT  0
+  STC 49
   WRT  0
+  STC 48
   WRT  0
+  STC 48
   WRT  0
+  STC 58
   WRT  0
+  STC 32
   WRT  0
 </put>
 <get>
@@ -364,47 +364,47 @@ L6:
 </put_line>
 <put>
 ; --- Escribiendo un tipo STRING val: "Numeros primos hasta " length: 21
-  STC 32
-  STC 97
-  STC 116
-  STC 115
-  STC 97
-  STC 104
-  STC 32
-  STC 115
-  STC 111
-  STC 109
-  STC 105
-  STC 114
-  STC 112
-  STC 32
-  STC 115
-  STC 111
-  STC 114
-  STC 101
-  STC 109
-  STC 117
   STC 78
   WRT  0
+  STC 117
   WRT  0
+  STC 109
   WRT  0
+  STC 101
   WRT  0
+  STC 114
   WRT  0
+  STC 111
   WRT  0
+  STC 115
   WRT  0
+  STC 32
   WRT  0
+  STC 112
   WRT  0
+  STC 114
   WRT  0
+  STC 105
   WRT  0
+  STC 109
   WRT  0
+  STC 111
   WRT  0
+  STC 115
   WRT  0
+  STC 32
   WRT  0
+  STC 104
   WRT  0
+  STC 97
   WRT  0
+  STC 115
   WRT  0
+  STC 116
   WRT  0
+  STC 97
   WRT  0
+  STC 32
   WRT  0
 </put>
 <put>
@@ -416,9 +416,9 @@ L6:
 </put>
 <put>
 ; --- Escribiendo un tipo STRING val: ": " length: 2
-  STC 32
   STC 58
   WRT  0
+  STC 32
   WRT  0
 </put>
 <put_line>
@@ -611,25 +611,25 @@ L11:
 </put>
 <put>
 ; --- Escribiendo un tipo STRING val: " es primo." length: 10
-  STC 46
-  STC 111
-  STC 109
-  STC 105
-  STC 114
-  STC 112
   STC 32
-  STC 115
+  WRT  0
   STC 101
+  WRT  0
+  STC 115
+  WRT  0
   STC 32
   WRT  0
+  STC 112
   WRT  0
+  STC 114
   WRT  0
+  STC 105
   WRT  0
+  STC 109
   WRT  0
+  STC 111
   WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
+  STC 46
   WRT  0
 </put>
 <put_line>
@@ -681,17 +681,17 @@ L8:
 </put_line>
 <put>
 ; --- Escribiendo un tipo STRING val: "Hasta " length: 6
-  STC 32
-  STC 97
-  STC 116
-  STC 115
-  STC 97
   STC 72
   WRT  0
+  STC 97
   WRT  0
+  STC 115
   WRT  0
+  STC 116
   WRT  0
+  STC 97
   WRT  0
+  STC 32
   WRT  0
 </put>
 <put>
@@ -704,14 +704,14 @@ L8:
 <put>
 ; --- Escribiendo un tipo STRING val: " hay " length: 5
   STC 32
-  STC 121
-  STC 97
+  WRT  0
   STC 104
+  WRT  0
+  STC 97
+  WRT  0
+  STC 121
+  WRT  0
   STC 32
-  WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
   WRT  0
 </put>
 <put>
@@ -723,37 +723,37 @@ L8:
 </put>
 <put>
 ; --- Escribiendo un tipo STRING val: " números primos." length: 16
-  STC 46
-  STC 115
-  STC 111
-  STC 109
-  STC 105
-  STC 114
-  STC 112
   STC 32
-  STC 115
-  STC 111
-  STC 114
-  STC 101
-  STC 109
-  STC 250
+  WRT  0
   STC 110
+  WRT  0
+  STC 250
+  WRT  0
+  STC 109
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 115
+  WRT  0
   STC 32
   WRT  0
+  STC 112
   WRT  0
+  STC 114
   WRT  0
+  STC 105
   WRT  0
+  STC 109
   WRT  0
+  STC 111
   WRT  0
+  STC 115
   WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
-  WRT  0
+  STC 46
   WRT  0
 </put>
 <put_line>
@@ -1851,161 +1851,161 @@ L0:
 <bloque_instrucciones_eratostenes>
 <put>
 ; --- Escribiendo un tipo STRING val: "Criba de Eratóstenes: determinación de qué números son primos hasta un n dado." length: 78
-  STC 46
-  STC 111
-  STC 100
-  STC 97
-  STC 100
-  STC 32
-  STC 110
-  STC 32
-  STC 110
-  STC 117
-  STC 32
-  STC 97
-  STC 116
-  STC 115
-  STC 97
-  STC 104
-  STC 32
-  STC 115
-  STC 111
-  STC 109
-  STC 105
-  STC 114
-  STC 112
-  STC 32
-  STC 110
-  STC 111
-  STC 115
-  STC 32
-  STC 115
-  STC 111
-  STC 114
-  STC 101
-  STC 109
-  STC 250
-  STC 110
-  STC 32
-  STC 233
-  STC 117
-  STC 113
-  STC 32
-  STC 101
-  STC 100
-  STC 32
-  STC 110
-  STC 243
-  STC 105
-  STC 99
-  STC 97
-  STC 110
-  STC 105
-  STC 109
-  STC 114
-  STC 101
-  STC 116
-  STC 101
-  STC 100
-  STC 32
-  STC 58
-  STC 115
-  STC 101
-  STC 110
-  STC 101
-  STC 116
-  STC 115
-  STC 243
-  STC 116
-  STC 97
-  STC 114
-  STC 69
-  STC 32
-  STC 101
-  STC 100
-  STC 32
-  STC 97
-  STC 98
-  STC 105
-  STC 114
   STC 67
   WRT  0
+  STC 114
   WRT  0
+  STC 105
   WRT  0
+  STC 98
   WRT  0
+  STC 97
   WRT  0
+  STC 32
   WRT  0
+  STC 100
   WRT  0
+  STC 101
   WRT  0
+  STC 32
   WRT  0
+  STC 69
   WRT  0
+  STC 114
   WRT  0
+  STC 97
   WRT  0
+  STC 116
   WRT  0
+  STC 243
   WRT  0
+  STC 115
   WRT  0
+  STC 116
   WRT  0
+  STC 101
   WRT  0
+  STC 110
   WRT  0
+  STC 101
   WRT  0
+  STC 115
   WRT  0
+  STC 58
   WRT  0
+  STC 32
   WRT  0
+  STC 100
   WRT  0
+  STC 101
   WRT  0
+  STC 116
   WRT  0
+  STC 101
   WRT  0
+  STC 114
   WRT  0
+  STC 109
   WRT  0
+  STC 105
   WRT  0
+  STC 110
   WRT  0
+  STC 97
   WRT  0
+  STC 99
   WRT  0
+  STC 105
   WRT  0
+  STC 243
   WRT  0
+  STC 110
   WRT  0
+  STC 32
   WRT  0
+  STC 100
   WRT  0
+  STC 101
   WRT  0
+  STC 32
   WRT  0
+  STC 113
   WRT  0
+  STC 117
   WRT  0
+  STC 233
   WRT  0
+  STC 32
   WRT  0
+  STC 110
   WRT  0
+  STC 250
   WRT  0
+  STC 109
   WRT  0
+  STC 101
   WRT  0
+  STC 114
   WRT  0
+  STC 111
   WRT  0
+  STC 115
   WRT  0
+  STC 32
   WRT  0
+  STC 115
   WRT  0
+  STC 111
   WRT  0
+  STC 110
   WRT  0
+  STC 32
   WRT  0
+  STC 112
   WRT  0
+  STC 114
   WRT  0
+  STC 105
   WRT  0
+  STC 109
   WRT  0
+  STC 111
   WRT  0
+  STC 115
   WRT  0
+  STC 32
   WRT  0
+  STC 104
   WRT  0
+  STC 97
   WRT  0
+  STC 115
   WRT  0
+  STC 116
   WRT  0
+  STC 97
   WRT  0
+  STC 32
   WRT  0
+  STC 117
   WRT  0
+  STC 110
   WRT  0
+  STC 32
   WRT  0
+  STC 110
   WRT  0
+  STC 32
   WRT  0
+  STC 100
   WRT  0
+  STC 97
   WRT  0
+  STC 100
   WRT  0
+  STC 111
   WRT  0
+  STC 46
   WRT  0
 </put>
 <put_line>
@@ -2017,115 +2017,115 @@ L0:
 </put_line>
 <put>
 ; --- Escribiendo un tipo STRING val: "https://es.wikipedia.org/wiki/Criba_de_Erat%C3%B3stenes" length: 55
-  STC 115
-  STC 101
-  STC 110
-  STC 101
-  STC 116
-  STC 115
-  STC 51
-  STC 66
-  STC 37
-  STC 51
-  STC 67
-  STC 37
-  STC 116
-  STC 97
-  STC 114
-  STC 69
-  STC 95
-  STC 101
-  STC 100
-  STC 95
-  STC 97
-  STC 98
-  STC 105
-  STC 114
-  STC 67
-  STC 47
-  STC 105
-  STC 107
-  STC 105
-  STC 119
-  STC 47
-  STC 103
-  STC 114
-  STC 111
-  STC 46
-  STC 97
-  STC 105
-  STC 100
-  STC 101
-  STC 112
-  STC 105
-  STC 107
-  STC 105
-  STC 119
-  STC 46
-  STC 115
-  STC 101
-  STC 47
-  STC 47
-  STC 58
-  STC 115
-  STC 112
-  STC 116
-  STC 116
   STC 104
   WRT  0
+  STC 116
   WRT  0
+  STC 116
   WRT  0
+  STC 112
   WRT  0
+  STC 115
   WRT  0
+  STC 58
   WRT  0
+  STC 47
   WRT  0
+  STC 47
   WRT  0
+  STC 101
   WRT  0
+  STC 115
   WRT  0
+  STC 46
   WRT  0
+  STC 119
   WRT  0
+  STC 105
   WRT  0
+  STC 107
   WRT  0
+  STC 105
   WRT  0
+  STC 112
   WRT  0
+  STC 101
   WRT  0
+  STC 100
   WRT  0
+  STC 105
   WRT  0
+  STC 97
   WRT  0
+  STC 46
   WRT  0
+  STC 111
   WRT  0
+  STC 114
   WRT  0
+  STC 103
   WRT  0
+  STC 47
   WRT  0
+  STC 119
   WRT  0
+  STC 105
   WRT  0
+  STC 107
   WRT  0
+  STC 105
   WRT  0
+  STC 47
   WRT  0
+  STC 67
   WRT  0
+  STC 114
   WRT  0
+  STC 105
   WRT  0
+  STC 98
   WRT  0
+  STC 97
   WRT  0
+  STC 95
   WRT  0
+  STC 100
   WRT  0
+  STC 101
   WRT  0
+  STC 95
   WRT  0
+  STC 69
   WRT  0
+  STC 114
   WRT  0
+  STC 97
   WRT  0
+  STC 116
   WRT  0
+  STC 37
   WRT  0
+  STC 67
   WRT  0
+  STC 51
   WRT  0
+  STC 37
   WRT  0
+  STC 66
   WRT  0
+  STC 51
   WRT  0
+  STC 115
   WRT  0
+  STC 116
   WRT  0
+  STC 101
   WRT  0
+  STC 110
   WRT  0
+  STC 101
   WRT  0
+  STC 115
   WRT  0
 </put>
 <put_line>

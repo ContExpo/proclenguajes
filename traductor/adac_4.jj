@@ -1120,13 +1120,13 @@ Attributes inst_escribir() :
 							+ temp.valBool);
 						put.addBlock(temp.block);
 						put.addInst(PCodeInstruction.OpCode.WRT, 0);
-						//TODO: esto no funcionará, hay que hacer 2 label y un goto para imprimir los codigos ascii de true y false
 						break;
 					case STRING:
 						put.addComment("Escribiendo un tipo " + temp.type +
 							" val: \"" + temp.valString + "\" length: " + temp.valString.length());
 						put.addBlock(temp.block);
-						for (int j = temp.valString.length()-1; j>=0 ; j--) {
+						for (int j = 0; j<temp.valString.length(); j++) {
+							put.addInst(PCodeInstruction.OpCode.STC, (int) temp.valString.charAt(j));
 							put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						}
 						break;
@@ -1185,12 +1185,18 @@ Attributes inst_escribir_linea() :
 						put.addBlock(temp.block);
 						put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						break;
-					//TODO añadir bool cómo antes
+					case BOOL:
+						put.addComment("Escribiendo un tipo " + temp.type + " val: "
+							+ temp.valBool);
+						put.addBlock(temp.block);
+						put.addInst(PCodeInstruction.OpCode.WRT, 0);
+						break;
 					case STRING:
 						put.addComment("Escribiendo un tipo " + temp.type +
 							" val: \"" + temp.valString + "\" length: " + temp.valString.length());
 						put.addBlock(temp.block);
-						for (int j = temp.valString.length()-1; j>=0 ; j--) {
+						for (int j = 0; j<temp.valString.length(); j++) {
+							put.addInst(PCodeInstruction.OpCode.STC, (int) temp.valString.charAt(j));
 							put.addInst(PCodeInstruction.OpCode.WRT, 0);
 						}
 						break;
@@ -2184,6 +2190,8 @@ Attributes factor() :
 			}
 			a.type = Symbol.Types.CHAR;
 			a.referenciable = false;
+			a.block.addComment("i2a");
+			a.block.addBlock(temp.block);
 		}
 		<tPTCL>
 	|	<tATOI>
@@ -2196,6 +2204,8 @@ Attributes factor() :
 			}
 			a.type = Symbol.Types.INT;
 			a.referenciable = false;
+			a.block.addComment("a21");
+			a.block.addBlock(temp.block);
 		}
 		<tPTCL>
 	|	LOOKAHEAD(2) 
@@ -2332,9 +2342,9 @@ Attributes factor() :
 			a.type = Symbol.Types.STRING;
 			a.referenciable = false;
 			a.valString = tempTok.image.substring(1, tempTok.image.length()-1);
-			for (int i = a.valString.length()-1; i>=0 ;i--) {
+			/*for (int i = a.valString.length()-1; i>=0 ;i--) {
 				a.block.addInst(PCodeInstruction.OpCode.STC, (int) a.valString.charAt(i));
-			}
+			}*/
 		}
 	|	<tTRUE>
 		{

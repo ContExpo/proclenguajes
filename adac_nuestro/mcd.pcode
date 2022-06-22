@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calcular_mcd>
+; --- Programa calcular_mcd
+  ENP L0
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 0, dirección[3]!
+; --- Variable j, de tipo INT, por NONE, nivel 0, dirección[4]!
+</declaracion_variables>
+<procedimiento_dato>
+L1:
+; --- Parámetro d, de tipo INT, por REF, nivel 1, dirección[3]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro d, de tipo INT, por REF, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L2
+<declaracion_variables>
+</declaracion_variables>
+L2:
+<bloque_instrucciones_dato>
+<asignación_en_variable_simple_d>
+; --- Obteniendo variable simple/parámetro "d".
+  SRF  0  3
+  DRF
+  STC  0
+  ASG
+</asignación_en_variable_simple_d>
+<while>
+L3:
+<condición>
+; --- Variable simple/parámetro "d".
+  SRF  0  3
+  DRF
+  DRF
+  STC  0
+  LTE
+</condición>
+  JMF L4
+<bloque_instrucciones_while>
+<put>
+; --- Escribiendo un tipo STRING val: "Escribe un numero (>0): " length: 24
+  STC 32
+  STC 58
+  STC 41
+  STC 48
+  STC 62
+  STC 40
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 98
+  STC 105
+  STC 114
+  STC 99
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+</put>
+<get>
+; --- Obteniendo variable simple/parámetro "d".
+  SRF  0  3
+  DRF
+  RD  1
+</get>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "d".
+  SRF  0  3
+  DRF
+  DRF
+  STC  0
+  LTE
+</condición>
+  JMF L5
+<then>
+<put>
+; --- Escribiendo un tipo STRING val: "El numero debe ser > 0." length: 23
+  STC 46
+  STC 48
+  STC 32
+  STC 62
+  STC 32
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 101
+  STC 98
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 108
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+</then>
+L5:
+</if-then>
+</bloque_instrucciones_while>
+  JMP L3
+L4:
+</while>
+  CSF
+</bloque_instrucciones_dato>
+</procedimiento_dato>
+<función_mcd>
+L6:
+; --- Parámetro a, de tipo INT, por VAL, nivel 1, dirección[3]!
+; --- Parámetro b, de tipo INT, por VAL, nivel 1, dirección[4]!
+<recuperar_parámetro_2>
+; --- Recuperando parámetro b, de tipo INT, por VAL, nivel 1, dirección[4]!
+  SRF  0  4
+  ASGI
+</recuperar_parámetro_2>
+<recuperar_parámetro_1>
+; --- Recuperando parámetro a, de tipo INT, por VAL, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L7
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[5]!
+; --- Variable j, de tipo INT, por NONE, nivel 1, dirección[6]!
+; --- Variable k, de tipo INT, por NONE, nivel 1, dirección[7]!
+</declaracion_variables>
+L7:
+<bloque_instrucciones_mcd>
+<asignación_en_variable_simple_j>
+; --- Obteniendo variable simple/parámetro "j".
+  SRF  0  6
+; --- Variable simple/parámetro "a".
+  SRF  0  3
+  DRF
+  ASG
+</asignación_en_variable_simple_j>
+<asignación_en_variable_simple_k>
+; --- Obteniendo variable simple/parámetro "k".
+  SRF  0  7
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+  ASG
+</asignación_en_variable_simple_k>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  5
+; --- Variable simple/parámetro "a".
+  SRF  0  3
+  DRF
+; --- Variable simple/parámetro "b".
+  SRF  0  4
+  DRF
+  MOD
+  ASG
+</asignación_en_variable_simple_i>
+<while>
+L8:
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  5
+  DRF
+  STC  0
+  NEQ
+</condición>
+  JMF L9
+<bloque_instrucciones_while>
+<asignación_en_variable_simple_j>
+; --- Obteniendo variable simple/parámetro "j".
+  SRF  0  6
+; --- Variable simple/parámetro "k".
+  SRF  0  7
+  DRF
+  ASG
+</asignación_en_variable_simple_j>
+<asignación_en_variable_simple_k>
+; --- Obteniendo variable simple/parámetro "k".
+  SRF  0  7
+; --- Variable simple/parámetro "i".
+  SRF  0  5
+  DRF
+  ASG
+</asignación_en_variable_simple_k>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  5
+; --- Variable simple/parámetro "j".
+  SRF  0  6
+  DRF
+; --- Variable simple/parámetro "k".
+  SRF  0  7
+  DRF
+  MOD
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
+  JMP L8
+L9:
+</while>
+<return>
+; --- Variable simple/parámetro "k".
+  SRF  0  7
+  DRF
+  CSF
+</return>
+  CSF
+</bloque_instrucciones_mcd>
+</función_mcd>
+L0:
+<bloque_instrucciones_calcular_mcd>
+<put>
+; --- Escribiendo un tipo STRING val: "Este programa pide dos números positivos y calcula su máximo común divisor." length: 75
+  STC 46
+  STC 114
+  STC 111
+  STC 115
+  STC 105
+  STC 118
+  STC 105
+  STC 100
+  STC 32
+  STC 110
+  STC 250
+  STC 109
+  STC 111
+  STC 99
+  STC 32
+  STC 111
+  STC 109
+  STC 105
+  STC 120
+  STC 225
+  STC 109
+  STC 32
+  STC 117
+  STC 115
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 99
+  STC 108
+  STC 97
+  STC 99
+  STC 32
+  STC 121
+  STC 32
+  STC 115
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 115
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 250
+  STC 110
+  STC 32
+  STC 115
+  STC 111
+  STC 100
+  STC 32
+  STC 101
+  STC 100
+  STC 105
+  STC 112
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<llamada_a_funcion_dato>
+<parámetro_1>
+; --- Variable simple/parámetro "i".
+  SRF  0  3
+</parámetro_1>
+  OSF  5  0 L1
+</llamada_a_funcion_dato>
+<llamada_a_funcion_dato>
+<parámetro_1>
+; --- Variable simple/parámetro "j".
+  SRF  0  4
+</parámetro_1>
+  OSF  5  0 L1
+</llamada_a_funcion_dato>
+<put>
+; --- Escribiendo un tipo STRING val: "" length: 0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "mcd(" length: 4
+  STC 40
+  STC 100
+  STC 99
+  STC 109
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "i".
+  SRF  0  3
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: "," length: 1
+  STC 44
+  WRT  0
+</put>
+<put>
+; --- Variable simple/parámetro "j".
+  SRF  0  4
+  DRF
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put>
+; --- Escribiendo un tipo STRING val: ") = " length: 4
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+</put>
+<put>
+<llamada_a_funcion_mcd>
+<parámetro_1>
+; --- Variable simple/parámetro "i".
+  SRF  0  3
+  DRF
+</parámetro_1>
+<parámetro_2>
+; --- Variable simple/parámetro "j".
+  SRF  0  4
+  DRF
+</parámetro_2>
+  OSF  5  0 L6
+</llamada_a_funcion_mcd>
+; --- Escribiendo un tipo INT
+  WRT  1
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+</bloque_instrucciones_calcular_mcd>
+  LVP
+</calcular_mcd>

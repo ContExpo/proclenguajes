@@ -1,0 +1,4733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<juego_de_la_vida>
+; --- Programa juego_de_la_vida
+  ENP L0
+<declaracion_variables>
+; --- Variable colonia, de tipo ARRAY[BOOL], de tamaño 80, por NONE, nivel 0, dirección[3:82]!
+; --- Variable i, de tipo INT, por NONE, nivel 0, dirección[83]!
+; --- Variable iteraciones, de tipo INT, por NONE, nivel 0, dirección[84]!
+; --- Variable elementos, de tipo INT, por NONE, nivel 0, dirección[85]!
+</declaracion_variables>
+<procedimiento_inicializar>
+L1:
+; --- Parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L2
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[4]!
+</declaracion_variables>
+L2:
+<bloque_instrucciones_inicializar>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  4
+  STC  0
+  ASG
+</asignación_en_variable_simple_i>
+<while>
+L3:
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Variable simple/parámetro "elementos".
+  SRF  1 85
+  DRF
+  LT
+</condición>
+  JMF L4
+<bloque_instrucciones_while>
+<asignación_en_componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L5
+  DUP
+  STC 79
+  LTE
+  JMT L6
+L5:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L6:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC 20
+  MOD
+  STC  0
+  EQ
+  ASG
+</asignación_en_componente_de_vector_colonia>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  4
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
+  JMP L3
+L4:
+</while>
+  CSF
+</bloque_instrucciones_inicializar>
+</procedimiento_inicializar>
+<procedimiento_inicializar2>
+L7:
+; --- Parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L8
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[4]!
+</declaracion_variables>
+L8:
+<bloque_instrucciones_inicializar2>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  4
+  STC  0
+  ASG
+</asignación_en_variable_simple_i>
+<while>
+L9:
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC 80
+  LT
+</condición>
+  JMF L10
+<bloque_instrucciones_while>
+<asignación_en_componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L11
+  DUP
+  STC 79
+  LTE
+  JMT L12
+L11:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L12:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC 37
+  GTE
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC 43
+  LTE
+  AND
+  ASG
+</asignación_en_componente_de_vector_colonia>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  4
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
+  JMP L9
+L10:
+</while>
+  CSF
+</bloque_instrucciones_inicializar2>
+</procedimiento_inicializar2>
+<procedimiento_asignar>
+L13:
+; --- Parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+; --- Parámetro siguiente, de tipo ARRAY[BOOL], de tamaño 80, por VAL, nivel 1, dirección[4:83]!
+<recuperar_parámetro_2>
+; --- Recuperando parámetro siguiente, de tipo ARRAY[BOOL], de tamaño 80, por VAL, nivel 1, dirección[4:83]!
+  SRF  0 83
+  ASGI
+  SRF  0 82
+  ASGI
+  SRF  0 81
+  ASGI
+  SRF  0 80
+  ASGI
+  SRF  0 79
+  ASGI
+  SRF  0 78
+  ASGI
+  SRF  0 77
+  ASGI
+  SRF  0 76
+  ASGI
+  SRF  0 75
+  ASGI
+  SRF  0 74
+  ASGI
+  SRF  0 73
+  ASGI
+  SRF  0 72
+  ASGI
+  SRF  0 71
+  ASGI
+  SRF  0 70
+  ASGI
+  SRF  0 69
+  ASGI
+  SRF  0 68
+  ASGI
+  SRF  0 67
+  ASGI
+  SRF  0 66
+  ASGI
+  SRF  0 65
+  ASGI
+  SRF  0 64
+  ASGI
+  SRF  0 63
+  ASGI
+  SRF  0 62
+  ASGI
+  SRF  0 61
+  ASGI
+  SRF  0 60
+  ASGI
+  SRF  0 59
+  ASGI
+  SRF  0 58
+  ASGI
+  SRF  0 57
+  ASGI
+  SRF  0 56
+  ASGI
+  SRF  0 55
+  ASGI
+  SRF  0 54
+  ASGI
+  SRF  0 53
+  ASGI
+  SRF  0 52
+  ASGI
+  SRF  0 51
+  ASGI
+  SRF  0 50
+  ASGI
+  SRF  0 49
+  ASGI
+  SRF  0 48
+  ASGI
+  SRF  0 47
+  ASGI
+  SRF  0 46
+  ASGI
+  SRF  0 45
+  ASGI
+  SRF  0 44
+  ASGI
+  SRF  0 43
+  ASGI
+  SRF  0 42
+  ASGI
+  SRF  0 41
+  ASGI
+  SRF  0 40
+  ASGI
+  SRF  0 39
+  ASGI
+  SRF  0 38
+  ASGI
+  SRF  0 37
+  ASGI
+  SRF  0 36
+  ASGI
+  SRF  0 35
+  ASGI
+  SRF  0 34
+  ASGI
+  SRF  0 33
+  ASGI
+  SRF  0 32
+  ASGI
+  SRF  0 31
+  ASGI
+  SRF  0 30
+  ASGI
+  SRF  0 29
+  ASGI
+  SRF  0 28
+  ASGI
+  SRF  0 27
+  ASGI
+  SRF  0 26
+  ASGI
+  SRF  0 25
+  ASGI
+  SRF  0 24
+  ASGI
+  SRF  0 23
+  ASGI
+  SRF  0 22
+  ASGI
+  SRF  0 21
+  ASGI
+  SRF  0 20
+  ASGI
+  SRF  0 19
+  ASGI
+  SRF  0 18
+  ASGI
+  SRF  0 17
+  ASGI
+  SRF  0 16
+  ASGI
+  SRF  0 15
+  ASGI
+  SRF  0 14
+  ASGI
+  SRF  0 13
+  ASGI
+  SRF  0 12
+  ASGI
+  SRF  0 11
+  ASGI
+  SRF  0 10
+  ASGI
+  SRF  0  9
+  ASGI
+  SRF  0  8
+  ASGI
+  SRF  0  7
+  ASGI
+  SRF  0  6
+  ASGI
+  SRF  0  5
+  ASGI
+  SRF  0  4
+  ASGI
+</recuperar_parámetro_2>
+<recuperar_parámetro_1>
+; --- Recuperando parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L14
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[84]!
+</declaracion_variables>
+L14:
+<bloque_instrucciones_asignar>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0 84
+  STC  0
+  ASG
+</asignación_en_variable_simple_i>
+<while>
+L15:
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0 84
+  DRF
+; --- Variable simple/parámetro "elementos".
+  SRF  1 85
+  DRF
+  LT
+</condición>
+  JMF L16
+<bloque_instrucciones_while>
+<asignación_en_componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0 84
+  DRF
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L17
+  DUP
+  STC 79
+  LTE
+  JMT L18
+L17:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L18:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+<componente_de_vector_siguiente>
+; --- Variable simple/parámetro "i".
+  SRF  0 84
+  DRF
+; --- Comprobando si el índice es válido para el vector "siguiente"
+  DUP
+  STC  0
+  GTE
+  JMF L19
+  DUP
+  STC 79
+  LTE
+  JMT L20
+L19:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "siguiente"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 115
+  WRT  0
+  STC 105
+  WRT  0
+  STC 103
+  WRT  0
+  STC 117
+  WRT  0
+  STC 105
+  WRT  0
+  STC 101
+  WRT  0
+  STC 110
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L20:
+; --- Dirección inicial de vector "siguiente".
+  SRF  0  4
+  PLUS
+  DRF
+</componente_de_vector_siguiente>
+  ASG
+</asignación_en_componente_de_vector_colonia>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0 84
+; --- Variable simple/parámetro "i".
+  SRF  0 84
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
+  JMP L15
+L16:
+</while>
+  CSF
+</bloque_instrucciones_asignar>
+</procedimiento_asignar>
+<función_vivira>
+L21:
+; --- Parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+; --- Parámetro i, de tipo INT, por VAL, nivel 1, dirección[4]!
+<recuperar_parámetro_2>
+; --- Recuperando parámetro i, de tipo INT, por VAL, nivel 1, dirección[4]!
+  SRF  0  4
+  ASGI
+</recuperar_parámetro_2>
+<recuperar_parámetro_1>
+; --- Recuperando parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L22
+<declaracion_variables>
+</declaracion_variables>
+L22:
+<bloque_instrucciones_vivira>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  0
+  EQ
+</condición>
+  JMF L23
+<then>
+<return>
+  STC  0
+  CSF
+</return>
+  JMP L36
+</then>
+<else>
+L23:
+<if-then>
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Variable simple/parámetro "elementos".
+  SRF  1 85
+  DRF
+  STC  1
+  SBT
+  EQ
+</condición>
+  JMF L24
+<then>
+<return>
+  STC  0
+  CSF
+</return>
+  JMP L35
+</then>
+<else>
+L24:
+<return>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L25
+  DUP
+  STC 79
+  LTE
+  JMT L26
+L25:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L26:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+  NGB
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  SBT
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L27
+  DUP
+  STC 79
+  LTE
+  JMT L28
+L27:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L28:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L29
+  DUP
+  STC 79
+  LTE
+  JMT L30
+L29:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L30:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+  NGB
+  AND
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  SBT
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L31
+  DUP
+  STC 79
+  LTE
+  JMT L32
+L31:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L32:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+  NGB
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L33
+  DUP
+  STC 79
+  LTE
+  JMT L34
+L33:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L34:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+  AND
+  OR
+  AND
+  CSF
+</return>
+</else>
+L35:
+</if-then>
+</else>
+L36:
+</if-then>
+  CSF
+</bloque_instrucciones_vivira>
+</función_vivira>
+<función_vivira2>
+L37:
+; --- Parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+; --- Parámetro i, de tipo INT, por VAL, nivel 1, dirección[4]!
+<recuperar_parámetro_2>
+; --- Recuperando parámetro i, de tipo INT, por VAL, nivel 1, dirección[4]!
+  SRF  0  4
+  ASGI
+</recuperar_parámetro_2>
+<recuperar_parámetro_1>
+; --- Recuperando parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L38
+<declaracion_variables>
+; --- Variable vivos, de tipo INT, por NONE, nivel 1, dirección[5]!
+</declaracion_variables>
+L38:
+<bloque_instrucciones_vivira2>
+<asignación_en_variable_simple_vivos>
+; --- Obteniendo variable simple/parámetro "vivos".
+  SRF  0  5
+  STC  0
+  ASG
+</asignación_en_variable_simple_vivos>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  0
+  GT
+</condición>
+  JMF L39
+<then>
+<if-then>
+<condición>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  SBT
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L40
+  DUP
+  STC 79
+  LTE
+  JMT L41
+L40:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L41:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+</condición>
+  JMF L42
+<then>
+<asignación_en_variable_simple_vivos>
+; --- Obteniendo variable simple/parámetro "vivos".
+  SRF  0  5
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_vivos>
+</then>
+L42:
+</if-then>
+</then>
+L39:
+</if-then>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  GT
+</condición>
+  JMF L43
+<then>
+<if-then>
+<condición>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  2
+  SBT
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L44
+  DUP
+  STC 79
+  LTE
+  JMT L45
+L44:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L45:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+</condición>
+  JMF L46
+<then>
+<asignación_en_variable_simple_vivos>
+; --- Obteniendo variable simple/parámetro "vivos".
+  SRF  0  5
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_vivos>
+</then>
+L46:
+</if-then>
+</then>
+L43:
+</if-then>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC 79
+  LT
+</condición>
+  JMF L47
+<then>
+<if-then>
+<condición>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L48
+  DUP
+  STC 79
+  LTE
+  JMT L49
+L48:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L49:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+</condición>
+  JMF L50
+<then>
+<asignación_en_variable_simple_vivos>
+; --- Obteniendo variable simple/parámetro "vivos".
+  SRF  0  5
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_vivos>
+</then>
+L50:
+</if-then>
+</then>
+L47:
+</if-then>
+<if-then>
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC 78
+  LT
+</condición>
+  JMF L51
+<then>
+<if-then>
+<condición>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  2
+  PLUS
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L52
+  DUP
+  STC 79
+  LTE
+  JMT L53
+L52:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L53:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+</condición>
+  JMF L54
+<then>
+<asignación_en_variable_simple_vivos>
+; --- Obteniendo variable simple/parámetro "vivos".
+  SRF  0  5
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_vivos>
+</then>
+L54:
+</if-then>
+</then>
+L51:
+</if-then>
+<if-then>
+<condición>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L55
+  DUP
+  STC 79
+  LTE
+  JMT L56
+L55:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L56:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  DRF
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+  NGB
+</condición>
+  JMF L57
+<then>
+<return>
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  2
+  EQ
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  3
+  EQ
+  OR
+  CSF
+</return>
+  JMP L58
+</then>
+<else>
+L57:
+<return>
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  2
+  EQ
+; --- Variable simple/parámetro "vivos".
+  SRF  0  5
+  DRF
+  STC  4
+  EQ
+  OR
+  CSF
+</return>
+</else>
+L58:
+</if-then>
+  CSF
+</bloque_instrucciones_vivira2>
+</función_vivira2>
+<procedimiento_siguientegeneracion>
+L59:
+; --- Parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por REF, nivel 1, dirección[3]!
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L60
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[4]!
+; --- Variable siguiente, de tipo ARRAY[BOOL], de tamaño 80, por NONE, nivel 1, dirección[5:84]!
+</declaracion_variables>
+L60:
+<bloque_instrucciones_siguientegeneracion>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  4
+  STC  0
+  ASG
+</asignación_en_variable_simple_i>
+<while>
+L61:
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Variable simple/parámetro "elementos".
+  SRF  1 85
+  DRF
+  LT
+</condición>
+  JMF L62
+<bloque_instrucciones_while>
+<asignación_en_componente_de_vector_siguiente>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+; --- Comprobando si el índice es válido para el vector "siguiente"
+  DUP
+  STC  0
+  GTE
+  JMF L63
+  DUP
+  STC 79
+  LTE
+  JMT L64
+L63:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "siguiente"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 115
+  WRT  0
+  STC 105
+  WRT  0
+  STC 103
+  WRT  0
+  STC 117
+  WRT  0
+  STC 105
+  WRT  0
+  STC 101
+  WRT  0
+  STC 110
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L64:
+; --- Dirección inicial de vector "siguiente".
+  SRF  0  5
+  PLUS
+<llamada_a_funcion_vivira>
+<parámetro_1>
+; --- Variable simple/parámetro "colonia".
+; --- Array pasado por referencia
+  SRF  0  3
+  DRF
+</parámetro_1>
+<parámetro_2>
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+</parámetro_2>
+  OSF 85  1 L21
+</llamada_a_funcion_vivira>
+  ASG
+</asignación_en_componente_de_vector_siguiente>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0  4
+; --- Variable simple/parámetro "i".
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
+  JMP L61
+L62:
+</while>
+<llamada_a_funcion_asignar>
+<parámetro_1>
+; --- Variable simple/parámetro "colonia".
+; --- Array pasado por referencia
+  SRF  0  3
+</parámetro_1>
+<parámetro_2>
+; --- Variable simple/parámetro "siguiente".
+; --- Encontrado identificador de array en una expresion, el còdigo se generarà luego
+; --- Array pasado por valor
+  SRF  0  5
+  DRF
+  STC  0
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  2
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  3
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  4
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  5
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  6
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  7
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  8
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC  9
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 10
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 11
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 12
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 13
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 14
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 15
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 16
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 17
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 18
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 19
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 20
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 21
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 22
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 23
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 24
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 25
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 26
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 27
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 28
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 29
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 30
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 31
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 32
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 33
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 34
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 35
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 36
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 37
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 38
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 39
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 40
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 41
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 42
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 43
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 44
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 45
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 46
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 47
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 48
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 49
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 50
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 51
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 52
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 53
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 54
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 55
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 56
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 57
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 58
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 59
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 60
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 61
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 62
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 63
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 64
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 65
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 66
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 67
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 68
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 69
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 70
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 71
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 72
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 73
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 74
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 75
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 76
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 77
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 78
+  PLUS
+  DRF
+  SRF  0  5
+  DRF
+  STC 79
+  PLUS
+  DRF
+</parámetro_2>
+  OSF 85  1 L13
+</llamada_a_funcion_asignar>
+  CSF
+</bloque_instrucciones_siguientegeneracion>
+</procedimiento_siguientegeneracion>
+<procedimiento_mostrarcolonia>
+L65:
+; --- Parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por VAL, nivel 1, dirección[3:82]!
+<recuperar_parámetro_1>
+; --- Recuperando parámetro colonia, de tipo ARRAY[BOOL], de tamaño 80, por VAL, nivel 1, dirección[3:82]!
+  SRF  0 82
+  ASGI
+  SRF  0 81
+  ASGI
+  SRF  0 80
+  ASGI
+  SRF  0 79
+  ASGI
+  SRF  0 78
+  ASGI
+  SRF  0 77
+  ASGI
+  SRF  0 76
+  ASGI
+  SRF  0 75
+  ASGI
+  SRF  0 74
+  ASGI
+  SRF  0 73
+  ASGI
+  SRF  0 72
+  ASGI
+  SRF  0 71
+  ASGI
+  SRF  0 70
+  ASGI
+  SRF  0 69
+  ASGI
+  SRF  0 68
+  ASGI
+  SRF  0 67
+  ASGI
+  SRF  0 66
+  ASGI
+  SRF  0 65
+  ASGI
+  SRF  0 64
+  ASGI
+  SRF  0 63
+  ASGI
+  SRF  0 62
+  ASGI
+  SRF  0 61
+  ASGI
+  SRF  0 60
+  ASGI
+  SRF  0 59
+  ASGI
+  SRF  0 58
+  ASGI
+  SRF  0 57
+  ASGI
+  SRF  0 56
+  ASGI
+  SRF  0 55
+  ASGI
+  SRF  0 54
+  ASGI
+  SRF  0 53
+  ASGI
+  SRF  0 52
+  ASGI
+  SRF  0 51
+  ASGI
+  SRF  0 50
+  ASGI
+  SRF  0 49
+  ASGI
+  SRF  0 48
+  ASGI
+  SRF  0 47
+  ASGI
+  SRF  0 46
+  ASGI
+  SRF  0 45
+  ASGI
+  SRF  0 44
+  ASGI
+  SRF  0 43
+  ASGI
+  SRF  0 42
+  ASGI
+  SRF  0 41
+  ASGI
+  SRF  0 40
+  ASGI
+  SRF  0 39
+  ASGI
+  SRF  0 38
+  ASGI
+  SRF  0 37
+  ASGI
+  SRF  0 36
+  ASGI
+  SRF  0 35
+  ASGI
+  SRF  0 34
+  ASGI
+  SRF  0 33
+  ASGI
+  SRF  0 32
+  ASGI
+  SRF  0 31
+  ASGI
+  SRF  0 30
+  ASGI
+  SRF  0 29
+  ASGI
+  SRF  0 28
+  ASGI
+  SRF  0 27
+  ASGI
+  SRF  0 26
+  ASGI
+  SRF  0 25
+  ASGI
+  SRF  0 24
+  ASGI
+  SRF  0 23
+  ASGI
+  SRF  0 22
+  ASGI
+  SRF  0 21
+  ASGI
+  SRF  0 20
+  ASGI
+  SRF  0 19
+  ASGI
+  SRF  0 18
+  ASGI
+  SRF  0 17
+  ASGI
+  SRF  0 16
+  ASGI
+  SRF  0 15
+  ASGI
+  SRF  0 14
+  ASGI
+  SRF  0 13
+  ASGI
+  SRF  0 12
+  ASGI
+  SRF  0 11
+  ASGI
+  SRF  0 10
+  ASGI
+  SRF  0  9
+  ASGI
+  SRF  0  8
+  ASGI
+  SRF  0  7
+  ASGI
+  SRF  0  6
+  ASGI
+  SRF  0  5
+  ASGI
+  SRF  0  4
+  ASGI
+  SRF  0  3
+  ASGI
+</recuperar_parámetro_1>
+  JMP L66
+<declaracion_variables>
+; --- Variable i, de tipo INT, por NONE, nivel 1, dirección[83]!
+</declaracion_variables>
+L66:
+<bloque_instrucciones_mostrarcolonia>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0 83
+  STC  0
+  ASG
+</asignación_en_variable_simple_i>
+<while>
+L67:
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0 83
+  DRF
+; --- Variable simple/parámetro "elementos".
+  SRF  1 85
+  DRF
+  LT
+</condición>
+  JMF L68
+<bloque_instrucciones_while>
+<if-then>
+<condición>
+<componente_de_vector_colonia>
+; --- Variable simple/parámetro "i".
+  SRF  0 83
+  DRF
+; --- Comprobando si el índice es válido para el vector "colonia"
+  DUP
+  STC  0
+  GTE
+  JMF L69
+  DUP
+  STC 79
+  LTE
+  JMT L70
+L69:
+; --- Escribiendo: "Error: Índice fuera de límites para el vector "colonia"."
+  STC 69
+  WRT  0
+  STC 114
+  WRT  0
+  STC 114
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 58
+  WRT  0
+  STC 32
+  WRT  0
+  STC 205
+  WRT  0
+  STC 110
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 99
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 102
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 237
+  WRT  0
+  STC 109
+  WRT  0
+  STC 105
+  WRT  0
+  STC 116
+  WRT  0
+  STC 101
+  WRT  0
+  STC 115
+  WRT  0
+  STC 32
+  WRT  0
+  STC 112
+  WRT  0
+  STC 97
+  WRT  0
+  STC 114
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 99
+  WRT  0
+  STC 116
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 32
+  WRT  0
+  STC 34
+  WRT  0
+  STC 99
+  WRT  0
+  STC 111
+  WRT  0
+  STC 108
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 34
+  WRT  0
+  STC 46
+  WRT  0
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  LVP
+L70:
+; --- Dirección inicial de vector "colonia".
+  SRF  0  3
+  PLUS
+  DRF
+</componente_de_vector_colonia>
+</condición>
+  JMF L71
+<then>
+<put>
+; --- Escribiendo un tipo CHAR val: *
+  STC 42
+  WRT  0
+</put>
+  JMP L72
+</then>
+<else>
+L71:
+<put>
+; --- Escribiendo un tipo CHAR val:  
+  STC 32
+  WRT  0
+</put>
+</else>
+L72:
+</if-then>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0 83
+; --- Variable simple/parámetro "i".
+  SRF  0 83
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
+  JMP L67
+L68:
+</while>
+<put>
+; --- Escribiendo un tipo CHAR val:  
+  WRT  0
+</put>
+<put>
+; --- Escribiendo un tipo CHAR val:  
+  WRT  0
+</put>
+  CSF
+</bloque_instrucciones_mostrarcolonia>
+</procedimiento_mostrarcolonia>
+L0:
+<bloque_instrucciones_juego_de_la_vida>
+<put>
+; --- Escribiendo un tipo STRING val: "Implementación de la versión 1D del Juego de la Vida de Conway." length: 63
+  STC 73
+  WRT  0
+  STC 109
+  WRT  0
+  STC 112
+  WRT  0
+  STC 108
+  WRT  0
+  STC 101
+  WRT  0
+  STC 109
+  WRT  0
+  STC 101
+  WRT  0
+  STC 110
+  WRT  0
+  STC 116
+  WRT  0
+  STC 97
+  WRT  0
+  STC 99
+  WRT  0
+  STC 105
+  WRT  0
+  STC 243
+  WRT  0
+  STC 110
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 118
+  WRT  0
+  STC 101
+  WRT  0
+  STC 114
+  WRT  0
+  STC 115
+  WRT  0
+  STC 105
+  WRT  0
+  STC 243
+  WRT  0
+  STC 110
+  WRT  0
+  STC 32
+  WRT  0
+  STC 49
+  WRT  0
+  STC 68
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 108
+  WRT  0
+  STC 32
+  WRT  0
+  STC 74
+  WRT  0
+  STC 117
+  WRT  0
+  STC 101
+  WRT  0
+  STC 103
+  WRT  0
+  STC 111
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 108
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 86
+  WRT  0
+  STC 105
+  WRT  0
+  STC 100
+  WRT  0
+  STC 97
+  WRT  0
+  STC 32
+  WRT  0
+  STC 100
+  WRT  0
+  STC 101
+  WRT  0
+  STC 32
+  WRT  0
+  STC 67
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 119
+  WRT  0
+  STC 97
+  WRT  0
+  STC 121
+  WRT  0
+  STC 46
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" length: 53
+  STC 104
+  WRT  0
+  STC 116
+  WRT  0
+  STC 116
+  WRT  0
+  STC 112
+  WRT  0
+  STC 115
+  WRT  0
+  STC 58
+  WRT  0
+  STC 47
+  WRT  0
+  STC 47
+  WRT  0
+  STC 101
+  WRT  0
+  STC 110
+  WRT  0
+  STC 46
+  WRT  0
+  STC 119
+  WRT  0
+  STC 105
+  WRT  0
+  STC 107
+  WRT  0
+  STC 105
+  WRT  0
+  STC 112
+  WRT  0
+  STC 101
+  WRT  0
+  STC 100
+  WRT  0
+  STC 105
+  WRT  0
+  STC 97
+  WRT  0
+  STC 46
+  WRT  0
+  STC 111
+  WRT  0
+  STC 114
+  WRT  0
+  STC 103
+  WRT  0
+  STC 47
+  WRT  0
+  STC 119
+  WRT  0
+  STC 105
+  WRT  0
+  STC 107
+  WRT  0
+  STC 105
+  WRT  0
+  STC 47
+  WRT  0
+  STC 67
+  WRT  0
+  STC 111
+  WRT  0
+  STC 110
+  WRT  0
+  STC 119
+  WRT  0
+  STC 97
+  WRT  0
+  STC 121
+  WRT  0
+  STC 37
+  WRT  0
+  STC 50
+  WRT  0
+  STC 55
+  WRT  0
+  STC 115
+  WRT  0
+  STC 95
+  WRT  0
+  STC 71
+  WRT  0
+  STC 97
+  WRT  0
+  STC 109
+  WRT  0
+  STC 101
+  WRT  0
+  STC 95
+  WRT  0
+  STC 111
+  WRT  0
+  STC 102
+  WRT  0
+  STC 95
+  WRT  0
+  STC 76
+  WRT  0
+  STC 105
+  WRT  0
+  STC 102
+  WRT  0
+  STC 101
+  WRT  0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<put>
+; --- Escribiendo un tipo STRING val: "" length: 0
+</put>
+<put_line>
+; --- CR/LF
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+</put_line>
+<asignación_en_variable_simple_elementos>
+; --- Obteniendo variable simple/parámetro "elementos".
+  SRF  0 85
+  STC 80
+  ASG
+</asignación_en_variable_simple_elementos>
+<llamada_a_funcion_inicializar>
+<parámetro_1>
+; --- Variable simple/parámetro "colonia".
+; --- Array pasado por referencia
+  SRF  0  3
+</parámetro_1>
+  OSF 86  0 L1
+</llamada_a_funcion_inicializar>
+<llamada_a_funcion_mostrarcolonia>
+<parámetro_1>
+; --- Variable simple/parámetro "colonia".
+; --- Encontrado identificador de array en una expresion, el còdigo se generarà luego
+; --- Array pasado por valor
+  SRF  0  3
+  DRF
+  STC  0
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  2
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  3
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  4
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  5
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  6
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  7
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  8
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  9
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 10
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 11
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 12
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 13
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 14
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 15
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 16
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 17
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 18
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 19
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 20
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 21
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 22
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 23
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 24
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 25
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 26
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 27
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 28
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 29
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 30
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 31
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 32
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 33
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 34
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 35
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 36
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 37
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 38
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 39
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 40
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 41
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 42
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 43
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 44
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 45
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 46
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 47
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 48
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 49
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 50
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 51
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 52
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 53
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 54
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 55
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 56
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 57
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 58
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 59
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 60
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 61
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 62
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 63
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 64
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 65
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 66
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 67
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 68
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 69
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 70
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 71
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 72
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 73
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 74
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 75
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 76
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 77
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 78
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 79
+  PLUS
+  DRF
+</parámetro_1>
+  OSF 86  0 L65
+</llamada_a_funcion_mostrarcolonia>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0 83
+  STC  1
+  ASG
+</asignación_en_variable_simple_i>
+<asignación_en_variable_simple_iteraciones>
+; --- Obteniendo variable simple/parámetro "iteraciones".
+  SRF  0 84
+  STC 50
+  ASG
+</asignación_en_variable_simple_iteraciones>
+<while>
+L73:
+<condición>
+; --- Variable simple/parámetro "i".
+  SRF  0 83
+  DRF
+; --- Variable simple/parámetro "iteraciones".
+  SRF  0 84
+  DRF
+  LTE
+</condición>
+  JMF L74
+<bloque_instrucciones_while>
+<llamada_a_funcion_siguientegeneracion>
+<parámetro_1>
+; --- Variable simple/parámetro "colonia".
+; --- Array pasado por referencia
+  SRF  0  3
+</parámetro_1>
+  OSF 86  0 L59
+</llamada_a_funcion_siguientegeneracion>
+<llamada_a_funcion_mostrarcolonia>
+<parámetro_1>
+; --- Variable simple/parámetro "colonia".
+; --- Encontrado identificador de array en una expresion, el còdigo se generarà luego
+; --- Array pasado por valor
+  SRF  0  3
+  DRF
+  STC  0
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  2
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  3
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  4
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  5
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  6
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  7
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  8
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC  9
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 10
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 11
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 12
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 13
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 14
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 15
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 16
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 17
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 18
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 19
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 20
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 21
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 22
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 23
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 24
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 25
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 26
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 27
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 28
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 29
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 30
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 31
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 32
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 33
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 34
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 35
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 36
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 37
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 38
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 39
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 40
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 41
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 42
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 43
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 44
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 45
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 46
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 47
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 48
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 49
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 50
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 51
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 52
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 53
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 54
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 55
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 56
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 57
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 58
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 59
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 60
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 61
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 62
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 63
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 64
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 65
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 66
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 67
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 68
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 69
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 70
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 71
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 72
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 73
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 74
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 75
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 76
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 77
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 78
+  PLUS
+  DRF
+  SRF  0  3
+  DRF
+  STC 79
+  PLUS
+  DRF
+</parámetro_1>
+  OSF 86  0 L65
+</llamada_a_funcion_mostrarcolonia>
+<asignación_en_variable_simple_i>
+; --- Obteniendo variable simple/parámetro "i".
+  SRF  0 83
+; --- Variable simple/parámetro "i".
+  SRF  0 83
+  DRF
+  STC  1
+  PLUS
+  ASG
+</asignación_en_variable_simple_i>
+</bloque_instrucciones_while>
+  JMP L73
+L74:
+</while>
+</bloque_instrucciones_juego_de_la_vida>
+  LVP
+</juego_de_la_vida>
